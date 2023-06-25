@@ -6,18 +6,129 @@
     <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
 <h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
 <span id="more"></span>
 
 <h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
 <h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
 <h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
 ]]></content>
+  </entry>
+  <entry>
+    <title>算法性能</title>
+    <url>/2023/06/23/20-56-15/</url>
+    <content><![CDATA[<h2 id="时间复杂度分析"><a href="#时间复杂度分析" class="headerlink" title="时间复杂度分析"></a>时间复杂度分析</h2><h4 id="什么是时间复杂度"><a href="#什么是时间复杂度" class="headerlink" title="什么是时间复杂度"></a>什么是时间复杂度</h4><p>时间复杂度是一个函数，它定性描述该算法的运行时间。</p>
+<p>假设算法的问题规模为n，那么操作单元数量便用函数f(n)来表示，随着数据规模n的增大，算法执行时间的增长率和f(n)的增长率相同，这称作为算法的渐近时间复杂度，简称时间复杂度，记为 O(f(n))。</p>
+<p><strong>大O用来表示上界</strong>，但代表的是一般情况，而不是严格的上界。就像快排的时间复杂度是O(nlogn)，但最坏情况下应该是O(n^2)。<strong>大O是数据量级突破一个点且数据量级非常大的情况下所表现出的时间复杂度，这个数据量也就是常数项系数已经不起决定性作用的数据量</strong>。</p>
+<p>所以我们说的时间复杂度都是省略常数项系数的，是因为一般情况下都是默认数据规模足够的大。</p>
+<p>O(1)常数阶 &lt; O(logn)对数阶 &lt; O(n)线性阶 &lt; O(nlogn)线性对数阶 &lt; O(n^2)平方阶 &lt; O(n^3)立方阶 &lt; O(2^n)指数阶</p>
+<span id="more"></span>
+
+<h4 id="复杂表达式的化简"><a href="#复杂表达式的化简" class="headerlink" title="复杂表达式的化简"></a>复杂表达式的化简</h4><ul>
+<li>去掉加法常数项</li>
+<li>去掉常数系数</li>
+<li>保留最高项</li>
+</ul>
+<h4 id="log以什么为底"><a href="#log以什么为底" class="headerlink" title="log以什么为底"></a>log以什么为底</h4><p>说logn的时候，通常忽略了底数的描述。这是因为底可以被化简掉，无论以什么为底，套上O后效果都一样</p>
+<h2 id="算法为什么会超时"><a href="#算法为什么会超时" class="headerlink" title="算法为什么会超时"></a>算法为什么会超时</h2><p>程序运行的时间超过了规定的时间，一般OJ（online judge）的超时时间就是1s。如果n的规模已经足够让$O(n)$的算法运行时间超过了1s，就应该考虑log(n)的解法了。</p>
+]]></content>
+      <categories>
+        <category>Algorithm</category>
+      </categories>
+      <tags>
+        <tag>Algorithm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>数组</title>
+    <url>/2023/06/23/21-00-00/</url>
+    <content><![CDATA[<h2 id="数组理论基础"><a href="#数组理论基础" class="headerlink" title="数组理论基础"></a>数组理论基础</h2><p>数组是存放在<strong>连续内存空间</strong>上的<strong>相同类型数据</strong>的集合。正是因为数组在内存空间的地址上是连续的，所以在增删元素时，难免要移动其他元素的地址。</p>
+<p><strong>数组的元素是不能删的，只能覆盖。</strong></p>
+<p>关于二维数组的内存地址空间的连续性问题，不同的编程语言的内存管理不同。在C++中，二维数组是连续分布的；但在Java中二维数组的每一行头结点的地址是没有规则的。</p>
+<span id="more"></span>
+
+
+
+<h2 id="二分查找"><a href="#二分查找" class="headerlink" title="二分查找"></a>二分查找</h2><h3 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h3><p>题目的前提是数组为<strong>有序数组</strong>，同时题目还强调数组中<strong>无重复元素</strong>。二分法逻辑比较简单，但有两个容易搞错的点，即</p>
+<ul>
+<li><pre><code>while(left &lt; right)     or    while(left &lt;= right)
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">- ```</span><br><span class="line">  right = middle    or     right = middle - 1</span><br></pre></td></tr></table></figure>
+</code></pre>
+</li>
+</ul>
+<p>主要原因在于<strong>对区间的定义没想清楚</strong>，在二分查找时要遵循<strong>循环不变量</strong>原则，区间的定义就是不变量。</p>
+<p>区间的一般定义有两种，左闭右闭和左闭右开。因此衍生了两种主要的写法</p>
+<h3 id="左闭右闭"><a href="#左闭右闭" class="headerlink" title="左闭右闭"></a>左闭右闭</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &#123;<span class="type">number[]</span>&#125; <span class="variable">nums</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &#123;<span class="type">number</span>&#125; <span class="variable">target</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> &#123;<span class="type">number</span>&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> search = <span class="keyword">function</span>(<span class="params">nums, target</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> left=<span class="number">0</span>,right=nums.<span class="property">length</span>-<span class="number">1</span>,mid=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(left&lt;=right)&#123;</span><br><span class="line">        mid=(left + right) &gt;&gt;<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(target==nums[mid]) <span class="keyword">return</span> mid;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(target&gt;nums[mid]) left=mid+<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span> right=mid-<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>时间复杂度：O(logn)</li>
+<li>空间复杂度：O(1)</li>
+</ul>
+<h3 id="左闭右开"><a href="#左闭右开" class="headerlink" title="左闭右开"></a>左闭右开</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &#123;<span class="type">number[]</span>&#125; <span class="variable">nums</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &#123;<span class="type">number</span>&#125; <span class="variable">target</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> &#123;<span class="type">number</span>&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> search = <span class="keyword">function</span>(<span class="params">nums, target</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> left=<span class="number">0</span>,right=nums.<span class="property">length</span>,mid=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>(left&lt;right)&#123;</span><br><span class="line">        mid=(left + right) &gt;&gt;<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span>(target==nums[mid]) <span class="keyword">return</span> mid;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(target&gt;nums[mid]) left=mid+<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span> right=mid;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>时间复杂度：O(logn)</li>
+<li>空间复杂度：O(1)</li>
+</ul>
+<h3 id="相关题目"><a href="#相关题目" class="headerlink" title="相关题目"></a>相关题目</h3><ul>
+<li>35</li>
+</ul>
+<h2 id="移除元素"><a href="#移除元素" class="headerlink" title="移除元素"></a>移除元素</h2><h3 id="思路-1"><a href="#思路-1" class="headerlink" title="思路"></a>思路</h3><p>题目：给定一个数组nums和一个值val，<strong>原地</strong>移除所有数值等于 val 的元素，并返回移除后数组的新长度。</p>
+<p>问题乍一看很简单，但涉及到数组的底层理论，即：数组元素不能删除，只能覆盖。</p>
+<p>有一些库可以轻易实现该操作，例如vector中的erase操作，此题的本质就是实现erase函数。</p>
+<h3 id="暴力法"><a href="#暴力法" class="headerlink" title="暴力法"></a>暴力法</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &#123;<span class="type">number[]</span>&#125; <span class="variable">nums</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &#123;<span class="type">number</span>&#125; <span class="variable">val</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> &#123;<span class="type">number</span>&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> removeElement = <span class="keyword">function</span>(<span class="params">nums, val</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> length=nums.<span class="property">length</span>; <span class="comment">// 记录下原数组的大小</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;length;)&#123; <span class="comment">// 这里不能笼统的i+1，碰到要删除的元素时，元素整体前移，此时i不用+1</span></span><br><span class="line">        <span class="comment">// 此外，i&lt;length,而不是i&lt;nums.length,因为数组是动态变化的，length的值跟随数组变化</span></span><br><span class="line">        <span class="keyword">if</span>(nums[i]==val)&#123;</span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">var</span> j=i;j&lt;length-<span class="number">1</span>;j++)&#123; <span class="comment">// 覆盖待删除元素 </span></span><br><span class="line">                nums[j]=nums[j+<span class="number">1</span>];</span><br><span class="line">            &#125;</span><br><span class="line">            length--; <span class="comment">// length--和for循环的位置不能变，否则for循环中条件要变</span></span><br><span class="line">        &#125;<span class="keyword">else</span> i++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> length;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>时间复杂度：O(n^2)</li>
+<li>空间复杂度：O(1)</li>
+</ul>
+<h3 id="双指针法"><a href="#双指针法" class="headerlink" title="双指针法"></a>双指针法</h3><p>也叫快慢指针法，定义快慢指针</p>
+<ul>
+<li>快指针：寻找新数组的元素 ，新数组就是不含有目标元素的数组</li>
+<li>慢指针：指向更新 新数组下标的位置</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &#123;<span class="type">number[]</span>&#125; <span class="variable">nums</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &#123;<span class="type">number</span>&#125; <span class="variable">val</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> &#123;<span class="type">number</span>&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> removeElement = <span class="keyword">function</span>(<span class="params">nums, val</span>) &#123;</span><br><span class="line">    <span class="comment">// j指针用于遍历原数组，是快指针</span></span><br><span class="line">    <span class="comment">// i指针用于构成新数组，是慢指针</span></span><br><span class="line">    <span class="keyword">var</span> i=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> j=<span class="number">0</span>;j&lt;nums.<span class="property">length</span>;j++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(nums[j]!=val)&#123; <span class="comment">// 快指针指向的元素不是待删元素时，可以插入到新数组</span></span><br><span class="line">            nums[i]=nums[j]; <span class="comment">// 插入到新数组中的i指针位置</span></span><br><span class="line">            i++;</span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> i;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>时间复杂度：O(n)</li>
+<li>空间复杂度：O(1)</li>
+</ul>
+<h3 id="相关题目-1"><a href="#相关题目-1" class="headerlink" title="相关题目"></a>相关题目</h3><ul>
+<li><p>26</p>
+</li>
+<li><p>283</p>
+</li>
+</ul>
+<h2 id="有序数组的平方"><a href="#有序数组的平方" class="headerlink" title="有序数组的平方"></a>有序数组的平方</h2><h3 id="思路-2"><a href="#思路-2" class="headerlink" title="思路"></a>思路</h3><p>题目：给定一个 <strong>非递减</strong>的整数数组 <code>nums</code>，返回 <strong>每个数字的平方</strong> 组成的新数组，要求也按 <strong>非递减</strong> 排序。</p>
+<p>很容易想到暴力的方法，即先遍历数组，取每个元素的平方，再快排。</p>
+<h3 id="双指针法-1"><a href="#双指针法-1" class="headerlink" title="双指针法"></a>双指针法</h3><p>观察数组，由于负数的存在，平方后数组中最大的元素在两边。因此可以在<strong>两边各放指针向中间靠拢</strong>，得到由大到小的元素，数组从后往前构造即可。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &#123;<span class="type">number[]</span>&#125; <span class="variable">nums</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> &#123;<span class="type">number[]</span>&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> sortedSquares = <span class="keyword">function</span>(<span class="params">nums</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> new_num=[];</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;nums.<span class="property">length</span>;i++) nums[i]*=nums[i]; <span class="comment">// 先遍历，得到元素的平方</span></span><br><span class="line">    <span class="keyword">var</span> index=nums.<span class="property">length</span>-<span class="number">1</span>,left=<span class="number">0</span>,right=nums.<span class="property">length</span>-<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span>(left&lt;=right)&#123;</span><br><span class="line">        <span class="keyword">if</span>(nums[left]&gt;nums[right])&#123;</span><br><span class="line">            new_num[index--]=nums[left];</span><br><span class="line">            left++;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            new_num[index--]=nums[right];</span><br><span class="line">            right--;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> new_num;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="长度最小的子数组"><a href="#长度最小的子数组" class="headerlink" title="长度最小的子数组"></a>长度最小的子数组</h2><h3 id="思路-3"><a href="#思路-3" class="headerlink" title="思路"></a>思路</h3><p>题目：给定一个含有n个正整数的数组和一个正整数s，找出该数组中满足其和 ≥ s 的长度最小的 连续 子数组，并返回其长度。如果不存在符 合条件的子数组，返回 0。</p>
+<p>暴力方法：两个循环，一个遍历数组起始位置，一个遍历数组结束位置，组合出所有可能的数组位置从而得到长度。</p>
+<p>该问题的一个很自然的思路是从小到大列举数组的长度，看最小能满足条件的长度是多少。但这样就需要列举数组长度个 结果。</p>
+<p>刚刚那种思路是<strong>固定窗口大小，改变窗口位置</strong>。那能不能<strong>固定窗口位置，改变窗口大小</strong>呢？</p>
+<p>由此想到，可以遍历数组，每次固定窗口的<strong>起始位置</strong>，增加窗口大小直到满足条件，由此可得在该位置下最小的窗口大小，在一次完整的遍历之后即可得到全局解。<strong>本质上也是双指针</strong>的方法。</p>
+<p>但是如果固定起始位置，其方法与暴力破解一样。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &#123;<span class="type">number</span>&#125; <span class="variable">target</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &#123;<span class="type">number[]</span>&#125; <span class="variable">nums</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> &#123;<span class="type">number</span>&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> minSubArrayLen = <span class="keyword">function</span>(<span class="params">target, nums</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> sum,result=<span class="title class_">Number</span>.<span class="property">MAX_VALUE</span>,j=<span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 以i为头的子数组</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i=<span class="number">0</span>;i&lt;nums.<span class="property">length</span>;i++)&#123;</span><br><span class="line">        j=i;sum=<span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span>(sum&lt;target&amp;&amp;j&lt;nums.<span class="property">length</span>)&#123;</span><br><span class="line">            sum+=nums[j];j++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(sum&gt;=target)&#123;</span><br><span class="line">            <span class="keyword">if</span>((j-i)&lt;result) result=j-i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(result==<span class="title class_">Number</span>.<span class="property">MAX_VALUE</span>) result = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul>
+<li><p>双指针法</p>
+</li>
+<li><p>滑动窗口法</p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Algorithm</category>
+      </categories>
+      <tags>
+        <tag>Algorithm</tag>
+      </tags>
   </entry>
 </search>
