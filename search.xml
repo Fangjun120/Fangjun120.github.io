@@ -320,12 +320,136 @@
 </blockquote>
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// charCodeAt()方法，返回字符串第一个字符的Unicode编码值</span></span><br><span class="line"><span class="comment">// for..in可遍历Array, Object对象，且会遍历到新添加的成员属性。(历史遗留)</span></span><br><span class="line"><span class="comment">// for..of可遍历iterable可被迭代的对象(不包括Object)。且只遍历属于对象本身的属性。</span></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &#123;<span class="type">string</span>&#125; <span class="variable">s</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &#123;<span class="type">string</span>&#125; <span class="variable">t</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> &#123;<span class="type">boolean</span>&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> isAnagram = <span class="keyword">function</span>(<span class="params">s, t</span>) &#123;</span><br><span class="line">    <span class="comment">// 使用数组的解法</span></span><br><span class="line">    <span class="keyword">if</span>(s.<span class="property">length</span>!=t.<span class="property">length</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">var</span> arr=<span class="keyword">new</span> <span class="title class_">Array</span>(<span class="number">26</span>).<span class="title function_">fill</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">var</span> base=<span class="string">&quot;a&quot;</span>.<span class="title function_">charCodeAt</span>();<span class="comment">//获取a的unicode编码值</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">const</span> i <span class="keyword">of</span> s)&#123;</span><br><span class="line">        arr[i.<span class="title function_">charCodeAt</span>()-base]++;<span class="comment">//统计s串中各字符的个数</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">const</span> i <span class="keyword">of</span> t)&#123;</span><br><span class="line">        arr[i.<span class="title function_">charCodeAt</span>()-base]--;</span><br><span class="line">        <span class="keyword">if</span>(arr[i.<span class="title function_">charCodeAt</span>()-base]&lt;<span class="number">0</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> isAnagram = <span class="keyword">function</span>(<span class="params">s, t</span>) &#123;</span><br><span class="line">    <span class="comment">// 使用map的解法</span></span><br><span class="line">    <span class="keyword">if</span>(s.<span class="property">length</span>!=t.<span class="property">length</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">var</span> arr=<span class="keyword">new</span> <span class="title class_">Map</span>();</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">of</span> s)&#123;</span><br><span class="line">        <span class="keyword">var</span> temp=arr.<span class="title function_">get</span>(i)||<span class="number">0</span>;</span><br><span class="line">        arr.<span class="title function_">set</span>(i,temp+<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">of</span> t)&#123;</span><br><span class="line">        <span class="keyword">if</span>(!arr.<span class="title function_">get</span>(i)) <span class="comment">// 这里包含了两种情况，一是为0，二是undefined </span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        arr.<span class="title function_">set</span>(i, arr.<span class="title function_">get</span>(i)-<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
-]]></content>
+<h3 id="相关题目"><a href="#相关题目" class="headerlink" title="相关题目"></a>相关题目</h3><h2 id="数组交集"><a href="#数组交集" class="headerlink" title="数组交集"></a>数组交集</h2><blockquote>
+<p>题目：给定两个数组 <code>nums1</code> 和 <code>nums2</code> ，返回它们的交集 。输出结果中的每个元素一定是唯一的。</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &#123;<span class="type">number[]</span>&#125; <span class="variable">nums1</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> &#123;<span class="type">number[]</span>&#125; <span class="variable">nums2</span></span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> &#123;<span class="type">number[]</span>&#125;</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> intersection = <span class="keyword">function</span>(<span class="params">nums1, nums2</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> num1=<span class="keyword">new</span> <span class="title class_">Set</span>();</span><br><span class="line">    <span class="keyword">var</span> ret=[];</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">of</span> nums1)&#123;</span><br><span class="line">        num1.<span class="title function_">add</span>(i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">of</span> nums2)&#123;</span><br><span class="line">        <span class="keyword">if</span>(num1.<span class="title function_">has</span>(i)&amp;&amp;!ret.<span class="title function_">includes</span>(i)) ret.<span class="title function_">push</span>(i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ret;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="相关题目-1"><a href="#相关题目-1" class="headerlink" title="相关题目"></a>相关题目</h3>]]></content>
       <categories>
         <category>Algorithm</category>
       </categories>
       <tags>
         <tag>Algorithm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>js基础</title>
+    <url>/2023/06/27/20-56-15/</url>
+    <content><![CDATA[<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>JS &#x3D; ECMAScript(语法) + DOM(页面文档对象模型) + BOM(浏览器对象模型)  </p>
+<ul>
+<li>DOM和BOM都是Web API</li>
+</ul>
+<p>文档：</p>
+<p><code>https://developer.mozilla.org/zh-CN</code></p>
+<p><code>https://developer.mozilla.org/zh-CN/docs/web/javascript</code></p>
+<span id="more"></span>
+
+<h3 id="引入方式"><a href="#引入方式" class="headerlink" title="引入方式"></a>引入方式</h3><p>JavaScript 程序不能独立运行，它需要被嵌入 HTML 中，然后浏览器才能执行 JavaScript 代码。通过 <code>script</code> 标签将 JavaScript 代码引入到 HTML 中，有两种方式：</p>
+<h4 id="内部方式"><a href="#内部方式" class="headerlink" title="内部方式"></a>内部方式</h4><p>通过 <code>script</code> 标签包裹 JavaScript 代码</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">title</span>&gt;</span>JavaScript 基础 - 引入方式<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--通常写到文件底部，因为浏览器是按照代码顺序加载的，如果先加载的js涉及到修改其下方的html，可能会失败--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">    <span class="title function_">alert</span>(<span class="string">&#x27;嗨，欢迎来传智播学习前端技术！&#x27;</span>)</span></span><br><span class="line"><span class="language-javascript">    <span class="comment">// js一句代码结束后可以不写;</span></span></span><br><span class="line"><span class="language-javascript">  </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="外部形式"><a href="#外部形式" class="headerlink" title="外部形式"></a>外部形式</h4><p>一般将 JavaScript 代码写在独立的以 .js 结尾的文件中，然后通过 <code>script</code> 标签的 <code>src</code> 属性引入</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// demo.js</span></span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">write</span>(<span class="string">&#x27;hello&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">title</span>&gt;</span>JavaScript 基础 - 引入方式<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;demo.js&quot;</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">  	<span class="comment">// 这里的代码会被忽略</span></span></span><br><span class="line"><span class="language-javascript">  </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="输入输出语句"><a href="#输入输出语句" class="headerlink" title="输入输出语句"></a>输入输出语句</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>alert(msg)</td>
+<td align="left">浏览器弹出警示框</td>
+</tr>
+<tr>
+<td>console.log(msg)</td>
+<td align="left">浏览器控制台打印输出信息</td>
+</tr>
+<tr>
+<td>prompt(info)</td>
+<td align="left">浏览器弹出输入框，用户可以输入</td>
+</tr>
+<tr>
+<td>document.write()</td>
+<td align="left">向html文档中输出内容，可以识别标签</td>
+</tr>
+</tbody></table>
+<p>注：<code>alert</code>和<code>prompt</code>会跳过页面渲染先被执行。</p>
+<h3 id="let和var"><a href="#let和var" class="headerlink" title="let和var"></a>let和var</h3><p>JavaScript 使用专门的关键字 <code>let</code> 和 <code>var</code> 来声明（定义）变量，在使用时需要注意一些细节：</p>
+<p>以下是使用 <code>let</code> 时的注意事项：</p>
+<ol>
+<li>允许声明时赋值</li>
+<li><strong>不允许重复声明</strong></li>
+<li>允许同时声明多个变量并赋值</li>
+<li>JavaScript 中内置的一些关键字不能被当做变量名</li>
+</ol>
+<p><code>var</code>和<code>let</code>的区别在于</p>
+<ul>
+<li><strong>var允许重复声明</strong>。</li>
+<li>可以先使用再声明</li>
+<li>变量提升，是全局变量，没有块级作用域</li>
+</ul>
+<p>因此 <code>let</code> 相较 <code>var</code> 更严谨，推荐使用 <code>let</code>。</p>
+<h3 id="变量名命名规则"><a href="#变量名命名规则" class="headerlink" title="变量名命名规则"></a>变量名命名规则</h3><p>关于变量的名称（标识符）有一系列的规则需要遵守：</p>
+<ol>
+<li>只能是字母、数字、下划线、$，且不能能数字开头</li>
+<li>字母区分大小写，如 Age 和 age 是不同的变量</li>
+<li>JavaScript 内部已占用于单词（关键字或保留字）不允许使用</li>
+<li>尽量保证变量具有一定的语义，见字知义</li>
+</ol>
+<p>注：所谓关键字是指 JavaScript 内部使用的词语，如 <code>let</code> 和<code>var</code>，保留字是指 JavaScript 内部目前没有使用的词语，但是将来可能会使用词语。</p>
+<h3 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h3><p>概念：使用 <code>const</code> 声明的变量称为“常量”。</p>
+<p>使用场景：当某个变量永远不会改变的时候，就可以使用<code>const</code>来声明，而不是let。</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="variable constant_">PI</span> = <span class="number">3.14</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意： 常量不允许重新赋值,声明的时候必须赋值（初始化）</p>
+</blockquote>
+<h3 id="基本数据类型"><a href="#基本数据类型" class="headerlink" title="基本数据类型"></a>基本数据类型</h3><p>js是<strong>弱数据类型</strong>的语言，主要有五大基本数据类型，可以通过 <code>typeof</code> 关键字检测数据类型</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// typeof有两种使用方法</span></span><br><span class="line"><span class="comment">// 作为运算符</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="keyword">typeof</span> <span class="literal">null</span>)</span><br><span class="line"><span class="comment">// 函数形式</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title function_">typeof</span>(<span class="literal">null</span>))</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="number类型"><a href="#number类型" class="headerlink" title="number类型"></a>number类型</h4><p>包括整数、小数、正数、负数。在number中有一个特殊的值，叫做<code>NaN</code>，代表计算错误，任何对NaN的操作都会返回NaN。</p>
+<h4 id="string类型"><a href="#string类型" class="headerlink" title="string类型"></a>string类型</h4><p>通过单引号 、双引号或反引号包裹的数据都叫字符串，单引号和双引号没有本质上的区别，推荐使用单引号。</p>
+<p>字符串可以拼接，但比较麻烦。</p>
+<p>注意事项：</p>
+<ol>
+<li>无论单引号或是双引号必须成对使用</li>
+<li>单引号&#x2F;双引号<strong>可以互相嵌套</strong>，但是不能自已嵌套自已</li>
+<li>必要时可以使用转义符 <code>\</code>，输出单引号或双引号</li>
+</ol>
+<h5 id="模板字符串"><a href="#模板字符串" class="headerlink" title="模板字符串"></a>模板字符串</h5><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> age=<span class="number">20</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;我&#x27;</span>+age+<span class="string">&#x27;岁&#x27;</span>) <span class="comment">// 字符串拼接</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`我<span class="subst">$&#123;age&#125;</span>岁了`</span>) <span class="comment">// 模板字符串，必须用反引号</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="boolean类型"><a href="#boolean类型" class="headerlink" title="boolean类型"></a>boolean类型</h4><h4 id="undefined"><a href="#undefined" class="headerlink" title="undefined"></a>undefined</h4><p>未定义是比较特殊的类型，只有一个值 undefined。变量未初始化时，其默认值为 undefined。因为js是弱数据类型的语言，未经初始化，解释器也不知道变量是何类型</p>
+<p>一般很少【直接】为某个变量赋值为 undefined。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 只声明了变量，并末赋值</span></span><br><span class="line"><span class="keyword">let</span> tmp;</span><br><span class="line"><span class="variable language_">document</span>.<span class="title function_">write</span>(<span class="keyword">typeof</span> tmp) <span class="comment">// 结果为 undefined</span></span><br></pre></td></tr></table></figure>
+
+<p>通常用于检查一个数据是否被传递过来</p>
+<h4 id="null"><a href="#null" class="headerlink" title="null"></a>null</h4><p>null表示赋值了，但是内容为空。可以把null作为<strong>尚未创建的对象</strong></p>
+<p>如果一个变量里确定存放的是对象，但该对象还没准备好，就可以先放个null</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="keyword">typeof</span> data); <span class="comment">// object</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="literal">undefined</span>+<span class="number">1</span>) <span class="comment">// NaN</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="literal">null</span>+<span class="number">1</span>) <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="类型转换"><a href="#类型转换" class="headerlink" title="类型转换"></a>类型转换</h3><h4 id="隐式转换"><a href="#隐式转换" class="headerlink" title="隐式转换"></a>隐式转换</h4><p>某些运算符被执行时，<strong>系统内部自动将数据类型进行转换</strong>，这种转换称为隐式转换。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">let</span> num = <span class="number">13</span> <span class="comment">// 数值</span></span><br><span class="line"><span class="keyword">let</span> num2 = <span class="string">&#x27;2&#x27;</span> <span class="comment">// 字符串</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(num + num2) <span class="comment">//字符串拼接 132</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(num - num2) <span class="comment">//数字加减 11</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(num * num2) <span class="comment">// 26</span></span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(+<span class="string">&#x27;12&#x27;</span>) <span class="comment">// 转为数字型</span></span><br></pre></td></tr></table></figure>
+
+<p>转换类型不明显</p>
+<h4 id="显式转换"><a href="#显式转换" class="headerlink" title="显式转换"></a>显式转换</h4><p>编写程序时过度依靠系统内部的隐式转换是不严禁的，因为隐式转换规律并不清晰，大多是靠经验总结的规律。为了避免因隐式转换带来的问题，通常根逻辑需要对数据进行显示转换。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 显式将字符串 12 转换成数值 12</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="title class_">Number</span>(<span class="string">&#x27;12&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="built_in">parseInt</span>(<span class="string">&#x27;12.2pp&#x27;</span>)) <span class="comment">//12</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="built_in">parseInt</span>(<span class="string">&#x27;a12a&#x27;</span>)) <span class="comment">//NaN 只能取开头的数字</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="built_in">parseFloat</span>(<span class="string">&#x27;12.2pp&#x27;</span>)) <span class="comment">//12.2</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>JavaScript</category>
+      </categories>
+      <tags>
+        <tag>JavaScript</tag>
       </tags>
   </entry>
 </search>
