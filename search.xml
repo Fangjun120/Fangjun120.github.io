@@ -1041,6 +1041,205 @@
 </ul>
 <h3 id="跨平台原理"><a href="#跨平台原理" class="headerlink" title="跨平台原理"></a>跨平台原理</h3><p>如果没有跨平台性，同一个应用程序，想要在多种操作系统上运行，需要针对各个操作系统单独开发应用。比如微信有Windows版本、MacOS版本、Android版本、IOS版本</p>
 <p>跨平台性的原理是因为在<strong>不同版本的操作系统</strong>中安装有<strong>不同版本的Java虚拟机</strong>，Java程序的运行只依赖于Java虚拟机，和操作系统并没有直接关系。<strong>从而做到一处编译，处处运行</strong>。</p>
+<h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><h3 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h3><p>首先，左边<code>int[] ages</code> 表示定义了一个数组类型的变量，变量名叫ages</p>
+<p>其次，右边<code>&#123;12,24,36&#125;</code>表示创建一个数组对象，你完全可以把它理解成一个能装数据的东西。这个对象在内存中会有一个地址值<code>[I@4c873330</code>，每次创建一个数组对象都会有不用的地址值。</p>
+<p>然后，把右边的地址值<code>[I@4c873330</code>赋值给左边的ages变量</p>
+<p>所以，ages变量就可以通过地址值，找到数组这个东西。</p>
+<p>Java为了便于虚拟机执行Java程序，将虚拟机的内存划分为 方法区、栈、堆、本地方法栈、寄存器 这5块区域。同学们需要重点关注的是  <strong>方法区、栈、堆</strong>。</p>
+<p>下面把每一个块内存区域作用介绍一下，我们大致只需要知道每一部分存储什么内容就行。</p>
+<ul>
+<li><strong>方法区</strong>：字节码文件先加载到这里</li>
+<li><strong>栈</strong>：方法运行时所进入的内存区域，由于变量在方法中，所以变量也在这一块区域中</li>
+<li><strong>堆</strong>：存储new出来的东西，并分配地址。由于数组是new 出来的，所以数组也在这块区域。</li>
+</ul>
+<p><strong>总结一下<code>int a = 10</code>与 <code>int[] arr = new int[]&#123;11,22,33&#125;的区别</code></strong></p>
+<ul>
+<li><strong>a</strong>是一个变量，在栈内存中，<strong>a</strong>变量中存储的数据就是<strong>10</strong>这个值。</li>
+<li><strong>arr</strong>也是一个变量，在栈中，存储的是数组对象在堆内存中的地址值</li>
+</ul>
+<h3 id="静态初始化"><a href="#静态初始化" class="headerlink" title="静态初始化"></a>静态初始化</h3><p>静态初始化指的是：在定义数组时直接给数组中的数据赋值。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//定义数组，用来存储多个年龄</span></span><br><span class="line"><span class="type">int</span>[] ages = <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;<span class="number">12</span>, <span class="number">24</span>, <span class="number">36</span>&#125;</span><br><span class="line"><span class="comment">//简化写法</span></span><br><span class="line"><span class="type">int</span>[] ages = &#123;<span class="number">12</span>, <span class="number">24</span>, <span class="number">36</span>&#125;</span><br><span class="line"><span class="comment">//等价写法</span></span><br><span class="line"><span class="type">int</span> ages[] = &#123;<span class="number">12</span>, <span class="number">24</span>, <span class="number">36</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="动态初始化"><a href="#动态初始化" class="headerlink" title="动态初始化"></a>动态初始化</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//数据类型[]  数组名 = new 数据类型[长度];</span></span><br><span class="line"><span class="type">int</span>[] arr = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">3</span>];</span><br></pre></td></tr></table></figure>
+
+<h2 id="常用API"><a href="#常用API" class="headerlink" title="常用API"></a>常用API</h2><h3 id="包"><a href="#包" class="headerlink" title="包"></a>包</h3><p>包类似于文件夹，一个包中可以放多个类文件。</p>
+<ul>
+<li><p>如果当前程序中，要调用自己所在包下的其他程序，可以直接调用。（同一个包下的类，互相可以直接调用）</p>
+</li>
+<li><p>如果当前程序中，要调用其他包下的程序，则必须在当前程序中导包, 才可以访问！</p>
+<p>导包格式：<code> import 包名.类名</code></p>
+</li>
+<li><p>如果当前程序中，要调用Java.lang包下的程序，不需要我们导包的，可以直接使用。</p>
+</li>
+<li><p>如果当前程序中，要调用多个不同包下的程序，而这些程序名正好一样，此时默认只能导入一个程序，另一个程序必须带包名访问。</p>
+</li>
+</ul>
+<h3 id="String"><a href="#String" class="headerlink" title="String"></a>String</h3><h3 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h3>]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java面向对象</title>
+    <url>/2023/10/10/15-00-37/</url>
+    <content><![CDATA[<h2 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h2><h3 id="类与对象的执行原理"><a href="#类与对象的执行原理" class="headerlink" title="类与对象的执行原理"></a>类与对象的执行原理</h3><p><code>Student s1 = new Student();</code>这句话中的原理如下</p>
+<ul>
+<li><code>Student s1</code>表示的是在<strong>栈</strong>内存中，创建了一个Student类型的变量，变量名为s1</li>
+<li>而<code>new Student()</code>会在<strong>堆</strong>内存中创建一个对象，而对象中包含学生的属性名和属性值，同时系统会为这个Student对象分配一个地址值0x4f3f5b24</li>
+<li>类的代码存放在<strong>方法区</strong>。</li>
+</ul>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>一个代码文件中，可以写多个class类，但是只能有一个是public修饰，且public修饰的类必须和文件名相同。</p>
+<h2 id="实体类JavaBean"><a href="#实体类JavaBean" class="headerlink" title="实体类JavaBean"></a>实体类JavaBean</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>实体类就是一种特殊的类，它需要满足下面的要求：</p>
+<ul>
+<li>类中的成员变量都要<strong>私有</strong>，且对外提供相应的<strong>get</strong>和<strong>set</strong>方法。</li>
+<li>类中必须有一个<strong>无参构造器</strong></li>
+</ul>
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>实体类仅仅只用来<strong>封装数据</strong>，而对数据的处理交给其他类来完成，以实现<strong>数据和数据业务处理相分离</strong>。</p>
+<h2 id="static"><a href="#static" class="headerlink" title="static"></a>static</h2><h3 id="修饰成员变量"><a href="#修饰成员变量" class="headerlink" title="修饰成员变量"></a>修饰成员变量</h3><p>Java中的成员变量按照有无static修饰分为两种：<strong>类变量、实例变量</strong>。</p>
+<p>静态变量是属于类的，只需要通过类名就可以调用：**<code>类名.静态变量</code>**</p>
+<p>实例变量是属于对象的，需要通过对象才能调用：**<code>对象.实例变量</code>**</p>
+<p>如果某个数据只需要一份，且希望能够被共享（访问、修改），则该数据可以定义成类变量来记住。</p>
+<ul>
+<li>比如用户类可以记住自己创建了多少个用户对象。</li>
+</ul>
+<h3 id="修饰成员方法"><a href="#修饰成员方法" class="headerlink" title="修饰成员方法"></a>修饰成员方法</h3><p>成员方法根据有无static也分为两类：<strong>类方法、实例方法</strong></p>
+<p>有static修饰的方法，是属于类的，称为<strong>类方法</strong>；调用时直接用类名调用即可。</p>
+<p>无static修饰的方法，是属于对象的，称为实例方法；调用时，需要使用对象调用</p>
+<h3 id="工具类"><a href="#工具类" class="headerlink" title="工具类"></a>工具类</h3><p>如果一个类中的方法全都是静态的，那么这样的类就叫做工具类。</p>
+<p>比如一个生成验证码的类就可以写成工具类</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyUtils</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">createCode</span><span class="params">(<span class="type">int</span> n)</span>&#123;</span><br><span class="line">        <span class="comment">//1.定义一个字符串，用来记录产生的验证码</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">code</span> <span class="operator">=</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//2.验证码是由所有的大写字母、小写字母或者数字字符组成</span></span><br><span class="line">        <span class="comment">//这里先把所有的字符写成一个字符串，一会从字符串中随机找字符</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">data</span> <span class="operator">=</span> <span class="string">&quot;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKMNOPQRSTUVWXYZ&quot;</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//3.循环n次，产生n个索引,再通过索引获取字符</span></span><br><span class="line">        <span class="type">Random</span> <span class="variable">r</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>();</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>; i&lt;n; i++)&#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> r.nextInt(data.length());</span><br><span class="line">            <span class="type">char</span> <span class="variable">ch</span> <span class="operator">=</span> data.charAt(index);</span><br><span class="line">            <span class="comment">//4.把获取到的字符，拼接到code验证码字符串上。</span></span><br><span class="line">            code+=ch;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//最后返回code,code的值就是验证码</span></span><br><span class="line">        <span class="keyword">return</span> code;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h3><p>代码块根据有无static修饰分为两种：静态代码块、实例代码块</p>
+<h4 id="静态代码块"><a href="#静态代码块" class="headerlink" title="静态代码块"></a>静态代码块</h4><p>类加载时自动执行，只执行一次，在构造器之前执行。</p>
+<p>可以用于完成类的初始化等，例如对类变量的初始化赋值。</p>
+<h4 id="实例代码块"><a href="#实例代码块" class="headerlink" title="实例代码块"></a>实例代码块</h4><p>在创建对象之前执行，<strong>每次创建对象之前都会执行一次</strong></p>
+<h2 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h2><h3 id="概念-1"><a href="#概念-1" class="headerlink" title="概念"></a>概念</h3><p>Java中提供了一个关键字extends，用这个关键字，可以让一个类和另一个类建立起父子关系。</p>
+<p>子类能继承父类的<strong>非私有</strong>成员。</p>
+<p>带继承关系的类，java会用类和其父类，这<strong>多张设计图</strong>来一起创建类的对象。</p>
+<h3 id="权限修饰符"><a href="#权限修饰符" class="headerlink" title="权限修饰符"></a>权限修饰符</h3><p>用来限制类中的成员（成员变量、成员方法、构造器、代码块…）能够被访问的范围。</p>
+<table>
+<thead>
+<tr>
+<th>修饰符</th>
+<th>本类里</th>
+<th>同一个包中的类</th>
+<th>子孙类</th>
+<th>任意类</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>private</strong></td>
+<td>√</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>缺省</strong></td>
+<td>√</td>
+<td>√</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>protected</strong></td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>public</strong></td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+</tr>
+</tbody></table>
+<h3 id="单继承"><a href="#单继承" class="headerlink" title="单继承"></a>单继承</h3><p>Java是单继承的，即一个类只能继承一个父类，但是支持<strong>多层继承</strong>。</p>
+<p>Object类是java中所有类的祖先类，我们写的任何一个类，只要没有继承别的类，都会默认继承Object。</p>
+<h3 id="方法重写"><a href="#方法重写" class="headerlink" title="方法重写"></a>方法重写</h3><p>当子类觉得父类中的某个方法不好用，或者无法满足自己的需求时，子类可以重写一个方法名称、参数列表一样的方法，去覆盖父类的这个方法，这就是方法重写。</p>
+<ul>
+<li>使用Override注解，他可以指定java编译器，检查我们方法重写的格式是否正确，代码可读性也会更好。</li>
+<li>子类重写父类方法时，访问权限必须大于或者等于父类该方法的权限（ public &gt; protected &gt; 缺省 ）。</li>
+<li>重写的方法返回值类型，必须与被重写方法的返回值类型一样，或者范围更小。</li>
+<li>私有方法、静态方法不能被重写，如果重写会报错的。</li>
+<li>一般而言，方法重写遵循返回值类型和权限都不变，只改变方法的原则</li>
+</ul>
+<h4 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h4><p>最常见的应用是子类重写Object类的<code>toString()</code>方法，以便返回对象的内容。Object类默认的toString方法返回的是地址，一般不用。此外，由于特别常用，因此不用自己写，像setter和getter一样可以生成。</p>
+<h3 id="子类访问成员的特点"><a href="#子类访问成员的特点" class="headerlink" title="子类访问成员的特点"></a>子类访问成员的特点</h3><p>继承至少涉及到两个类，而每一个类中都可能有各自的成员（成员变量、成员方法），就有可能出现子类和父类有相同成员的情况。</p>
+<p><strong>在子类中访问其他成员（成员变量、成员方法），是依据就近原则的</strong></p>
+<ul>
+<li>先子类局部范围找</li>
+<li>再子类成员范围找</li>
+<li>最后父类成员范围找，找不到就报错</li>
+</ul>
+<p>如果子类和父类出现同名变量或者方法，优先使用子类的；此时如果一定要在子类中使用父类的成员，可以加<strong>this</strong>或者<strong>super</strong>进行区分。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">F</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;父类名字&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">print1</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;==父类的print1方法执行==&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Z</span> <span class="keyword">extends</span> <span class="title class_">F</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;子类名称&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">showName</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;局部名称&quot;</span>;</span><br><span class="line">        System.out.println(name); <span class="comment">// 局部名称</span></span><br><span class="line">        System.out.println(<span class="built_in">this</span>.name); <span class="comment">// 子类成员变量</span></span><br><span class="line">        System.out.println(<span class="built_in">super</span>.name); <span class="comment">// 父类的成员变量</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">print1</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;==子类的print1方法执行了=&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">showMethod</span><span class="params">()</span>&#123;</span><br><span class="line">        print1(); <span class="comment">// 子类的</span></span><br><span class="line">        <span class="built_in">super</span>.print1(); <span class="comment">// 父类的</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="子类构造器的特点"><a href="#子类构造器的特点" class="headerlink" title="子类构造器的特点"></a>子类构造器的特点</h3><h4 id="super"><a href="#super" class="headerlink" title="super()"></a><code>super()</code></h4><p>子类的构造器会<strong>先调用父类构造器</strong>，再执行自己。</p>
+<p>因为子类构造器中会默认带一行<code>super()</code>代码，作用就是调用父类的构造器。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Z</span> <span class="keyword">extends</span> <span class="title class_">F</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Z</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="comment">// super(); //默认存在的</span></span><br><span class="line">        System.out.println(<span class="string">&quot;子类z的无参构造器执行了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Z</span><span class="params">(String name)</span>&#123;</span><br><span class="line">        <span class="comment">// super(); //默认存在的</span></span><br><span class="line">        System.out.println(<span class="string">&quot;子类z的有参构造器执行了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="super-String"><a href="#super-String" class="headerlink" title="super(String)"></a><code>super(String)</code></h4><p>如果父类没有构造器，会默认带一个无参构造器；但如果父类只有一个有参构造器，系统就不会生成默认的无参构造器，此时由于子类中默认存在的<code>super()</code>还回去找父类的无参构造器，就会报错。</p>
+<p>如果不想使用默认的<code>super()</code>方式调用父类构造器，还可以手动使用<code>super(参数)</code>调用父类有参数构造器。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Z</span> <span class="keyword">extends</span> <span class="title class_">F</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Z</span><span class="params">(String name)</span>&#123;</span><br><span class="line">        <span class="built_in">super</span>(name); <span class="comment">//调用父类的带String参数的构造器</span></span><br><span class="line">        System.out.println(<span class="string">&quot;子类z的有参构造器执行了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="应用-1"><a href="#应用-1" class="headerlink" title="应用"></a>应用</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">People</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">People</span><span class="params">(String name,<span class="type">int</span> age)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Teacher</span> <span class="keyword">extends</span> <span class="title class_">People</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String skill;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Teacher</span><span class="params">(String name,<span class="type">int</span> age,String skill)</span>&#123;</span><br><span class="line">        <span class="built_in">super</span>(name,age); <span class="comment">//调用父类的有参构造器来完成初始化</span></span><br><span class="line">        <span class="built_in">this</span>.skill = skill;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="this"><a href="#this" class="headerlink" title="this()"></a><code>this()</code></h4><p>通过使用<code>this()</code>可以调用本类中的无参构造器。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>&#123;</span><br><span class="line">    <span class="comment">//需求：当学生没有填写年龄，默认18岁</span></span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Student</span><span class="params">()</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Student</span><span class="params">(String name)</span>&#123;</span><br><span class="line">       	<span class="comment">//this.name=name;</span></span><br><span class="line">        <span class="comment">//this.age=18; </span></span><br><span class="line">        <span class="comment">//这样写也能实现，但代码和下面的有参构造器的相似度太高</span></span><br><span class="line">        <span class="built_in">this</span>(name,<span class="number">18</span>); <span class="comment">//可以直接调用下面的有参构造器</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Student</span><span class="params">(String name,<span class="type">int</span> age)</span>&#123;</span><br><span class="line">        <span class="built_in">super</span>();</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：在一个构造器中，this和super不能同时使用。</strong>有this时，super不会默认存在</p>
+<ul>
+<li>this和super都要写在构造器的第一行</li>
+<li>this在调用其他构造器时，必定会调用super，不需要再有一个super</li>
+</ul>
+<h2 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h2><h3 id="概念-2"><a href="#概念-2" class="headerlink" title="概念"></a>概念</h3><p>多态是在继承&#x2F;实现情况下的一种现象，表现为：<strong>对象多态</strong>、<strong>行为多态</strong>。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">People</span> <span class="variable">p1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>();</span><br><span class="line"><span class="type">People</span> <span class="variable">p2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Teacher</span>();</span><br><span class="line"><span class="comment">//p1和p2都是people类型，但是指向的对象不一样，这种现象称之为对象多态</span></span><br><span class="line">p1.run();<span class="comment">//编译看左边，运行看右边，即编译器找的是people类中的run，运行时找student类中的run</span></span><br><span class="line">p2.run();</span><br><span class="line"><span class="comment">//都可以调用run方法，但两个方法表现的行为不一样，这种现象称之为行为多态</span></span><br></pre></td></tr></table></figure>
+
+<p>多态前提</p>
+<ul>
+<li>有继承&#x2F;实现关系</li>
+<li>存在父类引用子类对象</li>
+<li>存在方法重写</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java设计模式</title>
+    <url>/2023/10/12/08-30-37/</url>
+    <content><![CDATA[<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>一个问题通常有n种解法，其中肯定有一种解法是最优的，这个最优的解法被人总结出来了，称之为<strong>设计模式</strong>。</p>
+<p>关于设计模式，重点关注</p>
+<ul>
+<li>解决什么问题</li>
+<li>怎么写</li>
+</ul>
+<h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><p>确保一个类只有一个对象</p>
+<h3 id="写法"><a href="#写法" class="headerlink" title="写法"></a>写法</h3><p>实现方法有很多种。主要的要点包括</p>
+<ul>
+<li>把类的<strong>构造器私有</strong>，确保外部无法创建对象。</li>
+<li>定义一个<strong>类变量</strong>记住类的一个对象</li>
+<li>定义一个<strong>类方法</strong>，返回对象。</li>
+</ul>
+<h4 id="饿汉式单例"><a href="#饿汉式单例" class="headerlink" title="饿汉式单例"></a>饿汉式单例</h4><p>拿对象时，对象早就创建好了。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 单例类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">	<span class="comment">// 2、定义一个类变量记住类的一个对象</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="type">A</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">A</span>();</span><br><span class="line">	<span class="comment">// 1、私有构造器</span></span><br><span class="line">	<span class="keyword">private</span> <span class="title function_">A</span><span class="params">()</span>&#123;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 3、定义一个类方法返回对象</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> A <span class="title function_">getObject</span><span class="params">()</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> a;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="懒汉式单例"><a href="#懒汉式单例" class="headerlink" title="懒汉式单例"></a>懒汉式单例</h4><p>拿对象时才开始创建对象。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 单例类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">	<span class="comment">// 2、定义一个类变量记住类的一个对象</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> A a;</span><br><span class="line">	<span class="comment">// 1、私有构造器</span></span><br><span class="line">	<span class="keyword">private</span> <span class="title function_">A</span><span class="params">()</span>&#123;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 3、定义一个类方法返回对象</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> A <span class="title function_">getObject</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(a==<span class="literal">null</span>)&#123;</span><br><span class="line">            a=<span class="keyword">new</span> <span class="title class_">A</span>();</span><br><span class="line">        &#125;</span><br><span class="line">		<span class="keyword">return</span> a;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>在某些业务场景下，使用单例模式，可以避免浪费内存。如任务管理器对象、全局只有一个，获取运行时对象。</p>
 ]]></content>
       <categories>
         <category>Java</category>

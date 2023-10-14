@@ -184,6 +184,290 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2023/10/12/08-30-37/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fang Jun">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="eidolon的小窝">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/10/12/08-30-37/" class="post-title-link" itemprop="url">java设计模式</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-10-12 08:30:37 / 修改时间：08:41:53" itemprop="dateCreated datePublished" datetime="2023-10-12T08:30:37+08:00">2023-10-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>一个问题通常有n种解法，其中肯定有一种解法是最优的，这个最优的解法被人总结出来了，称之为<strong>设计模式</strong>。</p>
+<p>关于设计模式，重点关注</p>
+<ul>
+<li>解决什么问题</li>
+<li>怎么写</li>
+</ul>
+<h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><p>确保一个类只有一个对象</p>
+<h3 id="写法"><a href="#写法" class="headerlink" title="写法"></a>写法</h3><p>实现方法有很多种。主要的要点包括</p>
+<ul>
+<li>把类的<strong>构造器私有</strong>，确保外部无法创建对象。</li>
+<li>定义一个<strong>类变量</strong>记住类的一个对象</li>
+<li>定义一个<strong>类方法</strong>，返回对象。</li>
+</ul>
+<h4 id="饿汉式单例"><a href="#饿汉式单例" class="headerlink" title="饿汉式单例"></a>饿汉式单例</h4><p>拿对象时，对象早就创建好了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 单例类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">	<span class="comment">// 2、定义一个类变量记住类的一个对象</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> <span class="type">A</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">A</span>();</span><br><span class="line">	<span class="comment">// 1、私有构造器</span></span><br><span class="line">	<span class="keyword">private</span> <span class="title function_">A</span><span class="params">()</span>&#123;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 3、定义一个类方法返回对象</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> A <span class="title function_">getObject</span><span class="params">()</span>&#123;</span><br><span class="line">		<span class="keyword">return</span> a;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="懒汉式单例"><a href="#懒汉式单例" class="headerlink" title="懒汉式单例"></a>懒汉式单例</h4><p>拿对象时才开始创建对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 单例类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">	<span class="comment">// 2、定义一个类变量记住类的一个对象</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> A a;</span><br><span class="line">	<span class="comment">// 1、私有构造器</span></span><br><span class="line">	<span class="keyword">private</span> <span class="title function_">A</span><span class="params">()</span>&#123;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 3、定义一个类方法返回对象</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> A <span class="title function_">getObject</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(a==<span class="literal">null</span>)&#123;</span><br><span class="line">            a=<span class="keyword">new</span> <span class="title class_">A</span>();</span><br><span class="line">        &#125;</span><br><span class="line">		<span class="keyword">return</span> a;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>在某些业务场景下，使用单例模式，可以避免浪费内存。如任务管理器对象、全局只有一个，获取运行时对象。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2023/10/10/15-00-37/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fang Jun">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="eidolon的小窝">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/10/10/15-00-37/" class="post-title-link" itemprop="url">java面向对象</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-10-10 15:00:37" itemprop="dateCreated datePublished" datetime="2023-10-10T15:00:37+08:00">2023-10-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-14 14:13:09" itemprop="dateModified" datetime="2023-10-14T14:13:09+08:00">2023-10-14</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="背景知识"><a href="#背景知识" class="headerlink" title="背景知识"></a>背景知识</h2><h3 id="类与对象的执行原理"><a href="#类与对象的执行原理" class="headerlink" title="类与对象的执行原理"></a>类与对象的执行原理</h3><p><code>Student s1 = new Student();</code>这句话中的原理如下</p>
+<ul>
+<li><code>Student s1</code>表示的是在<strong>栈</strong>内存中，创建了一个Student类型的变量，变量名为s1</li>
+<li>而<code>new Student()</code>会在<strong>堆</strong>内存中创建一个对象，而对象中包含学生的属性名和属性值，同时系统会为这个Student对象分配一个地址值0x4f3f5b24</li>
+<li>类的代码存放在<strong>方法区</strong>。</li>
+</ul>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>一个代码文件中，可以写多个class类，但是只能有一个是public修饰，且public修饰的类必须和文件名相同。</p>
+<h2 id="实体类JavaBean"><a href="#实体类JavaBean" class="headerlink" title="实体类JavaBean"></a>实体类JavaBean</h2><h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>实体类就是一种特殊的类，它需要满足下面的要求：</p>
+<ul>
+<li>类中的成员变量都要<strong>私有</strong>，且对外提供相应的<strong>get</strong>和<strong>set</strong>方法。</li>
+<li>类中必须有一个<strong>无参构造器</strong></li>
+</ul>
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>实体类仅仅只用来<strong>封装数据</strong>，而对数据的处理交给其他类来完成，以实现<strong>数据和数据业务处理相分离</strong>。</p>
+<h2 id="static"><a href="#static" class="headerlink" title="static"></a>static</h2><h3 id="修饰成员变量"><a href="#修饰成员变量" class="headerlink" title="修饰成员变量"></a>修饰成员变量</h3><p>Java中的成员变量按照有无static修饰分为两种：<strong>类变量、实例变量</strong>。</p>
+<p>静态变量是属于类的，只需要通过类名就可以调用：**<code>类名.静态变量</code>**</p>
+<p>实例变量是属于对象的，需要通过对象才能调用：**<code>对象.实例变量</code>**</p>
+<p>如果某个数据只需要一份，且希望能够被共享（访问、修改），则该数据可以定义成类变量来记住。</p>
+<ul>
+<li>比如用户类可以记住自己创建了多少个用户对象。</li>
+</ul>
+<h3 id="修饰成员方法"><a href="#修饰成员方法" class="headerlink" title="修饰成员方法"></a>修饰成员方法</h3><p>成员方法根据有无static也分为两类：<strong>类方法、实例方法</strong></p>
+<p>有static修饰的方法，是属于类的，称为<strong>类方法</strong>；调用时直接用类名调用即可。</p>
+<p>无static修饰的方法，是属于对象的，称为实例方法；调用时，需要使用对象调用</p>
+<h3 id="工具类"><a href="#工具类" class="headerlink" title="工具类"></a>工具类</h3><p>如果一个类中的方法全都是静态的，那么这样的类就叫做工具类。</p>
+<p>比如一个生成验证码的类就可以写成工具类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyUtils</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">createCode</span><span class="params">(<span class="type">int</span> n)</span>&#123;</span><br><span class="line">        <span class="comment">//1.定义一个字符串，用来记录产生的验证码</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">code</span> <span class="operator">=</span> <span class="string">&quot;&quot;</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//2.验证码是由所有的大写字母、小写字母或者数字字符组成</span></span><br><span class="line">        <span class="comment">//这里先把所有的字符写成一个字符串，一会从字符串中随机找字符</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">data</span> <span class="operator">=</span> <span class="string">&quot;0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKMNOPQRSTUVWXYZ&quot;</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//3.循环n次，产生n个索引,再通过索引获取字符</span></span><br><span class="line">        <span class="type">Random</span> <span class="variable">r</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Random</span>();</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>; i&lt;n; i++)&#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">index</span> <span class="operator">=</span> r.nextInt(data.length());</span><br><span class="line">            <span class="type">char</span> <span class="variable">ch</span> <span class="operator">=</span> data.charAt(index);</span><br><span class="line">            <span class="comment">//4.把获取到的字符，拼接到code验证码字符串上。</span></span><br><span class="line">            code+=ch;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//最后返回code,code的值就是验证码</span></span><br><span class="line">        <span class="keyword">return</span> code;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="代码块"><a href="#代码块" class="headerlink" title="代码块"></a>代码块</h3><p>代码块根据有无static修饰分为两种：静态代码块、实例代码块</p>
+<h4 id="静态代码块"><a href="#静态代码块" class="headerlink" title="静态代码块"></a>静态代码块</h4><p>类加载时自动执行，只执行一次，在构造器之前执行。</p>
+<p>可以用于完成类的初始化等，例如对类变量的初始化赋值。</p>
+<h4 id="实例代码块"><a href="#实例代码块" class="headerlink" title="实例代码块"></a>实例代码块</h4><p>在创建对象之前执行，<strong>每次创建对象之前都会执行一次</strong></p>
+<h2 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h2><h3 id="概念-1"><a href="#概念-1" class="headerlink" title="概念"></a>概念</h3><p>Java中提供了一个关键字extends，用这个关键字，可以让一个类和另一个类建立起父子关系。</p>
+<p>子类能继承父类的<strong>非私有</strong>成员。</p>
+<p>带继承关系的类，java会用类和其父类，这<strong>多张设计图</strong>来一起创建类的对象。</p>
+<h3 id="权限修饰符"><a href="#权限修饰符" class="headerlink" title="权限修饰符"></a>权限修饰符</h3><p>用来限制类中的成员（成员变量、成员方法、构造器、代码块…）能够被访问的范围。</p>
+<table>
+<thead>
+<tr>
+<th>修饰符</th>
+<th>本类里</th>
+<th>同一个包中的类</th>
+<th>子孙类</th>
+<th>任意类</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>private</strong></td>
+<td>√</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>缺省</strong></td>
+<td>√</td>
+<td>√</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>protected</strong></td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+<td></td>
+</tr>
+<tr>
+<td><strong>public</strong></td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+</tr>
+</tbody></table>
+<h3 id="单继承"><a href="#单继承" class="headerlink" title="单继承"></a>单继承</h3><p>Java是单继承的，即一个类只能继承一个父类，但是支持<strong>多层继承</strong>。</p>
+<p>Object类是java中所有类的祖先类，我们写的任何一个类，只要没有继承别的类，都会默认继承Object。</p>
+<h3 id="方法重写"><a href="#方法重写" class="headerlink" title="方法重写"></a>方法重写</h3><p>当子类觉得父类中的某个方法不好用，或者无法满足自己的需求时，子类可以重写一个方法名称、参数列表一样的方法，去覆盖父类的这个方法，这就是方法重写。</p>
+<ul>
+<li>使用Override注解，他可以指定java编译器，检查我们方法重写的格式是否正确，代码可读性也会更好。</li>
+<li>子类重写父类方法时，访问权限必须大于或者等于父类该方法的权限（ public &gt; protected &gt; 缺省 ）。</li>
+<li>重写的方法返回值类型，必须与被重写方法的返回值类型一样，或者范围更小。</li>
+<li>私有方法、静态方法不能被重写，如果重写会报错的。</li>
+<li>一般而言，方法重写遵循返回值类型和权限都不变，只改变方法的原则</li>
+</ul>
+<h4 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h4><p>最常见的应用是子类重写Object类的<code>toString()</code>方法，以便返回对象的内容。Object类默认的toString方法返回的是地址，一般不用。此外，由于特别常用，因此不用自己写，像setter和getter一样可以生成。</p>
+<h3 id="子类访问成员的特点"><a href="#子类访问成员的特点" class="headerlink" title="子类访问成员的特点"></a>子类访问成员的特点</h3><p>继承至少涉及到两个类，而每一个类中都可能有各自的成员（成员变量、成员方法），就有可能出现子类和父类有相同成员的情况。</p>
+<p><strong>在子类中访问其他成员（成员变量、成员方法），是依据就近原则的</strong></p>
+<ul>
+<li>先子类局部范围找</li>
+<li>再子类成员范围找</li>
+<li>最后父类成员范围找，找不到就报错</li>
+</ul>
+<p>如果子类和父类出现同名变量或者方法，优先使用子类的；此时如果一定要在子类中使用父类的成员，可以加<strong>this</strong>或者<strong>super</strong>进行区分。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">F</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;父类名字&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">print1</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;==父类的print1方法执行==&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Z</span> <span class="keyword">extends</span> <span class="title class_">F</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;子类名称&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">showName</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> <span class="string">&quot;局部名称&quot;</span>;</span><br><span class="line">        System.out.println(name); <span class="comment">// 局部名称</span></span><br><span class="line">        System.out.println(<span class="built_in">this</span>.name); <span class="comment">// 子类成员变量</span></span><br><span class="line">        System.out.println(<span class="built_in">super</span>.name); <span class="comment">// 父类的成员变量</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">print1</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;==子类的print1方法执行了=&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">showMethod</span><span class="params">()</span>&#123;</span><br><span class="line">        print1(); <span class="comment">// 子类的</span></span><br><span class="line">        <span class="built_in">super</span>.print1(); <span class="comment">// 父类的</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="子类构造器的特点"><a href="#子类构造器的特点" class="headerlink" title="子类构造器的特点"></a>子类构造器的特点</h3><h4 id="super"><a href="#super" class="headerlink" title="super()"></a><code>super()</code></h4><p>子类的构造器会<strong>先调用父类构造器</strong>，再执行自己。</p>
+<p>因为子类构造器中会默认带一行<code>super()</code>代码，作用就是调用父类的构造器。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Z</span> <span class="keyword">extends</span> <span class="title class_">F</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Z</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="comment">// super(); //默认存在的</span></span><br><span class="line">        System.out.println(<span class="string">&quot;子类z的无参构造器执行了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Z</span><span class="params">(String name)</span>&#123;</span><br><span class="line">        <span class="comment">// super(); //默认存在的</span></span><br><span class="line">        System.out.println(<span class="string">&quot;子类z的有参构造器执行了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="super-String"><a href="#super-String" class="headerlink" title="super(String)"></a><code>super(String)</code></h4><p>如果父类没有构造器，会默认带一个无参构造器；但如果父类只有一个有参构造器，系统就不会生成默认的无参构造器，此时由于子类中默认存在的<code>super()</code>还回去找父类的无参构造器，就会报错。</p>
+<p>如果不想使用默认的<code>super()</code>方式调用父类构造器，还可以手动使用<code>super(参数)</code>调用父类有参数构造器。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Z</span> <span class="keyword">extends</span> <span class="title class_">F</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Z</span><span class="params">(String name)</span>&#123;</span><br><span class="line">        <span class="built_in">super</span>(name); <span class="comment">//调用父类的带String参数的构造器</span></span><br><span class="line">        System.out.println(<span class="string">&quot;子类z的有参构造器执行了&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="应用-1"><a href="#应用-1" class="headerlink" title="应用"></a>应用</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">People</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">People</span><span class="params">(String name,<span class="type">int</span> age)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Teacher</span> <span class="keyword">extends</span> <span class="title class_">People</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String skill;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Teacher</span><span class="params">(String name,<span class="type">int</span> age,String skill)</span>&#123;</span><br><span class="line">        <span class="built_in">super</span>(name,age); <span class="comment">//调用父类的有参构造器来完成初始化</span></span><br><span class="line">        <span class="built_in">this</span>.skill = skill;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="this"><a href="#this" class="headerlink" title="this()"></a><code>this()</code></h4><p>通过使用<code>this()</code>可以调用本类中的无参构造器。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Student</span>&#123;</span><br><span class="line">    <span class="comment">//需求：当学生没有填写年龄，默认18岁</span></span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> age;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Student</span><span class="params">()</span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Student</span><span class="params">(String name)</span>&#123;</span><br><span class="line">       	<span class="comment">//this.name=name;</span></span><br><span class="line">        <span class="comment">//this.age=18; </span></span><br><span class="line">        <span class="comment">//这样写也能实现，但代码和下面的有参构造器的相似度太高</span></span><br><span class="line">        <span class="built_in">this</span>(name,<span class="number">18</span>); <span class="comment">//可以直接调用下面的有参构造器</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">Student</span><span class="params">(String name,<span class="type">int</span> age)</span>&#123;</span><br><span class="line">        <span class="built_in">super</span>();</span><br><span class="line">        <span class="built_in">this</span>.name = name;</span><br><span class="line">        <span class="built_in">this</span>.age = age;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：在一个构造器中，this和super不能同时使用。</strong>有this时，super不会默认存在</p>
+<ul>
+<li>this和super都要写在构造器的第一行</li>
+<li>this在调用其他构造器时，必定会调用super，不需要再有一个super</li>
+</ul>
+<h2 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h2><h3 id="概念-2"><a href="#概念-2" class="headerlink" title="概念"></a>概念</h3><p>多态是在继承&#x2F;实现情况下的一种现象，表现为：<strong>对象多态</strong>、<strong>行为多态</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">People</span> <span class="variable">p1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>();</span><br><span class="line"><span class="type">People</span> <span class="variable">p2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Teacher</span>();</span><br><span class="line"><span class="comment">//p1和p2都是people类型，但是指向的对象不一样，这种现象称之为对象多态</span></span><br><span class="line">p1.run();<span class="comment">//编译看左边，运行看右边，即编译器找的是people类中的run，运行时找student类中的run</span></span><br><span class="line">p2.run();</span><br><span class="line"><span class="comment">//都可以调用run方法，但两个方法表现的行为不一样，这种现象称之为行为多态</span></span><br></pre></td></tr></table></figure>
+
+<p>多态前提</p>
+<ul>
+<li>有继承&#x2F;实现关系</li>
+<li>存在父类引用子类对象</li>
+<li>存在方法重写</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2023/10/09/19-00-37/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -207,10 +491,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-10-09 19:00:37 / 修改时间：19:14:08" itemprop="dateCreated datePublished" datetime="2023-10-09T19:00:37+08:00">2023-10-09</time>
+              <time title="创建时间：2023-10-09 19:00:37" itemprop="dateCreated datePublished" datetime="2023-10-09T19:00:37+08:00">2023-10-09</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-11 14:44:38" itemprop="dateModified" datetime="2023-10-11T14:44:38+08:00">2023-10-11</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -838,173 +1128,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2023/06/26/09-00-00/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Fang Jun">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="eidolon的小窝">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/06/26/09-00-00/" class="post-title-link" itemprop="url">链表</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-06-26 09:00:00" itemprop="dateCreated datePublished" datetime="2023-06-26T09:00:00+08:00">2023-06-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-26 20:30:18" itemprop="dateModified" datetime="2023-07-26T20:30:18+08:00">2023-07-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Algorithm/" itemprop="url" rel="index"><span itemprop="name">Algorithm</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><p>不同于数组在内存中的连续分布，链表中的结点<strong>散乱分布</strong>在内存中，通过指针域的指针链接各个结点。</p>
-<h3 id="链表的定义"><a href="#链表的定义" class="headerlink" title="链表的定义"></a>链表的定义</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ListNode</span>&#123;</span><br><span class="line">	val;</span><br><span class="line">	next=<span class="literal">null</span>;</span><br><span class="line">	<span class="title function_">constructor</span>(<span class="params">value</span>)&#123;</span><br><span class="line">		<span class="variable language_">this</span>.<span class="property">val</span>=value;</span><br><span class="line">		<span class="variable language_">this</span>.<span class="property">next</span>=<span class="literal">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="链表对比数组"><a href="#链表对比数组" class="headerlink" title="链表对比数组"></a>链表对比数组</h3><p><img src="https://code-thinking-1253855093.file.myqcloud.com/pics/20200806195200276.png" alt="链表-链表与数据性能对比"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/06/26/09-00-00/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2023/06/23/21-00-00/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Fang Jun">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="eidolon的小窝">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/06/23/21-00-00/" class="post-title-link" itemprop="url">数组</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-06-23 21:00:00" itemprop="dateCreated datePublished" datetime="2023-06-23T21:00:00+08:00">2023-06-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-07-25 19:39:35" itemprop="dateModified" datetime="2023-07-25T19:39:35+08:00">2023-07-25</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Algorithm/" itemprop="url" rel="index"><span itemprop="name">Algorithm</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="数组理论基础"><a href="#数组理论基础" class="headerlink" title="数组理论基础"></a>数组理论基础</h2><p>数组是存放在<strong>连续内存空间</strong>上的<strong>相同类型数据</strong>的集合。正是因为数组在内存空间的地址上是连续的，所以在增删元素时，难免要移动其他元素的地址。</p>
-<p><strong>数组的元素是不能删的，只能覆盖。</strong></p>
-<p>关于二维数组的内存地址空间的连续性问题，不同的编程语言的内存管理不同。在C++中，二维数组是连续分布的；但在Java中二维数组的每一行头结点的地址是没有规则的。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/06/23/21-00-00/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1074,7 +1197,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

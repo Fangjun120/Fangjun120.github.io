@@ -28,7 +28,7 @@
 <meta property="og:description" content="Java的背景知识技术体系所谓技术体系，就是Java为了满足不同的应用场景提供了不同的技术版本，主要有三个版本。  Java SE（Java Standard Edition）：叫做标准版，它是后面两个版本的基础，  Java EE（Java Enterprise Edition）: 叫做企业版，它是为企业级应用开发提供的一套解决方案。  Java ME（Java Micro Edition）：叫">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-09T11:00:37.000Z">
-<meta property="article:modified_time" content="2023-10-09T11:14:08.603Z">
+<meta property="article:modified_time" content="2023-10-11T06:44:38.090Z">
 <meta property="article:author" content="Fang Jun">
 <meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
@@ -212,10 +212,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-10-09 19:00:37 / 修改时间：19:14:08" itemprop="dateCreated datePublished" datetime="2023-10-09T19:00:37+08:00">2023-10-09</time>
+              <time title="创建时间：2023-10-09 19:00:37" itemprop="dateCreated datePublished" datetime="2023-10-09T19:00:37+08:00">2023-10-09</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-11 14:44:38" itemprop="dateModified" datetime="2023-10-11T14:44:38+08:00">2023-10-11</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -260,7 +266,40 @@
 </ul>
 <h3 id="跨平台原理"><a href="#跨平台原理" class="headerlink" title="跨平台原理"></a>跨平台原理</h3><p>如果没有跨平台性，同一个应用程序，想要在多种操作系统上运行，需要针对各个操作系统单独开发应用。比如微信有Windows版本、MacOS版本、Android版本、IOS版本</p>
 <p>跨平台性的原理是因为在<strong>不同版本的操作系统</strong>中安装有<strong>不同版本的Java虚拟机</strong>，Java程序的运行只依赖于Java虚拟机，和操作系统并没有直接关系。<strong>从而做到一处编译，处处运行</strong>。</p>
+<h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><h3 id="基本原理"><a href="#基本原理" class="headerlink" title="基本原理"></a>基本原理</h3><p>首先，左边<code>int[] ages</code> 表示定义了一个数组类型的变量，变量名叫ages</p>
+<p>其次，右边<code>&#123;12,24,36&#125;</code>表示创建一个数组对象，你完全可以把它理解成一个能装数据的东西。这个对象在内存中会有一个地址值<code>[I@4c873330</code>，每次创建一个数组对象都会有不用的地址值。</p>
+<p>然后，把右边的地址值<code>[I@4c873330</code>赋值给左边的ages变量</p>
+<p>所以，ages变量就可以通过地址值，找到数组这个东西。</p>
+<p>Java为了便于虚拟机执行Java程序，将虚拟机的内存划分为 方法区、栈、堆、本地方法栈、寄存器 这5块区域。同学们需要重点关注的是  <strong>方法区、栈、堆</strong>。</p>
+<p>下面把每一个块内存区域作用介绍一下，我们大致只需要知道每一部分存储什么内容就行。</p>
+<ul>
+<li><strong>方法区</strong>：字节码文件先加载到这里</li>
+<li><strong>栈</strong>：方法运行时所进入的内存区域，由于变量在方法中，所以变量也在这一块区域中</li>
+<li><strong>堆</strong>：存储new出来的东西，并分配地址。由于数组是new 出来的，所以数组也在这块区域。</li>
+</ul>
+<p><strong>总结一下<code>int a = 10</code>与 <code>int[] arr = new int[]&#123;11,22,33&#125;的区别</code></strong></p>
+<ul>
+<li><strong>a</strong>是一个变量，在栈内存中，<strong>a</strong>变量中存储的数据就是<strong>10</strong>这个值。</li>
+<li><strong>arr</strong>也是一个变量，在栈中，存储的是数组对象在堆内存中的地址值</li>
+</ul>
+<h3 id="静态初始化"><a href="#静态初始化" class="headerlink" title="静态初始化"></a>静态初始化</h3><p>静态初始化指的是：在定义数组时直接给数组中的数据赋值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义数组，用来存储多个年龄</span></span><br><span class="line"><span class="type">int</span>[] ages = <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;<span class="number">12</span>, <span class="number">24</span>, <span class="number">36</span>&#125;</span><br><span class="line"><span class="comment">//简化写法</span></span><br><span class="line"><span class="type">int</span>[] ages = &#123;<span class="number">12</span>, <span class="number">24</span>, <span class="number">36</span>&#125;</span><br><span class="line"><span class="comment">//等价写法</span></span><br><span class="line"><span class="type">int</span> ages[] = &#123;<span class="number">12</span>, <span class="number">24</span>, <span class="number">36</span>&#125;</span><br></pre></td></tr></table></figure>
 
+<h3 id="动态初始化"><a href="#动态初始化" class="headerlink" title="动态初始化"></a>动态初始化</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//数据类型[]  数组名 = new 数据类型[长度];</span></span><br><span class="line"><span class="type">int</span>[] arr = <span class="keyword">new</span> <span class="title class_">int</span>[<span class="number">3</span>];</span><br></pre></td></tr></table></figure>
+
+<h2 id="常用API"><a href="#常用API" class="headerlink" title="常用API"></a>常用API</h2><h3 id="包"><a href="#包" class="headerlink" title="包"></a>包</h3><p>包类似于文件夹，一个包中可以放多个类文件。</p>
+<ul>
+<li><p>如果当前程序中，要调用自己所在包下的其他程序，可以直接调用。（同一个包下的类，互相可以直接调用）</p>
+</li>
+<li><p>如果当前程序中，要调用其他包下的程序，则必须在当前程序中导包, 才可以访问！</p>
+<p>导包格式：<code> import 包名.类名</code></p>
+</li>
+<li><p>如果当前程序中，要调用Java.lang包下的程序，不需要我们导包的，可以直接使用。</p>
+</li>
+<li><p>如果当前程序中，要调用多个不同包下的程序，而这些程序名正好一样，此时默认只能导入一个程序，另一个程序必须带包名访问。</p>
+</li>
+</ul>
+<h3 id="String"><a href="#String" class="headerlink" title="String"></a>String</h3><h3 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h3>
     </div>
 
     
@@ -281,7 +320,10 @@
     <a href="/2023/07/14/10-00-00/" rel="prev" title="贪心">
       <i class="fa fa-chevron-left"></i> 贪心
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2023/10/10/15-00-37/" rel="next" title="java面向对象">
+      java面向对象 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -340,7 +382,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java%E7%9A%84%E8%83%8C%E6%99%AF%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">Java的背景知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E4%BD%93%E7%B3%BB"><span class="nav-number">1.1.</span> <span class="nav-text">技术体系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF"><span class="nav-number">1.2.</span> <span class="nav-text">常见错误</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDK%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-number">1.3.</span> <span class="nav-text">JDK的组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%A8%E5%B9%B3%E5%8F%B0%E5%8E%9F%E7%90%86"><span class="nav-number">1.4.</span> <span class="nav-text">跨平台原理</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java%E7%9A%84%E8%83%8C%E6%99%AF%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">Java的背景知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E4%BD%93%E7%B3%BB"><span class="nav-number">1.1.</span> <span class="nav-text">技术体系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%94%99%E8%AF%AF"><span class="nav-number">1.2.</span> <span class="nav-text">常见错误</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDK%E7%9A%84%E7%BB%84%E6%88%90"><span class="nav-number">1.3.</span> <span class="nav-text">JDK的组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%A8%E5%B9%B3%E5%8F%B0%E5%8E%9F%E7%90%86"><span class="nav-number">1.4.</span> <span class="nav-text">跨平台原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E7%BB%84"><span class="nav-number">2.</span> <span class="nav-text">数组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-number">2.1.</span> <span class="nav-text">基本原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.2.</span> <span class="nav-text">静态初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.3.</span> <span class="nav-text">动态初始化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8API"><span class="nav-number">3.</span> <span class="nav-text">常用API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%85"><span class="nav-number">3.1.</span> <span class="nav-text">包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#String"><span class="nav-number">3.2.</span> <span class="nav-text">String</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ArrayList"><span class="nav-number">3.3.</span> <span class="nav-text">ArrayList</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -354,7 +396,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
