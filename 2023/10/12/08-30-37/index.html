@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"fangjun120.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="概念一个问题通常有n种解法，其中肯定有一种解法是最优的，这个最优的解法被人总结出来了，称之为设计模式。 关于设计模式，重点关注  解决什么问题 怎么写  单例模式确保一个类只有一个对象 写法实现方法有很多种。主要的要点包括  把类的构造器私有，确保外部无法创建对象。 定义一个类变量记住类的一个对象 定义一个类方法，返回对象。  饿汉式单例拿对象时，对象早就创建好了。 123456789101112">
+  <meta name="description" content="概念一个问题通常有n种解法，其中肯定有一种解法是最优的，这个最优的解法被人总结出来了，称之为设计模式。 关于设计模式，重点关注  解决什么问题 怎么写">
 <meta property="og:type" content="article">
 <meta property="og:title" content="java设计模式">
 <meta property="og:url" content="https://fangjun120.github.io/2023/10/12/08-30-37/index.html">
 <meta property="og:site_name" content="eidolon的小窝">
-<meta property="og:description" content="概念一个问题通常有n种解法，其中肯定有一种解法是最优的，这个最优的解法被人总结出来了，称之为设计模式。 关于设计模式，重点关注  解决什么问题 怎么写  单例模式确保一个类只有一个对象 写法实现方法有很多种。主要的要点包括  把类的构造器私有，确保外部无法创建对象。 定义一个类变量记住类的一个对象 定义一个类方法，返回对象。  饿汉式单例拿对象时，对象早就创建好了。 123456789101112">
+<meta property="og:description" content="概念一个问题通常有n种解法，其中肯定有一种解法是最优的，这个最优的解法被人总结出来了，称之为设计模式。 关于设计模式，重点关注  解决什么问题 怎么写">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-10-12T00:30:37.000Z">
-<meta property="article:modified_time" content="2023-10-12T00:41:53.793Z">
+<meta property="article:modified_time" content="2023-10-18T01:38:34.634Z">
 <meta property="article:author" content="Fang Jun">
 <meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
@@ -212,10 +212,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-10-12 08:30:37 / 修改时间：08:41:53" itemprop="dateCreated datePublished" datetime="2023-10-12T08:30:37+08:00">2023-10-12</time>
+              <time title="创建时间：2023-10-12 08:30:37" itemprop="dateCreated datePublished" datetime="2023-10-12T08:30:37+08:00">2023-10-12</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-10-18 09:38:34" itemprop="dateModified" datetime="2023-10-18T09:38:34+08:00">2023-10-18</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -243,6 +249,8 @@
 <li>解决什么问题</li>
 <li>怎么写</li>
 </ul>
+<span id="more"></span>
+
 <h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><p>确保一个类只有一个对象</p>
 <h3 id="写法"><a href="#写法" class="headerlink" title="写法"></a>写法</h3><p>实现方法有很多种。主要的要点包括</p>
 <ul>
@@ -257,6 +265,15 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 单例类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> &#123;</span><br><span class="line">	<span class="comment">// 2、定义一个类变量记住类的一个对象</span></span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">static</span> A a;</span><br><span class="line">	<span class="comment">// 1、私有构造器</span></span><br><span class="line">	<span class="keyword">private</span> <span class="title function_">A</span><span class="params">()</span>&#123;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 3、定义一个类方法返回对象</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> A <span class="title function_">getObject</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(a==<span class="literal">null</span>)&#123;</span><br><span class="line">            a=<span class="keyword">new</span> <span class="title class_">A</span>();</span><br><span class="line">        &#125;</span><br><span class="line">		<span class="keyword">return</span> a;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><p>在某些业务场景下，使用单例模式，可以避免浪费内存。如任务管理器对象、全局只有一个，获取运行时对象。</p>
+<h2 id="模板方法-设计模式"><a href="#模板方法-设计模式" class="headerlink" title="模板方法 设计模式"></a>模板方法 设计模式</h2><p><strong>主要解决方法中存在重复代码的问题</strong>。</p>
+<p>比如两个方法大部分代码相同，只有少部分不同的代码。</p>
+<h3 id="应用场景-1"><a href="#应用场景-1" class="headerlink" title="应用场景"></a>应用场景</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title class_">C</span> &#123;</span><br><span class="line">    <span class="comment">// 模板方法</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title function_">sing</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="comment">//用final修饰，防止被重写</span></span><br><span class="line">        System.out.println(<span class="string">&quot;唱一首你喜欢的歌：&quot;</span>); <span class="comment">//相同部分</span></span><br><span class="line">        doSing(); <span class="comment">//不同部分</span></span><br><span class="line">        System.out.println(<span class="string">&quot;唱完了!&quot;</span>); <span class="comment">//相同部分</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title function_">doSing</span><span class="params">()</span>; <span class="comment">//把不同部分定义为抽象方法，强制子类实现</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span> <span class="keyword">extends</span> <span class="title class_">C</span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doSing</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;我是一只小小小小鸟，想要飞就能飞的高~~~&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">B</span> <span class="keyword">extends</span> <span class="title class_">C</span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doSing</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;我们一起学猫叫，喵喵喵喵喵喵喵~~&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 目标：搞清楚模板方法设计模式能解决什么问题，以及怎么写。</span></span><br><span class="line">        <span class="type">B</span> <span class="variable">b</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">B</span>();</span><br><span class="line">        b.sing();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h3><ul>
+<li>定义一个抽象类，把子类中相同的代码写成一个模板方法(建议使用final修饰，防止重写)。</li>
+<li>把模板方法中不能确定的代码写成抽象方法，并在模板方法中调用。</li>
+<li>子类继承抽象类，实现父类的抽象方法。</li>
+</ul>
 
     </div>
 
@@ -337,7 +354,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">单例模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">写法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A5%BF%E6%B1%89%E5%BC%8F%E5%8D%95%E4%BE%8B"><span class="nav-number">2.1.1.</span> <span class="nav-text">饿汉式单例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%87%92%E6%B1%89%E5%BC%8F%E5%8D%95%E4%BE%8B"><span class="nav-number">2.1.2.</span> <span class="nav-text">懒汉式单例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">2.2.</span> <span class="nav-text">应用场景</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%95%E4%BE%8B%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">单例模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">写法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A5%BF%E6%B1%89%E5%BC%8F%E5%8D%95%E4%BE%8B"><span class="nav-number">2.1.1.</span> <span class="nav-text">饿汉式单例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%87%92%E6%B1%89%E5%BC%8F%E5%8D%95%E4%BE%8B"><span class="nav-number">2.1.2.</span> <span class="nav-text">懒汉式单例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">2.2.</span> <span class="nav-text">应用场景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E6%9D%BF%E6%96%B9%E6%B3%95-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.</span> <span class="nav-text">模板方法 设计模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF-1"><span class="nav-number">3.1.</span> <span class="nav-text">应用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%AD%A5%E9%AA%A4"><span class="nav-number">3.2.</span> <span class="nav-text">实现步骤</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
