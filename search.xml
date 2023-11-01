@@ -1804,7 +1804,10 @@
     <content><![CDATA[<ul>
 <li>case语句如果不加break，在第一次匹配成功时，后面所有语句都会执行，知道遇到break，不管case能不能匹配上</li>
 </ul>
-<span id="more"></span>]]></content>
+<span id="more"></span>
+
+<p><img src="/pic/1.jpg"></p>
+]]></content>
       <categories>
         <category>Java</category>
       </categories>
