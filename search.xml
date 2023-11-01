@@ -1364,7 +1364,167 @@
 
 
 
-<h4 id="实现callable接口"><a href="#实现callable接口" class="headerlink" title="实现callable接口"></a>实现callable接口</h4>]]></content>
+<h4 id="实现callable接口"><a href="#实现callable接口" class="headerlink" title="实现callable接口"></a>实现callable接口</h4><p><strong>以上两种方法都不能返回线程执行的结果</strong></p>
+<p>使用Callable接口和FutureTask类可以返回线程执行后的结果。</p>
+<ul>
+<li>创建任务对象<br>定义一个类实现Callable接口，重写call方法，封装要做的事情，和要返回的数据。<br>把Callable类型的对象封装成FutureTask（线程任务对象）。</li>
+<li>把线程任务对象交给Thread对象。</li>
+<li>调用Thread对象的start方法启动线程。</li>
+<li>线程执行完毕后、通过FutureTask对象的的get方法去获取线程任务执行的结果。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// callable是一个泛型接口，需要填返回类型</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyThread</span> <span class="keyword">implements</span> <span class="title class_">Callable</span>&lt;String&gt;&#123;</span><br><span class="line">    <span class="comment">// 2、必须重写call方法</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="comment">// 描述线程的执行任务。</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;子线程MyThread输出：&quot;</span> + i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;aaa&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadTest3</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">// 3、创建一个Callable的对象</span></span><br><span class="line">        Callable&lt;String&gt; call = <span class="keyword">new</span> <span class="title class_">MyCallable</span>();</span><br><span class="line">        <span class="comment">// 4、把Callable的对象封装成一个FutureTask对象（任务对象）</span></span><br><span class="line">        <span class="comment">// 未来任务对象的作用？</span></span><br><span class="line">        <span class="comment">// 1、是一个任务对象，实现了Runnable对象.</span></span><br><span class="line">        <span class="comment">// 2、可以在线程执行完毕之后，用未来任务对象调用get方法获取线程执行完毕后的结果。</span></span><br><span class="line">        FutureTask&lt;String&gt; f  = <span class="keyword">new</span> <span class="title class_">FutureTask</span>&lt;&gt;(call);</span><br><span class="line">        <span class="comment">// 5、把任务对象交给一个Thread对象</span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(f).start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 6、获取线程执行完毕后返回的结果。</span></span><br><span class="line">        <span class="comment">// 注意：如果执行到这儿，假如上面的线程还没有执行完毕</span></span><br><span class="line">        <span class="comment">// 这里的代码会暂停，等待上面线程执行完毕后才会获取结果。</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">rs</span> <span class="operator">=</span> f.get();</span><br><span class="line">        System.out.println(rs);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><table>
+<thead>
+<tr>
+<th>方式</th>
+<th>优点</th>
+<th>缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>继承Thread类</td>
+<td>编程比较简单，可以直接使用Thread类中的方法</td>
+<td>扩展性较差，不能再继承其他的类，不能返回线程执行的结果</td>
+</tr>
+<tr>
+<td>实现Runnable接口</td>
+<td>扩展性强，实现该接口的同时还可以继承其他的类。</td>
+<td>编程相对复杂，不能返回线程执行的结果</td>
+</tr>
+<tr>
+<td>实现Callable接口</td>
+<td>扩展性强，实现该接口的同时还可以继承其他的类。<strong>可以得到线程执行的结果</strong></td>
+<td>编程相对复杂</td>
+</tr>
+</tbody></table>
+<h3 id="Thread常用方法"><a href="#Thread常用方法" class="headerlink" title="Thread常用方法"></a>Thread常用方法</h3><table>
+<thead>
+<tr>
+<th>Thread提供的常用方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>public void run()</td>
+<td>线程的任务方法</td>
+</tr>
+<tr>
+<td>public void start()</td>
+<td>启动线程</td>
+</tr>
+<tr>
+<td>public String getName()</td>
+<td>获取当前线程的名称，线程名称默认是Thread-索引</td>
+</tr>
+<tr>
+<td>public void setName(String name)</td>
+<td>为线程设置名称</td>
+</tr>
+<tr>
+<td>public static Thread currentThread()</td>
+<td>获取当前执行的线程对象</td>
+</tr>
+<tr>
+<td>public static void sleep(long time)</td>
+<td>让当前执行的线程休眠多少毫秒后，再继续执行</td>
+</tr>
+<tr>
+<td>public final void join()</td>
+<td>让调用当前这个方法的线程先执行完！</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>Thread提供的常见构造器</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>public Thread(String name)</td>
+<td>可以为当前线程指定名称</td>
+</tr>
+<tr>
+<td>public Thread(Runnable target)</td>
+<td>封装Runnable对象成为线程对象</td>
+</tr>
+<tr>
+<td>public Thread(Runnable target, String name)</td>
+<td>封装Runnable对象成为线程对象，并指定线程名称</td>
+</tr>
+</tbody></table>
+<h3 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h3><h4 id="存在原因"><a href="#存在原因" class="headerlink" title="存在原因"></a>存在原因</h4><ul>
+<li>存在多个线程在同时执行</li>
+<li>同时访问一个共享资源</li>
+<li>存在修改该共享资源</li>
+</ul>
+<p>解决线程安全可以用线程同步。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">         <span class="comment">// 1、创建一个账户对象，代表两个人的共享账户。</span></span><br><span class="line">        <span class="type">Account</span> <span class="variable">acc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Account</span>(<span class="string">&quot;ICBC-110&quot;</span>, <span class="number">100000</span>);</span><br><span class="line">        <span class="comment">// 2、创建两个线程，分别代表小明 小红，再去同一个账户对象中取钱10万。</span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">DrawThread</span>(acc, <span class="string">&quot;小明&quot;</span>).start(); <span class="comment">// 小明</span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">DrawThread</span>(acc, <span class="string">&quot;小红&quot;</span>).start(); <span class="comment">// 小红</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="线程同步"><a href="#线程同步" class="headerlink" title="线程同步"></a>线程同步</h3><p>让多个线程实现先后依次访问共享资源，方法：<strong>加锁</strong>。有三种方式</p>
+<h4 id="同步代码块"><a href="#同步代码块" class="headerlink" title="同步代码块"></a>同步代码块</h4><p>把访问共享资源的核心<strong>代码</strong>给上锁，以此保证线程安全。</p>
+<p>每次只允许一个线程加锁后进入，执行完毕后自动解锁，其他线程才可以进来执行</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">synchronized(同步锁) &#123;</span><br><span class="line">	访问共享资源的核心代码</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">drawMoney</span><span class="params">(<span class="type">double</span> money)</span> &#123;</span><br><span class="line">    <span class="comment">// 先搞清楚是谁来取钱？</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> Thread.currentThread().getName();</span><br><span class="line">    <span class="comment">// 1、判断余额是否足够</span></span><br><span class="line">    <span class="comment">// this正好代表共享资源！</span></span><br><span class="line">    <span class="comment">// 选中代码后ctrl alt t</span></span><br><span class="line">    <span class="comment">//synchronized (&quot;lock&quot;) &#123; //锁对象可以任意取</span></span><br><span class="line">    <span class="comment">//字符串作为锁对象是全局唯一的。也就是说如果这个锁对象同时锁住了所有账户上的所有其他线程</span></span><br><span class="line">    <span class="keyword">synchronized</span> (<span class="built_in">this</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">this</span>.money &gt;= money)&#123;</span><br><span class="line">            System.out.println(name + <span class="string">&quot;来取钱&quot;</span> + money + <span class="string">&quot;成功！&quot;</span>);</span><br><span class="line">            <span class="built_in">this</span>.money -= money;</span><br><span class="line">            System.out.println(name + <span class="string">&quot;来取钱后，余额剩余：&quot;</span> + <span class="built_in">this</span>.money);</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(name + <span class="string">&quot;来取钱：余额不足~&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>建议把共享资源作为锁对象, 不要将随便无关的对象当做锁对象</li>
+<li>对于实例方法，建议使用this作为锁对象</li>
+<li>对于静态方法，建议把类的字节码(类名.class)当做锁对象</li>
+</ol>
+<h4 id="同步方法"><a href="#同步方法" class="headerlink" title="同步方法"></a>同步方法</h4><p>把访问共享资源的核心<strong>方法</strong>给上锁，以此保证线程安全</p>
+<p>每次只能一个线程进入，执行完毕以后自动解锁，其他线程才可以进来执行</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 同步方法</span></span><br><span class="line"><span class="comment">// 把操作共享资源的方法用synchronized修饰</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">drawMoney</span><span class="params">(<span class="type">double</span> money)</span> &#123;</span><br><span class="line">    <span class="comment">// 先搞清楚是谁来取钱？</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> Thread.currentThread().getName();</span><br><span class="line">    <span class="comment">// 1、判断余额是否足够</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">this</span>.money &gt;= money)&#123;</span><br><span class="line">        System.out.println(name + <span class="string">&quot;来取钱&quot;</span> + money + <span class="string">&quot;成功！&quot;</span>);</span><br><span class="line">        <span class="built_in">this</span>.money -= money;</span><br><span class="line">        System.out.println(name + <span class="string">&quot;来取钱后，余额剩余：&quot;</span> + <span class="built_in">this</span>.money);</span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        System.out.println(name + <span class="string">&quot;来取钱：余额不足~&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>同步方法其实底层也是有隐式锁对象的，只是锁的范围是整个方法代码。</li>
+<li>如果方法是实例方法：同步方法默认用this作为的锁对象。</li>
+<li>如果方法是静态方法：同步方法默认用类名.class作为的锁对象。</li>
+</ul>
+<h5 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h5><p>范围上：同步代码块锁的范围更小，同步方法锁的范围更大。因此同步代码块性能更好<br>可读性：同步方法更好。</p>
+<h4 id="Lock锁"><a href="#Lock锁" class="headerlink" title="Lock锁"></a>Lock锁</h4><p>Lock锁是JDK5版本专门提供的一种锁对象，通过这个锁对象的方法来达到加锁，和释放锁的目的，使用起来<strong>更加灵活</strong>。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 创建锁对象</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="type">Lock</span> <span class="variable">mylock</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ReentrantLock</span>();</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">drawMoney</span><span class="params">(<span class="type">double</span> money)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> Thread.currentThread().getName();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            mylock.lock(); <span class="comment">// 加锁</span></span><br><span class="line">            <span class="comment">// 1、判断余额是否足够</span></span><br><span class="line">            <span class="keyword">if</span>(<span class="built_in">this</span>.money &gt;= money)&#123;</span><br><span class="line">                System.out.println(name + <span class="string">&quot;来取钱&quot;</span> + money + <span class="string">&quot;成功！&quot;</span>);</span><br><span class="line">                <span class="built_in">this</span>.money -= money;</span><br><span class="line">                System.out.println(name + <span class="string">&quot;来取钱后，余额剩余：&quot;</span> + <span class="built_in">this</span>.money);</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                System.out.println(name + <span class="string">&quot;来取钱：余额不足~&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="comment">//加try catch finally防止加锁和解锁之间有异常，导致加了锁但没解锁</span></span><br><span class="line">            mylock.unlock(); <span class="comment">// 解锁</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="线程通信"><a href="#线程通信" class="headerlink" title="线程通信"></a>线程通信</h3><p>当多个线程共同操作共享的资源时，线程间通过某种方式互相告知自己的状态，以相互协调，并避免无效的资源争夺。</p>
+<p>常见的模型为生产者与消费者模型。</p>
+<p>Object类的等待和唤醒方法：</p>
+<table>
+<thead>
+<tr>
+<th>方法名称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>void wait()</td>
+<td>让当前线程等待并释放所占锁，直到另一个线程调用notify()方法或 notifyAll()方法</td>
+</tr>
+<tr>
+<td>void notify()</td>
+<td>唤醒正在等待的单个线程</td>
+</tr>
+<tr>
+<td>void notifyAll()</td>
+<td>唤醒正在等待的所有线程</td>
+</tr>
+</tbody></table>
+<p>注意：上述方法应该<strong>使用当前同步锁对象进行调用</strong>(只有锁对象知道谁等待谁唤醒)，此外，<strong>先唤醒再等待</strong></p>
+<h4 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h4><p>以三个生产者，两个消费者为例。生产者生产完数据后应该让自己等待，通知其他消费者消费；消费者消费完数据之后应该让自己等待，同时通知生产者生成。</p>
+<blockquote>
+<p>1.先确定在这个案例中，什么是共享数据？<br>答：这里案例中桌子是共享数据，因为厨师和顾客都需要对桌子上的包子进行操作。</p>
+<p>2.再确定有那几条线程？哪个是生产者，哪个是消费者？<br>答：厨师是生产者线程，3条生产者线程；<br>   顾客是消费者线程，2条消费者线程</p>
+<p>3.什么时候将哪一个线程设置为什么状态<br>生产者线程(厨师)放包子：<br>     1)先判断是否有包子<br>     2)没有包子时，厨师开始做包子, 做完之后把别人唤醒，然后让自己等待<br>     3)有包子时，不做包子了，直接唤醒别人、然后让自己等待<br>     	<br>消费者线程(顾客)吃包子：<br>     1)先判断是否有包子<br>     2)有包子时，顾客开始吃包子, 吃完之后把别人唤醒，然后让自己等待<br>     3)没有包子时，不吃包子了，直接唤醒别人、然后让自己等待</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Desk</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> List&lt;String&gt; list = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 放1个包子的方法</span></span><br><span class="line">    <span class="comment">// 厨师1 厨师2 厨师3</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">put</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> Thread.currentThread().getName();</span><br><span class="line">            <span class="comment">// 判断是否有包子。</span></span><br><span class="line">            <span class="keyword">if</span>(list.size() == <span class="number">0</span>)&#123;</span><br><span class="line">                list.add(name + <span class="string">&quot;做的肉包子&quot;</span>);</span><br><span class="line">                System.out.println(name + <span class="string">&quot;做了一个肉包子~~&quot;</span>);</span><br><span class="line">                Thread.sleep(<span class="number">2000</span>);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 唤醒别人, 等待自己</span></span><br><span class="line">                <span class="built_in">this</span>.notifyAll();</span><br><span class="line">                <span class="built_in">this</span>.wait();</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 有包子了，不做了。</span></span><br><span class="line">                <span class="comment">// 唤醒别人, 等待自己</span></span><br><span class="line">                <span class="built_in">this</span>.notifyAll();</span><br><span class="line">                <span class="built_in">this</span>.wait();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 吃货1 吃货2</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">get</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">name</span> <span class="operator">=</span> Thread.currentThread().getName();</span><br><span class="line">            <span class="keyword">if</span>(list.size() == <span class="number">1</span>)&#123;</span><br><span class="line">                <span class="comment">// 有包子，吃了</span></span><br><span class="line">                System.out.println(name  + <span class="string">&quot;吃了：&quot;</span> + list.get(<span class="number">0</span>));</span><br><span class="line">                list.clear();</span><br><span class="line">                Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                <span class="built_in">this</span>.notifyAll();</span><br><span class="line">                <span class="built_in">this</span>.wait();</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 没有包子</span></span><br><span class="line">                <span class="built_in">this</span>.notifyAll();</span><br><span class="line">                <span class="built_in">this</span>.wait();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadTest</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">//   需求：3个生产者线程，负责生产包子，每个线程每次只能生产1个包子放在桌子上</span></span><br><span class="line">        <span class="comment">//      2个消费者线程负责吃包子，每人每次只能从桌子上拿1个包子吃。</span></span><br><span class="line">        <span class="type">Desk</span> <span class="variable">desk</span>  <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Desk</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建3个生产者线程（3个厨师）</span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                desk.put();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;厨师1&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                desk.put();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;厨师2&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                desk.put();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;厨师3&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 创建2个消费者线程（2个吃货）</span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                desk.get();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;吃货1&quot;</span>).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">                desk.get();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, <span class="string">&quot;吃货2&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h3><p>线程池是可以复用线程的技术。</p>
+]]></content>
       <categories>
         <category>Java</category>
       </categories>
