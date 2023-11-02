@@ -1756,6 +1756,8 @@
     <title>java常用API</title>
     <url>/2023/10/18/10-30-37/</url>
     <content><![CDATA[<h2 id="Object类"><a href="#Object类" class="headerlink" title="Object类"></a>Object类</h2><p>Object是java中所有类的祖先类，所以Java中所有类的对象都可以直接使用Object类中提供的一些方法。</p>
+<span id="more"></span>
+
 <h3 id="toString-NaN"><a href="#toString-NaN" class="headerlink" title="toString()"></a>toString()</h3><h3 id="equals-Object-o"><a href="#equals-Object-o" class="headerlink" title="equals(Object o)"></a>equals(Object o)</h3><h3 id="clone"><a href="#clone" class="headerlink" title="clone()"></a>clone()</h3><h2 id="Objects类"><a href="#Objects类" class="headerlink" title="Objects类"></a>Objects类</h2><p>Objects是一个工具类，提供了一些方法可以对任意对象进行操作。</p>
 <h2 id="基本类型包装类"><a href="#基本类型包装类" class="headerlink" title="基本类型包装类"></a>基本类型包装类</h2><p>Java中<strong>万物皆对象</strong>，但8种基本数据类型还不是对象，所以要把它们变成对象，变成对象之后，可以提供一些方法对数据进行操作。</p>
 <p>学习包装类，主要学习两点：</p>
@@ -1800,7 +1802,7 @@
     <content><![CDATA[<h2 id="创建方法"><a href="#创建方法" class="headerlink" title="创建方法"></a>创建方法</h2><p>Java通过java.lang.Thread 类的对象来代表线程。 </p>
 <h3 id="继承Thread"><a href="#继承Thread" class="headerlink" title="继承Thread"></a>继承Thread</h3><p>需要重写run方法</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyThread</span> <span class="keyword">extends</span> <span class="title class_">Thread</span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= <span class="number">3</span>; i++) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;当前thread输出：&quot;</span> + i);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
+<span id="more"></span>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadTest1</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">Thread</span> <span class="variable">t1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">MyThread</span>();</span><br><span class="line">        t1.start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= <span class="number">5</span>; i++) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;主线程输出：&quot;</span> + i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>线程类已经继承Thread，无法继承其他类，不利于功能的扩展。</p>
