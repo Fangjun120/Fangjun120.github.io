@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"fangjun120.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="背景图片(image)1background-image : none | url (url)      参数 作用    none 无背景图（默认的）   url 使用绝对或相对地址指定背景图像   1background-image : url(images&#x2F;demo.png);   提倡背景图片后面的地址，url不要加引号。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CSS基础--背景">
+<meta property="og:url" content="https://fangjun120.github.io/2020/11/03/15-30-58/index.html">
+<meta property="og:site_name" content="eidolon的小窝">
+<meta property="og:description" content="背景图片(image)1background-image : none | url (url)      参数 作用    none 无背景图（默认的）   url 使用绝对或相对地址指定背景图像   1background-image : url(images&#x2F;demo.png);   提倡背景图片后面的地址，url不要加引号。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-03T07:30:58.000Z">
+<meta property="article:modified_time" content="2023-04-09T02:21:23.561Z">
+<meta property="article:author" content="Fang Jun">
+<meta property="article:tag" content="CSS">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://fangjun120.github.io/2020/11/03/15-30-58/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>CSS基础--背景 | eidolon的小窝</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">eidolon的小窝</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">做有趣的人</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2020/11/03/15-30-58/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fang Jun">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="eidolon的小窝">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CSS基础--背景
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-03 15:30:58" itemprop="dateCreated datePublished" datetime="2020-11-03T15:30:58+08:00">2020-11-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-09 10:21:23" itemprop="dateModified" datetime="2023-04-09T10:21:23+08:00">2023-04-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CSS/" itemprop="url" rel="index"><span itemprop="name">CSS</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="背景图片-image"><a href="#背景图片-image" class="headerlink" title="背景图片(image)"></a>背景图片(image)</h2><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">background-image</span> : none | url (url) </span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>none</td>
+<td align="center">无背景图（默认的）</td>
+</tr>
+<tr>
+<td>url</td>
+<td align="center">使用绝对或相对地址指定背景图像</td>
+</tr>
+</tbody></table>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">background-image</span> : <span class="built_in">url</span>(<span class="string">images/demo.png</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>提倡背景图片后面的地址，url不要加引号。</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="背景平铺（repeat）"><a href="#背景平铺（repeat）" class="headerlink" title="背景平铺（repeat）"></a>背景平铺（repeat）</h2><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">background-repeat</span> : repeat | no-repeat | repeat-x | repeat-y </span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>repeat</td>
+<td align="center">背景图像在纵向和横向上平铺（默认的）</td>
+</tr>
+<tr>
+<td>no-repeat</td>
+<td align="center">背景图像不平铺</td>
+</tr>
+<tr>
+<td>repeat-x</td>
+<td align="center">背景图像在横向上平铺</td>
+</tr>
+<tr>
+<td>repeat-y</td>
+<td align="center">背景图像在纵向平铺</td>
+</tr>
+</tbody></table>
+<h2 id="背景位置-position"><a href="#背景位置-position" class="headerlink" title="背景位置(position)"></a><strong>背景位置(position)</strong></h2><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">background-position</span> : length || length</span><br><span class="line"></span><br><span class="line">background-position : position || position </span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th align="center">值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>length</td>
+<td align="center">百分数 | 由浮点数字和单位标识符组成的长度值</td>
+</tr>
+<tr>
+<td>position</td>
+<td align="center">top | center | bottom | left | center | right   方位名词</td>
+</tr>
+</tbody></table>
+<ul>
+<li>注意：<ul>
+<li>必须先指定background-image属性</li>
+<li>position 后面是x坐标和y坐标。 可以使用方位名词或者 精确单位。</li>
+<li>如果指定两个值，两个值都是方位名字，则两个值前后顺序无关，比如left  top和top  left效果一致</li>
+<li>如果只指定了一个方位名词，另一个值默认居中对齐。</li>
+<li>如果position 后面是精确坐标， 那么第一个，肯定是 x  第二的一定是y</li>
+<li>如果只指定一个数值,那该数值一定是x坐标，另一个默认垂直居中</li>
+<li>如果指定的两个值是 精确单位和方位名字混合使用，则第一个值是x坐标，第二个值是y坐标</li>
+</ul>
+</li>
+</ul>
+<p><strong>实际工作用的最多的，就是背景图片居中对齐。</strong></p>
+<h2 id="背景附着"><a href="#背景附着" class="headerlink" title="背景附着"></a>背景附着</h2><ul>
+<li><p>背景附着就是解释背景是滚动的还是固定的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">background-attachment : scroll | fixed </span><br></pre></td></tr></table></figure></li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>scroll</td>
+<td align="center">背景图像是随对象内容滚动</td>
+</tr>
+<tr>
+<td>fixed</td>
+<td align="center">背景图像固定</td>
+</tr>
+</tbody></table>
+<h2 id="背景简写"><a href="#背景简写" class="headerlink" title="背景简写"></a>背景简写</h2><ul>
+<li>background：属性的值的书写顺序官方并没有强制标准的。为了可读性，建议大家如下写：</li>
+<li>background: 背景颜色 背景图片地址 背景平铺 背景滚动 背景位置;</li>
+<li>语法：</li>
+</ul>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">background</span>: transparent <span class="built_in">url</span>(<span class="string">image.jpg</span>) repeat-y  scroll center top ;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="背景透明-CSS3"><a href="#背景透明-CSS3" class="headerlink" title="背景透明(CSS3)"></a>背景透明(CSS3)</h2><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">background</span>: <span class="built_in">rgba</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0.3</span>);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>最后一个参数是alpha 透明度  取值范围 0~1之间</li>
+<li>我们习惯把0.3 的 0 省略掉  这样写  background: rgba(0, 0, 0, .3);</li>
+<li>注意：  背景半透明是指盒子背景半透明， 盒子里面的内容不受影响</li>
+<li>因为是CSS3 ，所以 低于 ie9 的版本是不支持的。</li>
+</ul>
+<h2 id="背景总结"><a href="#背景总结" class="headerlink" title="背景总结"></a>背景总结</h2><table>
+<thead>
+<tr>
+<th>属性</th>
+<th align="left">作用</th>
+<th align="left">值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>background-color</td>
+<td align="left">背景颜色</td>
+<td align="left">预定义的颜色值&#x2F;十六进制&#x2F;RGB代码</td>
+</tr>
+<tr>
+<td>background-image</td>
+<td align="left">背景图片</td>
+<td align="left">url(图片路径)</td>
+</tr>
+<tr>
+<td>background-repeat</td>
+<td align="left">是否平铺</td>
+<td align="left">repeat&#x2F;no-repeat&#x2F;repeat-x&#x2F;repeat-y</td>
+</tr>
+<tr>
+<td>background-position</td>
+<td align="left">背景位置</td>
+<td align="left">length&#x2F;position    分别是x  和 y坐标， 切记 如果有 精确数值单位，则必须按照先X 后Y 的写法</td>
+</tr>
+<tr>
+<td>background-attachment</td>
+<td align="left">背景固定还是滚动</td>
+<td align="left">scroll&#x2F;fixed</td>
+</tr>
+<tr>
+<td>背景简写</td>
+<td align="left">更简单</td>
+<td align="left">背景颜色 背景图片地址 背景平铺 背景滚动 背景位置;  他们没有顺序</td>
+</tr>
+<tr>
+<td>背景透明</td>
+<td align="left">让盒子半透明</td>
+<td align="left">background: rgba(0,0,0,0.3);   后面必须是 4个值</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/CSS/" rel="tag"># CSS</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/03/14-30-56/" rel="prev" title="CSS基础--标签显示模式">
+      <i class="fa fa-chevron-left"></i> CSS基础--标签显示模式
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/11/03/15-31-00/" rel="next" title="CSS基础--三大特性">
+      CSS基础--三大特性 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF%E5%9B%BE%E7%89%87-image"><span class="nav-number">1.</span> <span class="nav-text">背景图片(image)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF%E5%B9%B3%E9%93%BA%EF%BC%88repeat%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">背景平铺（repeat）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF%E4%BD%8D%E7%BD%AE-position"><span class="nav-number">3.</span> <span class="nav-text">背景位置(position)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF%E9%99%84%E7%9D%80"><span class="nav-number">4.</span> <span class="nav-text">背景附着</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF%E7%AE%80%E5%86%99"><span class="nav-number">5.</span> <span class="nav-text">背景简写</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF%E9%80%8F%E6%98%8E-CSS3"><span class="nav-number">6.</span> <span class="nav-text">背景透明(CSS3)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF%E6%80%BB%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">背景总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Fang Jun</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">50</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fang Jun</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
