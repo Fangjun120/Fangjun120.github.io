@@ -1679,6 +1679,40 @@
 <li>把模板方法中不能确定的代码写成抽象方法，并在模板方法中调用。</li>
 <li>子类继承抽象类，实现父类的抽象方法。</li>
 </ul>
+<h2 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h2><p>以明星和经纪人举例。明星要做的是唱歌、跳舞、拍戏，但是每次唱歌和跳舞之前或者之后都要做一些繁琐的事情，那么这些事情就可以交给经纪人，比如准备话筒，搭建舞台和收钱。</p>
+<p>那我们就需要明星类和经纪人类，但是如何让他们的业务保持一致呢(经纪人要代理明星业务范围内的活)？<strong>让他们实现同一个接口</strong>。</p>
+<h3 id="开发步骤"><a href="#开发步骤" class="headerlink" title="开发步骤"></a>开发步骤</h3><ul>
+<li>必须定义接口，里面定义一些行为，用来约束被代理对象和代理对象都要完成的事情。</li>
+<li>定义一个实现类实现接口，这个实现类的对象代表被代理的对象。</li>
+<li>定义一个测试类，在里面创建被代理对象，然后为其创建一个代理对象返回。（重点）</li>
+<li>代理对象中，需要模拟收首付款，真正触发被代理对象的行为，然后接收尾款操作。</li>
+<li>通过返回的代理对象进行方法的调用，观察动态代理的执行流程。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">Star</span>&#123;</span><br><span class="line">    String <span class="title function_">sing</span><span class="params">(String name)</span>;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">dance</span><span class="params">()</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">BigStar</span> <span class="keyword">implements</span> <span class="title class_">Star</span>&#123;</span><br><span class="line">	<span class="keyword">private</span> String name;</span><br><span class="line">	<span class="keyword">public</span> <span class="title function_">BigStar</span><span class="params">(String name)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.name=name;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">sing</span><span class="params">(String name)</span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">dance</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProxyUtil</span> &#123;</span><br><span class="line">    <span class="comment">//这个类用于生成代理</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Star <span class="title function_">createProxy</span><span class="params">(BigStar bigStar)</span>&#123;</span><br><span class="line">       <span class="comment">/* newProxyInstance(ClassLoader loader,</span></span><br><span class="line"><span class="comment">                Class&lt;?&gt;[] interfaces,</span></span><br><span class="line"><span class="comment">                InvocationHandler h)</span></span><br><span class="line"><span class="comment">                参数1：用于指定一个类加载器</span></span><br><span class="line"><span class="comment">                参数2：接口数组，指定生成的代理长什么样子，也就是有哪些方法</span></span><br><span class="line"><span class="comment">                参数3：用来指定生成的代理对象要干什么事情</span></span><br><span class="line"><span class="comment">       */</span></span><br><span class="line">        <span class="comment">// Star starProxy = ProxyUtil.createProxy(s);</span></span><br><span class="line">        <span class="comment">// starProxy.sing(&quot;好日子&quot;);</span></span><br><span class="line">        <span class="type">Star</span> <span class="variable">starProxy</span> <span class="operator">=</span> (Star) Proxy.newProxyInstance(ProxyUtil.class.getClassLoader(),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Star.class&#125;, <span class="keyword">new</span> <span class="title class_">InvocationHandler</span>() &#123;</span><br><span class="line">                    <span class="meta">@Override</span> <span class="comment">// 回调方法</span></span><br><span class="line">                    <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">                        <span class="comment">// 代理对象要做的事情，会在这里写代码</span></span><br><span class="line">                        <span class="comment">// method代表代理的具体方法</span></span><br><span class="line">                        <span class="keyword">if</span>(method.getName().equals(<span class="string">&quot;sing&quot;</span>))&#123;</span><br><span class="line">                            System.out.println(<span class="string">&quot;准备话筒，收钱20万&quot;</span>);</span><br><span class="line">                        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(method.getName().equals(<span class="string">&quot;dance&quot;</span>))&#123;</span><br><span class="line">                            System.out.println(<span class="string">&quot;准备场地，收钱1000万&quot;</span>);</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="comment">//返回给被代理对象，被代理对象执行对应方法</span></span><br><span class="line">                        <span class="keyword">return</span> method.invoke(bigStar, args);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">        <span class="keyword">return</span> starProxy;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">BigStar</span> <span class="variable">s</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BigStar</span>(<span class="string">&quot;杨超越&quot;</span>);</span><br><span class="line">        <span class="type">Star</span> <span class="variable">starProxy</span> <span class="operator">=</span> ProxyUtil.createProxy(s);</span><br><span class="line"></span><br><span class="line">        <span class="type">String</span> <span class="variable">rs</span> <span class="operator">=</span> starProxy.sing(<span class="string">&quot;好日子&quot;</span>);</span><br><span class="line">        System.out.println(rs);</span><br><span class="line"></span><br><span class="line">        starProxy.dance();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="应用案例"><a href="#应用案例" class="headerlink" title="应用案例"></a>应用案例</h3><p>方法中不属于主要业务的其他重复代码可以用代理完成</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> *  用户业务接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">    <span class="comment">// 登录功能</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">login</span><span class="params">(String loginName,String passWord)</span> <span class="keyword">throws</span> Exception;</span><br><span class="line">    <span class="comment">// 删除用户</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">deleteUsers</span><span class="params">()</span> <span class="keyword">throws</span> Exception;</span><br><span class="line">    <span class="comment">// 查询用户，返回数组的形式。</span></span><br><span class="line">    String[] selectUsers() <span class="keyword">throws</span> Exception;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面有一个UserService接口的实现类，下面<strong>每一个方法中都有计算方法运行时间的代码</strong>。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 用户业务实现类（面向接口编程）</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">UserService</span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">login</span><span class="params">(String loginName, String passWord)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">long</span> <span class="variable">time1</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">&quot;admin&quot;</span>.equals(loginName) &amp;&amp; <span class="string">&quot;123456&quot;</span>.equals(passWord))&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;您登录成功，欢迎光临本系统~&quot;</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;您登录失败，用户名或密码错误~&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">        <span class="type">long</span> <span class="variable">time2</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">        System.out.println(<span class="string">&quot;login方法耗时：&quot;</span>+(time2-time1));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">deleteUsers</span><span class="params">()</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="type">long</span> <span class="variable">time1</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">        System.out.println(<span class="string">&quot;成功删除了1万个用户~&quot;</span>);</span><br><span class="line">        Thread.sleep(<span class="number">1500</span>);</span><br><span class="line">        <span class="type">long</span> <span class="variable">time2</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">        System.out.println(<span class="string">&quot;deleteUsers方法耗时：&quot;</span>+(time2-time1));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String[] selectUsers() <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">		<span class="type">long</span> <span class="variable">time1</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">        System.out.println(<span class="string">&quot;查询出了3个用户&quot;</span>);</span><br><span class="line">        String[] names = &#123;<span class="string">&quot;张全蛋&quot;</span>, <span class="string">&quot;李二狗&quot;</span>, <span class="string">&quot;牛爱花&quot;</span>&#125;;</span><br><span class="line">        Thread.sleep(<span class="number">500</span>);</span><br><span class="line">		<span class="type">long</span> <span class="variable">time2</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">        System.out.println(<span class="string">&quot;selectUsers方法耗时：&quot;</span>+(time2-time1));</span><br><span class="line">        <span class="keyword">return</span> names;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>每一个方法中<strong>计算耗时的代码都是重复的</strong>，况且这些代码并不属于UserSerivce的主要业务</p>
+<p>把计算每一个方法的耗时操作，交给代理对象来做。</p>
+<p>先在UserService类中把计算耗时的代码删除</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 用户业务实现类（面向接口编程）</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">UserService</span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">login</span><span class="params">(String loginName, String passWord)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">&quot;admin&quot;</span>.equals(loginName) &amp;&amp; <span class="string">&quot;123456&quot;</span>.equals(passWord))&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;您登录成功，欢迎光临本系统~&quot;</span>);</span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;您登录失败，用户名或密码错误~&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">deleteUsers</span><span class="params">()</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;成功删除了1万个用户~&quot;</span>);</span><br><span class="line">        Thread.sleep(<span class="number">1500</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String[] selectUsers() <span class="keyword">throws</span> Exception&#123;</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;查询出了3个用户&quot;</span>);</span><br><span class="line">        String[] names = &#123;<span class="string">&quot;张全蛋&quot;</span>, <span class="string">&quot;李二狗&quot;</span>, <span class="string">&quot;牛爱花&quot;</span>&#125;;</span><br><span class="line">        Thread.sleep(<span class="number">500</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> names;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后为UserService生成一个动态代理对象，在动态代理中调用目标方法，在调用目标方法之前和之后记录毫秒值，并计算方法运行的时间。代码如下</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProxyUtil</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> UserService <span class="title function_">createProxy</span><span class="params">(UserService userService)</span>&#123;</span><br><span class="line">        UserService userServiceProxy= (UserService) Proxy.newProxyInstance(</span><br><span class="line">            ProxyUtil.class.getClassLoader(),</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;UserService.class&#125;, </span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">InvocationHandler</span>() &#123;</span><br><span class="line">			<span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123;             </span><br><span class="line">                <span class="keyword">if</span>( method.getName().equals(<span class="string">&quot;login&quot;</span>) || method.getName().equals(<span class="string">&quot;deleteUsers&quot;</span>)||</span><br><span class="line">                method.getName().equals(<span class="string">&quot;selectUsers&quot;</span>))&#123;</span><br><span class="line">                    <span class="comment">//方法运行前记录毫秒值         </span></span><br><span class="line">                    <span class="type">long</span> <span class="variable">startTime</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">                    <span class="comment">//执行方法</span></span><br><span class="line">                    <span class="type">Object</span> <span class="variable">rs</span> <span class="operator">=</span> method.invoke(userService, args);</span><br><span class="line">                    <span class="comment">//执行方法后记录毫秒值</span></span><br><span class="line">                    <span class="type">long</span> <span class="variable">endTime</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">                    System.out.println(method.getName() + <span class="string">&quot;方法执行耗时：&quot;</span> + (endTime - startTime)/ <span class="number">1000.0</span> + <span class="string">&quot;s&quot;</span>);</span><br><span class="line">                    <span class="keyword">return</span> rs;</span><br><span class="line">                &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="type">Object</span> <span class="variable">rs</span> <span class="operator">=</span> method.invoke(userService, args);</span><br><span class="line">                    <span class="keyword">return</span> rs;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="comment">//返回代理对象</span></span><br><span class="line">        <span class="keyword">return</span> userServiceProxy;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在测试类中为UserService创建代理对象</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 目标：使用动态代理解决实际问题，并掌握使用代理的好处。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="comment">// 1、创建用户业务对象。</span></span><br><span class="line">        <span class="type">UserService</span> <span class="variable">userService</span> <span class="operator">=</span> ProxyUtil.createProxy(<span class="keyword">new</span> <span class="title class_">UserServiceImpl</span>());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2、调用用户业务的功能。</span></span><br><span class="line">        userService.login(<span class="string">&quot;admin&quot;</span>, <span class="string">&quot;123456&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;----------------------------------&quot;</span>);</span><br><span class="line"></span><br><span class="line">        userService.deleteUsers();</span><br><span class="line">        System.out.println(<span class="string">&quot;----------------------------------&quot;</span>);</span><br><span class="line"></span><br><span class="line">        String[] names = userService.selectUsers();</span><br><span class="line">        System.out.println(<span class="string">&quot;查询到的用户是：&quot;</span> + Arrays.toString(names));</span><br><span class="line">        System.out.println(<span class="string">&quot;----------------------------------&quot;</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <categories>
         <category>Java</category>
@@ -2111,7 +2145,288 @@
   <entry>
     <title>java高级</title>
     <url>/2023/11/03/11-00-37/</url>
-    <content><![CDATA[<span id="more"></span>]]></content>
+    <content><![CDATA[<h2 id="Junit单元测试"><a href="#Junit单元测试" class="headerlink" title="Junit单元测试"></a>Junit单元测试</h2><p>单元测试就是针对最小的功能单元(方法)，编写测试代码对该功能进行正确性测试。</p>
+<span id="more"></span>
+
+<p>JUnit是使用Java语言实现的单元测试框架，它是第三方公司开源出来的，很多开发工具已经集成了Junit框架，比如IDEA。</p>
+<ul>
+<li>编写的测试代码很灵活，可以指某个测试方法执行测试，也支持一键完成自动化测试。</li>
+<li>不需要程序员去分析测试的结果，会自动生成测试报告出来。</li>
+</ul>
+<h3 id="使用步骤"><a href="#使用步骤" class="headerlink" title="使用步骤"></a>使用步骤</h3><ul>
+<li>将Junit框架的jar包导入到项目中（注意：IDEA集成了Junit框架，不需要我们自己手工导入了），一般导入junit4版本</li>
+<li>编写测试类、测试类方法（注意：测试方法必须是公共的，无参数，无返回值的非静态方法）</li>
+<li>必须在测试方法上使用@Test注解（标注该方法是一个测试方法）</li>
+<li>在测试方法中，编写程序调用被测试的方法即可。</li>
+<li>选中测试方法，右键选择“JUnit运行” ，如果测试通过则是绿色；如果测试失败，则是红色</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringUtil</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">printNumber</span><span class="params">(String name)</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;名字长度：&quot;</span>+name.length());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>写一个测试类，测试StringUtil工具类中的方法能否正常使用。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringUtilTest</span>&#123;</span><br><span class="line">    <span class="meta">@Test</span> <span class="comment">//声明测试方法</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testPrintNumber</span><span class="params">()</span>&#123;</span><br><span class="line">        StringUtil.printNumber(<span class="string">&quot;admin&quot;</span>);<span class="comment">//传递字符串，测试通过</span></span><br><span class="line">        StringUtil.printNumber(<span class="literal">null</span>);<span class="comment">//传递非法字符，会报异常，测试不通过</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>点击绿色的三角形按钮，就可以运行测试方法。</p>
+<p><strong>所谓测试，也只是运行代码看有没有异常，能不能测试出效果还要看测试代码的质量</strong></p>
+<h3 id="断言机制"><a href="#断言机制" class="headerlink" title="断言机制"></a>断言机制</h3><p>可以用于判断代码的实际输出和目标输出是否匹配，从而<strong>判断代码逻辑</strong>是否出错。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringUtil</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">getMaxIndex</span><span class="params">(String data)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(data==<span class="literal">null</span>) <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">return</span> data.length();  <span class="comment">//这里逻辑错误，应该是length()-1</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StringUtilTest</span>&#123;</span><br><span class="line">    <span class="meta">@Test</span> <span class="comment">//声明测试方法</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testGetMaxIndex</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="type">int</span> index1=StringUtil.getMaxIndex(<span class="string">&quot;admin&quot;</span>);</span><br><span class="line">        <span class="comment">//提示信息，期望值，实际值</span></span><br><span class="line">        Assert.assertEquals(<span class="string">&quot;有bug&quot;</span>,<span class="number">4</span>,index1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Junit常用注解"><a href="#Junit常用注解" class="headerlink" title="Junit常用注解"></a>Junit常用注解</h3><p>before通常用于申请资源，after通常用于释放资源</p>
+<h4 id="Junit4版本"><a href="#Junit4版本" class="headerlink" title="Junit4版本"></a>Junit4版本</h4><table>
+<thead>
+<tr>
+<th><strong>注解</strong></th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>@Test</td>
+<td>测试方法</td>
+</tr>
+<tr>
+<td>@Before</td>
+<td>用来修饰一个实例方法，该方法会在每一个测试方法执行之前执行一次。</td>
+</tr>
+<tr>
+<td>@After</td>
+<td>用来修饰一个实例方法，该方法会在每一个测试方法执行之后执行一次。</td>
+</tr>
+<tr>
+<td>@BeforeClass</td>
+<td>用来修饰一个静态方法，该方法会在所有测试方法之前只执行一次。</td>
+</tr>
+<tr>
+<td>@AfterClass</td>
+<td>用来修饰一个静态方法，该方法会在所有测试方法之后只执行一次。</td>
+</tr>
+</tbody></table>
+<h4 id="Junit5版本"><a href="#Junit5版本" class="headerlink" title="Junit5版本"></a>Junit5版本</h4><table>
+<thead>
+<tr>
+<th><strong>注解</strong></th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>@Test</td>
+<td>测试方法</td>
+</tr>
+<tr>
+<td>@BeforeEach</td>
+<td>用来修饰一个实例方法，该方法会在每一个测试方法执行之前执行一次。</td>
+</tr>
+<tr>
+<td>@AfterEach</td>
+<td>用来修饰一个实例方法，该方法会在每一个测试方法执行之后执行一次。</td>
+</tr>
+<tr>
+<td>@BeforeAll</td>
+<td>用来修饰一个静态方法，该方法会在所有测试方法之前只执行一次。</td>
+</tr>
+<tr>
+<td>@AfterAll</td>
+<td>用来修饰一个静态方法，该方法会在所有测试方法之后只执行一次。</td>
+</tr>
+</tbody></table>
+<h2 id="反射"><a href="#反射" class="headerlink" title="反射"></a>反射</h2><p>反射就是加载类，并且允许以编程方式访问已加载类的成分。反射主要<strong>用于做框架</strong>。比如idea中的代码提示，在对象名.之后会把对象的属性罗列出来。</p>
+<h3 id="获取类"><a href="#获取类" class="headerlink" title="获取类"></a>获取类</h3><p>就是获取类的<strong>字节码</strong>，通过Class对象操作</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test1Class</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">        <span class="comment">//方法一：类名.class</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c1</span> <span class="operator">=</span> Student.class;</span><br><span class="line">        System.out.println(c1.getName()); <span class="comment">//获取全类名</span></span><br><span class="line">        System.out.println(c1.getSimpleName()); <span class="comment">//获取简单类名</span></span><br><span class="line">        <span class="comment">//方法二：Class.forName(全类名)</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c2</span> <span class="operator">=</span> Class.forName(<span class="string">&quot;com.itheima.d2_reflect.Student&quot;</span>);</span><br><span class="line">        System.out.println(c1 == c2); <span class="comment">//true</span></span><br><span class="line">        <span class="comment">//方法三：对象.getClass</span></span><br><span class="line">        <span class="type">Student</span> <span class="variable">s</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>();</span><br><span class="line">        <span class="type">Class</span> <span class="variable">c3</span> <span class="operator">=</span> s.getClass();</span><br><span class="line">        System.out.println(c2 == c3); <span class="comment">//true</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="获取类构造器"><a href="#获取类构造器" class="headerlink" title="获取类构造器"></a>获取类构造器</h3><p>通过Constructor对象操作</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Constructor&lt;?&gt;[] getConstructors()</td>
+<td>返回所有构造器对象的数组（只能拿public的）</td>
+</tr>
+<tr>
+<td>Constructor&lt;?&gt;[] getDeclaredConstructors()</td>
+<td>返回所有构造器对象的数组，存在就能拿到</td>
+</tr>
+<tr>
+<td>Constructor<T> getConstructor(Class&lt;?&gt;… parameterTypes)</td>
+<td>返回单个构造器对象（只能拿public的）</td>
+</tr>
+<tr>
+<td>Constructor<T> getDeclaredConstructor(Class&lt;?&gt;… parameterTypes)</td>
+<td>返回单个构造器对象，存在就能拿到</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test2Constructor</span>()&#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testGetConstructors</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="comment">//1、反射第一步：必须先得到这个类的Class对象</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Cat.class;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//2、获取类的全部构造器</span></span><br><span class="line">        Constructor[] constructors = c.getDeclaredConstructors();</span><br><span class="line">        <span class="comment">//遍历数组中的每一个构造器对象。</span></span><br><span class="line">        <span class="keyword">for</span>(Constructor constructor: constructors)&#123;</span><br><span class="line">            System.out.println(constructor.getName()+<span class="string">&quot;---&gt; 参数个数：&quot;</span>+constructor.getParameterCount());</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">         <span class="comment">//3、获取private修饰的有两个参数的构造器，第一个参数String类型，第二个参数int类型</span></span><br><span class="line">        <span class="type">Constructor</span> <span class="variable">constructor2</span> <span class="operator">=</span> c.getDeclaredConstructor(String.class,<span class="type">int</span>.class);</span><br><span class="line">        </span><br><span class="line">        System.out.println(constructor2.getName()+<span class="string">&quot;---&gt; 参数个数：&quot;</span>+constructor1.getParameterCount());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>获取构造器最终是<strong>为了初始化对象返回</strong></p>
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>T newInstance(Object… initargs)</td>
+<td>根据指定的构造器创建对象</td>
+</tr>
+<tr>
+<td>public void setAccessible(boolean flag)</td>
+<td>设置为true,表示取消访问检查，进行暴力反射</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test2Constructor</span>()&#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testGetConstructors</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Cat.class;</span><br><span class="line">         <span class="comment">//获取private修饰的有两个参数的构造器</span></span><br><span class="line">        <span class="type">Constructor</span> <span class="variable">constructor</span> <span class="operator">=</span> c.getDeclaredConstructor(String.class,<span class="type">int</span>.class);</span><br><span class="line">        constructor.setAccessible(<span class="literal">true</span>); <span class="comment">//私有构造器不允许类外访问，用这条语句可以禁止检查访问权限</span></span><br><span class="line">        <span class="type">Cat</span> <span class="variable">cat</span> <span class="operator">=</span> (Cat) constructor.newInstance();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注：非public的构造器，需要打开权限（暴力反射），因此反射可以破坏封装性，私有的也可以执行了。</p>
+<p>在框架发开中，这样的对象获取方法是常用的。</p>
+<h3 id="获取类成员变量"><a href="#获取类成员变量" class="headerlink" title="获取类成员变量"></a>获取类成员变量</h3><p>通过Field对象操作</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Field[] getFields()</td>
+<td>返回所有成员变量对象的数组（只能拿public的）</td>
+</tr>
+<tr>
+<td>Field[] getDeclaredFields()</td>
+<td>返回所有成员变量对象的数组，存在就能拿到</td>
+</tr>
+<tr>
+<td>Field getField(String name)</td>
+<td>返回单个成员变量对象（只能拿public的）</td>
+</tr>
+<tr>
+<td>Field getDeclaredField(String name)</td>
+<td>返回单个成员变量对象，存在就能拿到</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test2Constructor</span>()&#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testGetConstructors</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Cat.class;</span><br><span class="line">        Field[] fields = c.getDeclaredFields();</span><br><span class="line">        <span class="keyword">for</span>(Field field:fields)&#123;</span><br><span class="line">            System.out.println(field.getName()+field.getType());</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="type">Field</span> <span class="variable">fName</span> <span class="operator">=</span> c.getDeclaredFields(<span class="string">&quot;name&quot;</span>);</span><br><span class="line">        <span class="type">Cat</span> <span class="variable">cat</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Cat</span>();</span><br><span class="line">        FName.set(cat,<span class="string">&quot;加菲&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>获取成员变量的目的依然是取值和赋值，如果私有也需要暴力反射</p>
+<ul>
+<li>void set(Object obj, Object value)：</li>
+<li>Object get(Object obj)</li>
+</ul>
+<h3 id="获取类成员方法"><a href="#获取类成员方法" class="headerlink" title="获取类成员方法"></a>获取类成员方法</h3><p>通过Method对象操作</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Method[] getMethods()</td>
+<td>返回所有成员方法对象的数组（只能拿public的）</td>
+</tr>
+<tr>
+<td>Method[] getDeclaredMethods()</td>
+<td>返回所有成员方法对象的数组，存在就能拿到</td>
+</tr>
+<tr>
+<td>Method getMethod(String name, Class&lt;?&gt;… parameterTypes)</td>
+<td>返回单个成员方法对象（只能拿public的）</td>
+</tr>
+<tr>
+<td>Method getDeclaredMethod(String name, Class&lt;?&gt;… parameterTypes)</td>
+<td>返回单个成员方法对象，存在就能拿到</td>
+</tr>
+</tbody></table>
+<p>获取的目的是为了执行</p>
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Object invoke(Object obj, Object… args)</td>
+<td>运行方法参数一：用obj对象调用该方法。参数二：调用方法的传递的参数（如果没有就不写）。</td>
+</tr>
+</tbody></table>
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><ul>
+<li>可以得到一个类的全部成分然后操作</li>
+<li>可以破坏封装性</li>
+<li>可以破坏泛型的约束性<ul>
+<li>泛型只在编译时有效，在字节码中泛型被擦除了，而反射是作用在运行时的技术，操作的时字节码，可以在有泛型类型的集合中存入其他任意类型的元素</li>
+</ul>
+</li>
+<li><strong>适合做框架</strong></li>
+</ul>
+<h2 id="注解"><a href="#注解" class="headerlink" title="注解"></a>注解</h2><p>Java 注解（Annotation）又称 Java 标注，是 JDK5.0 引入的一种注释机制。Java 语言中的类、构造器、方法、成员变量、参数等都可以被注解进行标注，其作用是让其他程序根据注解信息决定怎么执行该程序。</p>
+<h3 id="自定义注解"><a href="#自定义注解" class="headerlink" title="自定义注解"></a>自定义注解</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//public @interface 注解名称 &#123;</span></span><br><span class="line"><span class="comment">//    public 属性类型 属性名() default 默认值 ;</span></span><br><span class="line"><span class="comment">//&#125;</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyTest&#123;</span><br><span class="line">    String <span class="title function_">aaa</span><span class="params">()</span>;</span><br><span class="line">    <span class="type">boolean</span> <span class="title function_">bbb</span><span class="params">()</span> <span class="keyword">default</span> <span class="literal">true</span>;	</span><br><span class="line">    String[] ccc();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@MyTest(aaa=&quot;牛魔王&quot;,ccc=&#123;&quot;HTML&quot;,&quot;Java&quot;&#125;)</span><span class="comment">//标注类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AnnotationTest1</span>&#123;</span><br><span class="line">    <span class="meta">@MyTest(aaa=&quot;铁扇公主&quot;,bbb=false, ccc=&#123;&quot;前端&quot;,&quot;Java&quot;&#125;)</span><span class="comment">//标注方法</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">test1</span><span class="params">()</span>&#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意：注解的属性名如何是value的话，并且只有value没有默认值，使用注解时value名称可以省略。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyTest2&#123;</span><br><span class="line">    String <span class="title function_">value</span><span class="params">()</span>; <span class="comment">//特殊属性</span></span><br><span class="line">    <span class="type">int</span> <span class="title function_">age</span><span class="params">()</span> <span class="keyword">default</span> <span class="number">10</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@MyTest2(&quot;孙悟空&quot;)</span> <span class="comment">//等价于 @MyTest2(value=&quot;孙悟空&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AnnotationTest1</span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">test1</span><span class="params">()</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>以把注解的字节码进行反编译，使用XJad工具进行反编译</p>
+<ul>
+<li>注解本质上是接口，每一个注解接口都继承子Annotation接口</li>
+<li>注解中的属性本质上是抽象方法</li>
+<li>使用注解实际上是作为接口的实现类对象</li>
+<li>@MyTest1(aaa&#x3D;”孙悟空”,bbb&#x3D;false,ccc&#x3D;{“Python”,”前端”,”Java”})里面的属性值，可以通过调用aaa()、bbb()、ccc()方法获取到。</li>
+</ul>
+<h3 id="注解解析"><a href="#注解解析" class="headerlink" title="注解解析"></a>注解解析</h3><p><strong>把获取类上、方法上、变量上等位置注解及注解属性值的过程称为解析注解。</strong>注解在谁身上，就先获取谁，再用谁获取谁身上的注解</p>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Annotation[]  getDeclaredAnnotations()</td>
+<td>获得当前对象上使用的所有注解，返回注解数组。</td>
+</tr>
+<tr>
+<td>T getDeclaredAnnotation(Class<T> annotationClass)</td>
+<td>根据注解类型获得对应注解对象</td>
+</tr>
+<tr>
+<td>boolean isAnnotationPresent(Class<Annotation> annotationClass)</td>
+<td>判断当前对象是否使用了指定的注解，如果使用了则返回true，否则false</td>
+</tr>
+</tbody></table>
+<p>所有的类成分Class, Method , Field , Constructor，都实现了AnnotatedElement接口他们都拥有解析注解的能力</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AnnotationTest3</span>&#123;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">parseClass</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="comment">//1.先获取Class对象</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Demo.class;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//2.解析Demo类上的注解</span></span><br><span class="line">        <span class="keyword">if</span>(c.isAnnotationPresent(MyTest4.class))&#123;</span><br><span class="line">            <span class="comment">//获取类上的MyTest4注解</span></span><br><span class="line">            <span class="type">MyTest4</span> <span class="variable">myTest4</span> <span class="operator">=</span> (MyTest4)c.getDeclaredAnnotation(MyTest4.class);</span><br><span class="line">            <span class="comment">//获取MyTests4注解的属性值</span></span><br><span class="line">            System.out.println(myTest4.value());</span><br><span class="line">            System.out.println(myTest4.aaa());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">parseMethods</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="comment">//1.先获取Class对象</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> Demo.class;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//2.解析Demo类中test1方法上的注解MyTest4注解</span></span><br><span class="line">        <span class="type">Method</span> <span class="variable">m</span> <span class="operator">=</span> c.getDeclaredMethod(<span class="string">&quot;test1&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span>(m.isAnnotationPresent(MyTest4.class))&#123;</span><br><span class="line">            <span class="comment">//获取方法上的MyTest4注解</span></span><br><span class="line">            <span class="type">MyTest4</span> <span class="variable">myTest4</span> <span class="operator">=</span> (MyTest4)m.getDeclaredAnnotation(MyTest4.class);</span><br><span class="line">            <span class="comment">//获取MyTests4注解的属性值</span></span><br><span class="line">            System.out.println(myTest4.value());</span><br><span class="line">            System.out.println(myTest4.aaa());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="元注解"><a href="#元注解" class="headerlink" title="元注解"></a>元注解</h3><p><strong>元注解是修饰注解的注解</strong>，常见的元注解有<code>@Target</code>和<code>@Retention</code></p>
+<p>@Target：约束自定义注解只能在哪些地方使用。可使用的值定义在ElementType枚举类中，常用值如下</p>
+<ul>
+<li>TYPE，类，接口</li>
+<li>FIELD, 成员变量</li>
+<li>METHOD, 成员方法</li>
+<li>PARAMETER, 方法参数</li>
+<li>CONSTRUCTOR, 构造器</li>
+<li>LOCAL_VARIABLE, 局部变量</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//声明@MyTest3注解只能用在类上和方法上</span></span><br><span class="line"><span class="meta">@Target(&#123;ElementType.TYPE,ElementType.METHOD&#125;)</span>	</span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyTest3&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>@Retention：申明注解的生命周期。可使用的值定义在RetentionPolicy枚举类中，常用值如下</p>
+<ul>
+<li>SOURCE： 注解只作用在源码阶段，生成的字节码文件中不存在</li>
+<li>CLASS：  注解作用在源码阶段，字节码文件阶段，运行阶段不存在，默认值.</li>
+<li>RUNTIME：注解作用在源码阶段，字节码文件阶段，运行阶段（开发常用）</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//@MyTest3保留到运行时期</span></span><br><span class="line"><span class="meta">@Retetion(RetetionPloicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyTest3&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="应用场景-1"><a href="#应用场景-1" class="headerlink" title="应用场景"></a>应用场景</h3><p>模拟Junit写一个测试框架，要求有@MyTest注解的方法可以被框架执行，没有@MyTest注解的方法不能被框架执行。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Target(ElementType.METHOD)</span>	</span><br><span class="line"><span class="meta">@Retetion(RetetionPloicy.RUNTIME)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> MyTest&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AnnotationTest4</span>&#123;</span><br><span class="line">    <span class="meta">@MyTest</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">test1</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;=====test1====&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">test3</span><span class="params">()</span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;=====test2====&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span>&#123;</span><br><span class="line">        <span class="type">AnnotationTest4</span> <span class="variable">a</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">AnnotationTest4</span>();</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//1.先获取Class对象</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> AnnotationTest4.class;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//2.解析AnnotationTest4类中所有的方法对象</span></span><br><span class="line">        Method[] methods = c.getDeclaredMethods();</span><br><span class="line">        <span class="keyword">for</span>(Method m: methods)&#123;</span><br><span class="line">            <span class="comment">//3.判断方法上是否有MyTest注解，有就执行该方法</span></span><br><span class="line">            <span class="keyword">if</span>(m.isAnnotationPresent(MyTest.class))&#123;</span><br><span class="line">            	m.invoke(a);</span><br><span class="line">        	&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+]]></content>
       <categories>
         <category>Java</category>
       </categories>
