@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"fangjun120.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="day05 - Web APIs 学习目标: 能够说出常见 offset 系列属性的作用 能够说出常见 client 系列属性的作用 能够说出常见 scroll 系列属性的作用 能够封装简单动画函数  **1.1. **元素偏移量 offset 系列1.1.1 offset 概述offset 翻译过来就是偏移量， 我们使用 offset系列相关属性可以动态的得到该元素的位置（偏移）、大小等。  获">
+<meta property="og:type" content="article">
+<meta property="og:title" content="web API05">
+<meta property="og:url" content="https://fangjun120.github.io/2022/03/05/00-00-00/index.html">
+<meta property="og:site_name" content="eidolon的小窝">
+<meta property="og:description" content="day05 - Web APIs 学习目标: 能够说出常见 offset 系列属性的作用 能够说出常见 client 系列属性的作用 能够说出常见 scroll 系列属性的作用 能够封装简单动画函数  **1.1. **元素偏移量 offset 系列1.1.1 offset 概述offset 翻译过来就是偏移量， 我们使用 offset系列相关属性可以动态的得到该元素的位置（偏移）、大小等。  获">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fangjun120.github.io/images5%5C%E5%9B%BE%E7%89%871.png">
+<meta property="og:image" content="https://fangjun120.github.io/images5%5C%E5%9B%BE%E7%89%872.png">
+<meta property="og:image" content="https://fangjun120.github.io/images5%5C1551881487(1).png">
+<meta property="og:image" content="https://fangjun120.github.io/images5%5C1551881563(1).jpg">
+<meta property="og:image" content="https://fangjun120.github.io/images5%5C%E5%9B%BE%E7%89%873.png">
+<meta property="og:image" content="https://fangjun120.github.io/images5%5C%E5%9B%BE%E7%89%874.png">
+<meta property="og:image" content="https://fangjun120.github.io/images5%5C%E5%9B%BE%E7%89%875.png">
+<meta property="og:image" content="https://fangjun120.github.io/images5%5C%E5%9B%BE%E7%89%876.png">
+<meta property="og:image" content="https://fangjun120.github.io/images5%5C%E5%9B%BE%E7%89%877.png">
+<meta property="article:published_time" content="2022-03-04T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-09T02:21:11.334Z">
+<meta property="article:author" content="Fang Jun">
+<meta property="article:tag" content="JavaScript">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fangjun120.github.io/images5%5C%E5%9B%BE%E7%89%871.png">
+
+<link rel="canonical" href="https://fangjun120.github.io/2022/03/05/00-00-00/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>web API05 | eidolon的小窝</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">eidolon的小窝</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">做有趣的人</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2022/03/05/00-00-00/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fang Jun">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="eidolon的小窝">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          web API05
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-05 00:00:00" itemprop="dateCreated datePublished" datetime="2022-03-05T00:00:00+08:00">2022-03-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-09 10:21:11" itemprop="dateModified" datetime="2023-04-09T10:21:11+08:00">2023-04-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="day05-Web-APIs"><a href="#day05-Web-APIs" class="headerlink" title="day05 - Web APIs"></a><strong>day05 - Web APIs</strong></h1><blockquote>
+<p><strong>学习目标:</strong></p>
+<p>能够说出常见 offset 系列属性的作用</p>
+<p>能够说出常见 client 系列属性的作用</p>
+<p>能够说出常见 scroll 系列属性的作用</p>
+<p>能够封装简单动画函数</p>
+</blockquote>
+<h2 id="1-1-元素偏移量-offset-系列"><a href="#1-1-元素偏移量-offset-系列" class="headerlink" title="**1.1. **元素偏移量 offset 系列"></a>**1.1. **元素偏移量 offset 系列</h2><h3 id="1-1-1-offset-概述"><a href="#1-1-1-offset-概述" class="headerlink" title="1.1.1 offset 概述"></a>1.1.1 offset 概述</h3><p>offset 翻译过来就是偏移量， 我们使用 offset系列相关属性可以动态的得到该元素的位置（偏移）、大小等。</p>
+<ol>
+<li><p>获得元素距离带有定位父元素的位置</p>
+</li>
+<li><p>获得元素自身的大小（宽度高度）</p>
+</li>
+<li><p>注意：返回的数值都不带单位</p>
+<p><img src="/images5%5C%E5%9B%BE%E7%89%871.png" alt="图片1"></p>
+</li>
+</ol>
+<p><img src="/images5%5C%E5%9B%BE%E7%89%872.png" alt="图片2"></p>
+<h3 id="1-1-2-offset-与-style-区别"><a href="#1-1-2-offset-与-style-区别" class="headerlink" title="1.1.2 offset 与 style 区别"></a>1.1.2 offset 与 style 区别</h3><h4 id="offset"><a href="#offset" class="headerlink" title="offset"></a>offset</h4><ul>
+<li><p>offset 可以得到任意样式表中的样式值</p>
+</li>
+<li><p>offset 系列获得的数值是没有单位的</p>
+</li>
+<li><p>offsetWidth 包含padding+border+width</p>
+</li>
+<li><p>offsetWidth 等属性是<strong>只读属性</strong>，只能获取不能赋值</p>
+</li>
+<li><blockquote>
+<p>所以，我们想要获取元素大小位置，用offset更合适</p>
+</blockquote>
+</li>
+</ul>
+<h4 id="style"><a href="#style" class="headerlink" title="style"></a>style</h4><ul>
+<li><p>style 只能得到行内样式表中的样式值</p>
+</li>
+<li><p>style.width 获得的是带有单位的字符串</p>
+</li>
+<li><p>style.width 获得不包含padding和border 的值</p>
+</li>
+<li><p>style.width 是可读写属性，可以获取也可以赋值</p>
+</li>
+<li><blockquote>
+<p>所以，我们想要给元素更改值，则需要用style改变</p>
+</blockquote>
+</li>
+</ul>
+<blockquote>
+<p><strong>因为平时我们都是给元素注册触摸事件，所以重点记住 targetTocuhes</strong></p>
+</blockquote>
+<h3 id="1-1-3-案例：获取鼠标在盒子内的坐标"><a href="#1-1-3-案例：获取鼠标在盒子内的坐标" class="headerlink" title="1.1.3  案例：获取鼠标在盒子内的坐标"></a>1.1.3  案例：获取鼠标在盒子内的坐标</h3><ol>
+<li>我们在盒子内点击，想要得到鼠标距离盒子左右的距离。</li>
+<li>首先得到鼠标在页面中的坐标（e.pageX, e.pageY）</li>
+<li>其次得到盒子在页面中的距离 ( box.offsetLeft, box.offsetTop)</li>
+<li>用鼠标距离页面的坐标减去盒子在页面中的距离，得到鼠标在盒子内的坐标</li>
+<li>如果想要移动一下鼠标，就要获取最新的坐标，使用鼠标移动</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> box = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.box&#x27;</span>);</span><br><span class="line">box.<span class="title function_">addEventListener</span>(<span class="string">&#x27;mousemove&#x27;</span>, <span class="keyword">function</span>(<span class="params">e</span>) &#123;</span><br><span class="line"><span class="keyword">var</span> x = e.<span class="property">pageX</span> - <span class="variable language_">this</span>.<span class="property">offsetLeft</span>;</span><br><span class="line"><span class="keyword">var</span> y = e.<span class="property">pageY</span> - <span class="variable language_">this</span>.<span class="property">offsetTop</span>;</span><br><span class="line"><span class="variable language_">this</span>.<span class="property">innerHTML</span> = <span class="string">&#x27;x坐标是&#x27;</span> + x + <span class="string">&#x27; y坐标是&#x27;</span> + y;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-1-4-案例：模态框拖拽"><a href="#1-1-4-案例：模态框拖拽" class="headerlink" title="1.1.4  案例：模态框拖拽"></a>1.1.4  案例：模态框拖拽</h3><p>弹出框，我们也称为模态框。</p>
+<p>​	1.点击弹出层，会弹出模态框， 并且显示灰色半透明的遮挡层。</p>
+<p>​	2.点击关闭按钮，可以关闭模态框，并且同时关闭灰色半透明遮挡层。</p>
+<p>​	3.鼠标放到模态框最上面一行，可以按住鼠标拖拽模态框在页面中移动。</p>
+<p>​	4.鼠标松开，可以停止拖动模态框移动</p>
+<h3 id="1-1-5-案例分析"><a href="#1-1-5-案例分析" class="headerlink" title="1.1.5. 案例分析:"></a>1.1.5. 案例分析:</h3><ol>
+<li>点击弹出层， 模态框和遮挡层就会显示出来 display:block;</li>
+<li>点击关闭按钮，模态框和遮挡层就会隐藏起来 display:none;</li>
+<li>在页面中拖拽的原理：鼠标按下并且移动， 之后松开鼠标</li>
+<li>触发事件是鼠标按下mousedown，鼠标移动mousemove 鼠标松开 mouseup</li>
+<li>拖拽过程:  鼠标移动过程中，获得最新的值赋值给模态框的left和top值，这样模态框可以跟着鼠标走了</li>
+<li>鼠标按下触发的事件源是最上面一行，就是  id 为 title </li>
+<li>鼠标的坐标减去 鼠标在盒子内的坐标， 才是模态框真正的位置。</li>
+<li>鼠标按下，我们要得到鼠标在盒子的坐标。</li>
+<li>鼠标移动，就让模态框的坐标  设置为  ：鼠标坐标 减去盒子坐标即可，注意移动事件写到按下事件里面。</li>
+<li>鼠标松开，就停止拖拽，就是可以让鼠标移动事件解除</li>
+</ol>
+<p>  </p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 获取元素</span></span><br><span class="line"><span class="keyword">var</span> login = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.login&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> mask = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.login-bg&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> link = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;#link&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> closeBtn = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;#closeBtn&#x27;</span>);</span><br><span class="line"><span class="keyword">var</span> title = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;#title&#x27;</span>);</span><br><span class="line"><span class="comment">// 2. 点击弹出层这个链接 link  让mask 和login 显示出来</span></span><br><span class="line">link.<span class="title function_">addEventListener</span>(<span class="string">&#x27;click&#x27;</span>, <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        mask.<span class="property">style</span>.<span class="property">display</span> = <span class="string">&#x27;block&#x27;</span>;</span><br><span class="line">        login.<span class="property">style</span>.<span class="property">display</span> = <span class="string">&#x27;block&#x27;</span>;</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="comment">// 3. 点击 closeBtn 就隐藏 mask 和 login </span></span><br><span class="line">closeBtn.<span class="title function_">addEventListener</span>(<span class="string">&#x27;click&#x27;</span>, <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        mask.<span class="property">style</span>.<span class="property">display</span> = <span class="string">&#x27;none&#x27;</span>;</span><br><span class="line">        login.<span class="property">style</span>.<span class="property">display</span> = <span class="string">&#x27;none&#x27;</span>;</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="comment">// 4. 开始拖拽</span></span><br><span class="line">    <span class="comment">// (1) 当我们鼠标按下， 就获得鼠标在盒子内的坐标</span></span><br><span class="line">title.<span class="title function_">addEventListener</span>(<span class="string">&#x27;mousedown&#x27;</span>, <span class="keyword">function</span>(<span class="params">e</span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> x = e.<span class="property">pageX</span> - login.<span class="property">offsetLeft</span>;</span><br><span class="line">    <span class="keyword">var</span> y = e.<span class="property">pageY</span> - login.<span class="property">offsetTop</span>;</span><br><span class="line">    <span class="comment">// (2) 鼠标移动的时候，把鼠标在页面中的坐标，减去 鼠标在盒子内的坐标就是模态框的left和top值</span></span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">addEventListener</span>(<span class="string">&#x27;mousemove&#x27;</span>, move)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">move</span>(<span class="params">e</span>) &#123;</span><br><span class="line">        login.<span class="property">style</span>.<span class="property">left</span> = e.<span class="property">pageX</span> - x + <span class="string">&#x27;px&#x27;</span>;</span><br><span class="line">        login.<span class="property">style</span>.<span class="property">top</span> = e.<span class="property">pageY</span> - y + <span class="string">&#x27;px&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// (3) 鼠标弹起，就让鼠标移动事件移除</span></span><br><span class="line">    <span class="variable language_">document</span>.<span class="title function_">addEventListener</span>(<span class="string">&#x27;mouseup&#x27;</span>, <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="variable language_">document</span>.<span class="title function_">removeEventListener</span>(<span class="string">&#x27;mousemove&#x27;</span>, move);</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-1-6-案例：仿京东放大镜"><a href="#1-1-6-案例：仿京东放大镜" class="headerlink" title="1.1.6  案例：仿京东放大镜"></a>1.1.6  案例：仿京东放大镜</h3><ol>
+<li>整个案例可以分为三个功能模块</li>
+<li>鼠标经过小图片盒子， 黄色的遮挡层 和 大图片盒子显示，离开隐藏2个盒子功能</li>
+<li>黄色的遮挡层跟随鼠标功能。 </li>
+<li>移动黄色遮挡层，大图片跟随移动功能。</li>
+</ol>
+<h3 id="1-1-7-案例分析"><a href="#1-1-7-案例分析" class="headerlink" title="1.1.7. 案例分析:"></a>1.1.7. 案例分析:</h3><ol>
+<li>黄色的遮挡层跟随鼠标功能。</li>
+<li>把鼠标坐标给遮挡层不合适。因为遮挡层坐标以父盒子为准。</li>
+<li>首先是获得鼠标在盒子的坐标。 </li>
+<li>之后把数值给遮挡层做为left 和top值。</li>
+<li>此时用到鼠标移动事件，但是还是在小图片盒子内移动。</li>
+<li>发现，遮挡层位置不对，需要再减去盒子自身高度和宽度的一半。</li>
+<li>遮挡层不能超出小图片盒子范围。</li>
+<li>如果小于零，就把坐标设置为0</li>
+<li>如果大于遮挡层最大的移动距离，就把坐标设置为最大的移动距离</li>
+<li>遮挡层的最大移动距离：小图片盒子宽度 减去 遮挡层盒子宽度</li>
+</ol>
+<p><img src="/images5%5C1551881487(1).png" alt="1551881487(1)"></p>
+<p><img src="/images5%5C1551881563(1).jpg" alt="1551881563(1)"></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&#x27;load&#x27;</span>, <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">var</span> preview_img = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.preview_img&#x27;</span>);</span><br><span class="line">    <span class="keyword">var</span> mask = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.mask&#x27;</span>);</span><br><span class="line">    <span class="keyword">var</span> big = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.big&#x27;</span>);</span><br><span class="line">    <span class="comment">// 1. 当我们鼠标经过 preview_img 就显示和隐藏 mask 遮挡层 和 big 大盒子</span></span><br><span class="line">    preview_img.<span class="title function_">addEventListener</span>(<span class="string">&#x27;mouseover&#x27;</span>, <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        mask.<span class="property">style</span>.<span class="property">display</span> = <span class="string">&#x27;block&#x27;</span>;</span><br><span class="line">        big.<span class="property">style</span>.<span class="property">display</span> = <span class="string">&#x27;block&#x27;</span>;</span><br><span class="line">    &#125;)</span><br><span class="line">    preview_img.<span class="title function_">addEventListener</span>(<span class="string">&#x27;mouseout&#x27;</span>, <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">            mask.<span class="property">style</span>.<span class="property">display</span> = <span class="string">&#x27;none&#x27;</span>;</span><br><span class="line">            big.<span class="property">style</span>.<span class="property">display</span> = <span class="string">&#x27;none&#x27;</span>;</span><br><span class="line">        &#125;)</span><br><span class="line">        <span class="comment">// 2. 鼠标移动的时候，让黄色的盒子跟着鼠标来走</span></span><br><span class="line">    preview_img.<span class="title function_">addEventListener</span>(<span class="string">&#x27;mousemove&#x27;</span>, <span class="keyword">function</span>(<span class="params">e</span>) &#123;</span><br><span class="line">        <span class="comment">// (1). 先计算出鼠标在盒子内的坐标</span></span><br><span class="line">        <span class="keyword">var</span> x = e.<span class="property">pageX</span> - <span class="variable language_">this</span>.<span class="property">offsetLeft</span>;</span><br><span class="line">        <span class="keyword">var</span> y = e.<span class="property">pageY</span> - <span class="variable language_">this</span>.<span class="property">offsetTop</span>;</span><br><span class="line">        <span class="comment">// console.log(x, y);</span></span><br><span class="line">        <span class="comment">// (2) 减去盒子高度 300的一半 是 150 就是我们mask 的最终 left 和top值了</span></span><br><span class="line">        <span class="comment">// (3) 我们mask 移动的距离</span></span><br><span class="line">        <span class="keyword">var</span> maskX = x - mask.<span class="property">offsetWidth</span> / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">var</span> maskY = y - mask.<span class="property">offsetHeight</span> / <span class="number">2</span>;</span><br><span class="line">        <span class="comment">// (4) 如果x 坐标小于0 就让他停在0 的位置</span></span><br><span class="line">        <span class="comment">// 遮挡层的最大移动距离</span></span><br><span class="line">        <span class="keyword">var</span> maskMax = preview_img.<span class="property">offsetWidth</span> - mask.<span class="property">offsetWidth</span>;</span><br><span class="line">        <span class="keyword">if</span> (maskX &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">            maskX = <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (maskX &gt;= maskMax) &#123;</span><br><span class="line">            maskX = maskMax;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (maskY &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">            maskY = <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (maskY &gt;= maskMax) &#123;</span><br><span class="line">            maskY = maskMax;</span><br><span class="line">        &#125;</span><br><span class="line">        mask.<span class="property">style</span>.<span class="property">left</span> = maskX + <span class="string">&#x27;px&#x27;</span>;</span><br><span class="line">        mask.<span class="property">style</span>.<span class="property">top</span> = maskY + <span class="string">&#x27;px&#x27;</span>;</span><br><span class="line">        <span class="comment">// 3. 大图片的移动距离 = 遮挡层移动距离 * 大图片最大移动距离 / 遮挡层的最大移动距离</span></span><br><span class="line">        <span class="comment">// 大图</span></span><br><span class="line">        <span class="keyword">var</span> bigIMg = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.bigImg&#x27;</span>);</span><br><span class="line">        <span class="comment">// 大图片最大移动距离</span></span><br><span class="line">        <span class="keyword">var</span> bigMax = bigIMg.<span class="property">offsetWidth</span> - big.<span class="property">offsetWidth</span>;</span><br><span class="line">        <span class="comment">// 大图片的移动距离 X Y</span></span><br><span class="line">        <span class="keyword">var</span> bigX = maskX * bigMax / maskMax;</span><br><span class="line">        <span class="keyword">var</span> bigY = maskY * bigMax / maskMax;</span><br><span class="line">        bigIMg.<span class="property">style</span>.<span class="property">left</span> = -bigX + <span class="string">&#x27;px&#x27;</span>;</span><br><span class="line">        bigIMg.<span class="property">style</span>.<span class="property">top</span> = -bigY + <span class="string">&#x27;px&#x27;</span>;</span><br><span class="line"></span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-2-元素可视区-client-系列"><a href="#1-2-元素可视区-client-系列" class="headerlink" title="1.2. 元素可视区 client 系列"></a>1.2. 元素可视区 client 系列</h2><h3 id="1-2-1-client概述"><a href="#1-2-1-client概述" class="headerlink" title="1.2.1 client概述"></a>1.2.1 client概述</h3><p>client 翻译过来就是客户端，我们使用 client 系列的相关属性来获取元素可视区的相关信息。通过 client<br>系列的相关属性可以动态的得到该元素的边框大小、元素大小等。</p>
+<p><img src="/images5%5C%E5%9B%BE%E7%89%873.png" alt="图片3"></p>
+<p><img src="/images5%5C%E5%9B%BE%E7%89%874.png" alt="图片4"></p>
+<h3 id="1-2-2-淘宝-flexible-js-源码分析"><a href="#1-2-2-淘宝-flexible-js-源码分析" class="headerlink" title="1.2.2. 淘宝 flexible.js 源码分析"></a>1.2.2. 淘宝 flexible.js 源码分析</h3><h4 id="立即执行函数"><a href="#立即执行函数" class="headerlink" title="立即执行函数"></a>立即执行函数</h4><p>普通函数需要调用才能执行</p>
+<p>立即执行函数 (function(){})()  或者 (function(){}())</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">// 1、(function [函数名，可选]()&#123;&#125;)() 右边小括号为调用</span></span><br><span class="line">   <span class="comment">// 传参，a b为形参；1 2为实参</span></span><br><span class="line">   (<span class="keyword">function</span>(<span class="params">a,b</span>)&#123;</span><br><span class="line">       <span class="variable language_">console</span>.<span class="title function_">log</span>(a+b);</span><br><span class="line">   &#125;)(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line">   <span class="comment">// 类似于</span></span><br><span class="line">   <span class="keyword">function</span> <span class="title function_">fn</span>(<span class="params">a,b</span>)&#123;</span><br><span class="line">       <span class="variable language_">console</span>.<span class="title function_">log</span>(a+b);</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="title function_">fn</span>(<span class="number">1</span>,<span class="number">2</span>);</span><br><span class="line"><span class="comment">// 2、(function [函数名]()&#123;&#125;())</span></span><br><span class="line">   (<span class="keyword">function</span>(<span class="params">a,b</span>)&#123;</span><br><span class="line">	<span class="variable language_">console</span>.<span class="title function_">log</span>(a+b);</span><br><span class="line">   &#125;(<span class="number">2</span>,<span class="number">3</span>));</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>主要作用： 创建一个独立的作用域，其中的变量都是局部变量。 避免了命名冲突问题</strong></p>
+<h4 id="pageshow与load"><a href="#pageshow与load" class="headerlink" title="pageshow与load"></a>pageshow与load</h4><p>下面三种情况都会刷新页面都会触发 load 事件。</p>
+<p>1.a标签的超链接</p>
+<p>2.F5或者刷新按钮（强制刷新）</p>
+<p>3.前进后退按钮</p>
+<p>但是 火狐中，有个特点，有个“往返缓存”，这个缓存中不仅保存着页面数据，还保存了DOM和JavaScript的状态；实际上是将整个页面都保存在了内存里。</p>
+<p>所以此时后退按钮不能刷新页面。</p>
+<p>此时可以使用 pageshow事件来触发。，这个事件在页面显示时触发，无论页面是否来自缓存。在重新加载页面中，pageshow会在load事件触发后触发；根据事件对象中的persisted来判断是否是缓存中的页面触发的pageshow事件</p>
+<p><code>注意这个事件给window添加。</code></p>
+<h2 id="1-3-元素滚动-scroll-系列"><a href="#1-3-元素滚动-scroll-系列" class="headerlink" title="1.3.元素滚动 scroll 系列"></a>1.3.元素滚动 scroll 系列</h2><h3 id="1-3-1-scroll-概述"><a href="#1-3-1-scroll-概述" class="headerlink" title="1.3.1. scroll 概述"></a>1.3.1. scroll 概述</h3><p>scroll 翻译过来就是滚动的，我们使用 scroll 系列的相关属性可以动态的得到该元素的大小、滚动距离等。</p>
+<p><img src="/images5%5C%E5%9B%BE%E7%89%875.png" alt="图片5"></p>
+<p><img src="/images5%5C%E5%9B%BE%E7%89%876.png" alt="图片6"></p>
+<h3 id="1-3-2-页面被卷去的头部"><a href="#1-3-2-页面被卷去的头部" class="headerlink" title="1.3.2. 页面被卷去的头部"></a>1.3.2. 页面被卷去的头部</h3><p>如果浏览器的高（或宽）度不足以显示整个页面时，会自动出现滚动条。当滚动条向下滚动时，页面上面被隐藏掉的高度，我们就称为页面被卷去的头部。滚动条在滚动时会触发 onscroll事件。</p>
+<h3 id="1-3-3-案例：仿淘宝固定右侧侧边栏"><a href="#1-3-3-案例：仿淘宝固定右侧侧边栏" class="headerlink" title="1.3.3.案例：仿淘宝固定右侧侧边栏"></a>1.3.3.案例：仿淘宝固定右侧侧边栏</h3><ol>
+<li>原先侧边栏是绝对定位</li>
+<li>当页面滚动到一定位置，侧边栏改为固定定位</li>
+<li>页面继续滚动，会让 返回顶部显示出来</li>
+</ol>
+<h3 id="1-3-4-案例分析"><a href="#1-3-4-案例分析" class="headerlink" title="1.3.4.案例分析:"></a>1.3.4.案例分析:</h3><ol>
+<li>需要用到页面滚动事件 scroll  因为是页面滚动，所以事件源是document</li>
+<li>滚动到某个位置，就是判断页面被卷去的上部值。</li>
+<li>页面被卷去的头部：可以通过window.pageYOffset 获得  如果是被卷去的左侧window.pageXOffset</li>
+<li>注意，<strong>元素被卷去的头部是element.scrollTop  , 如果是页面被卷去的头部 则是 window.pageYOffset</strong></li>
+<li>其实这个值 可以通过盒子的 offsetTop可以得到，如果大于等于这个值，就可以让盒子固定定位了</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1. 获取元素</span></span><br><span class="line">      <span class="keyword">var</span> sliderbar = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.slider-bar&#x27;</span>);</span><br><span class="line">      <span class="keyword">var</span> banner = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.banner&#x27;</span>);</span><br><span class="line">      <span class="comment">// banner.offestTop 就是被卷去头部的大小 一定要写到滚动的外面</span></span><br><span class="line">      <span class="keyword">var</span> bannerTop = banner.<span class="property">offsetTop</span></span><br><span class="line">          <span class="comment">// 当我们侧边栏固定定位之后应该变化的数值</span></span><br><span class="line">      <span class="keyword">var</span> sliderbarTop = sliderbar.<span class="property">offsetTop</span> - bannerTop;</span><br><span class="line">      <span class="comment">// 获取main 主体元素</span></span><br><span class="line">      <span class="keyword">var</span> main = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.main&#x27;</span>);</span><br><span class="line">      <span class="keyword">var</span> goBack = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.goBack&#x27;</span>);</span><br><span class="line">      <span class="keyword">var</span> mainTop = main.<span class="property">offsetTop</span>;</span><br><span class="line">      <span class="comment">// 2. 页面滚动事件 scroll</span></span><br><span class="line">      <span class="variable language_">document</span>.<span class="title function_">addEventListener</span>(<span class="string">&#x27;scroll&#x27;</span>, <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">          <span class="comment">// console.log(11);</span></span><br><span class="line">          <span class="comment">// window.pageYOffset 页面被卷去的头部</span></span><br><span class="line">          <span class="comment">// console.log(window.pageYOffset);</span></span><br><span class="line">          <span class="comment">// 3 .当我们页面被卷去的头部大于等于了 172 此时 侧边栏就要改为固定定位</span></span><br><span class="line">          <span class="keyword">if</span> (<span class="variable language_">window</span>.<span class="property">pageYOffset</span> &gt;= bannerTop) &#123;</span><br><span class="line">              sliderbar.<span class="property">style</span>.<span class="property">position</span> = <span class="string">&#x27;fixed&#x27;</span>;</span><br><span class="line">              sliderbar.<span class="property">style</span>.<span class="property">top</span> = sliderbarTop + <span class="string">&#x27;px&#x27;</span>;</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">              sliderbar.<span class="property">style</span>.<span class="property">position</span> = <span class="string">&#x27;absolute&#x27;</span>;</span><br><span class="line">              sliderbar.<span class="property">style</span>.<span class="property">top</span> = <span class="string">&#x27;300px&#x27;</span>;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="comment">// 4. 当我们页面滚动到main盒子，就显示 goback模块</span></span><br><span class="line">          <span class="keyword">if</span> (<span class="variable language_">window</span>.<span class="property">pageYOffset</span> &gt;= mainTop) &#123;</span><br><span class="line">              goBack.<span class="property">style</span>.<span class="property">display</span> = <span class="string">&#x27;block&#x27;</span>;</span><br><span class="line">          &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">              goBack.<span class="property">style</span>.<span class="property">display</span> = <span class="string">&#x27;none&#x27;</span>;</span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">      &#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-5-页面被卷去的头部兼容性解决方案"><a href="#1-3-5-页面被卷去的头部兼容性解决方案" class="headerlink" title="1.3.5.页面被卷去的头部兼容性解决方案"></a>1.3.5.页面被卷去的头部兼容性解决方案</h3><p>需要注意的是，页面被卷去的头部，有兼容性问题，因此被卷去的头部通常有如下几种写法：</p>
+<ol>
+<li>声明了 DTD，使用 document.documentElement.scrollTop</li>
+<li>未声明 DTD，使用  document.body.scrollTop</li>
+<li>新方法 window.pageYOffset和 window.pageXOffset，IE9 开始支持</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">getScroll</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      <span class="attr">left</span>: <span class="variable language_">window</span>.<span class="property">pageXOffset</span> || <span class="variable language_">document</span>.<span class="property">documentElement</span>.<span class="property">scrollLeft</span> || <span class="variable language_">document</span>.<span class="property">body</span>.<span class="property">scrollLeft</span>||<span class="number">0</span>,</span><br><span class="line">      <span class="attr">top</span>: <span class="variable language_">window</span>.<span class="property">pageYOffset</span> || <span class="variable language_">document</span>.<span class="property">documentElement</span>.<span class="property">scrollTop</span> || <span class="variable language_">document</span>.<span class="property">body</span>.<span class="property">scrollTop</span> || <span class="number">0</span></span><br><span class="line">    &#125;;</span><br><span class="line"> &#125; </span><br><span class="line">使用的时候  <span class="title function_">getScroll</span>().<span class="property">left</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="1-4-三大系列总结"><a href="#1-4-三大系列总结" class="headerlink" title="1.4. 三大系列总结"></a>1.4. 三大系列总结</h2><p><img src="/images5%5C%E5%9B%BE%E7%89%877.png" alt="图片7"></p>
+<p>他们主要用法：</p>
+<p>1.offset 系列 经常用于获得元素位置    offsetLeft  offsetTop</p>
+<p>2.client 经常用于获取元素大小  clientWidth clientHeight</p>
+<p>3.scroll 经常用于获取滚动距离 scrollTop  scrollLeft  </p>
+<p><strong>4.注意页面滚动的距离通过 window.pageXOffset&#x2F;pageYOffset 获得</strong></p>
+<h2 id="1-5-mouseenter-和mouseover的区别"><a href="#1-5-mouseenter-和mouseover的区别" class="headerlink" title="1.5. mouseenter 和mouseover的区别"></a>1.5. mouseenter 和mouseover的区别</h2><ul>
+<li>当鼠标移动到元素上时就会触发</li>
+<li><strong>mouseover 鼠标经过自身盒子会触发，经过子盒子还会触发。mouseenter  只会经过自身盒子触发</strong></li>
+<li>之所以这样，是因为mouseenter不会冒泡</li>
+<li>跟mouseenter搭配鼠标离开 mouseleave，同样不会冒泡</li>
+</ul>
+<h2 id="1-6-动画"><a href="#1-6-动画" class="headerlink" title="1.6. 动画"></a>1.6. 动画</h2><h3 id="1-6-1-动画实现原理"><a href="#1-6-1-动画实现原理" class="headerlink" title="1.6.1. 动画实现原理"></a>1.6.1. 动画实现原理</h3><blockquote>
+<p>核心原理：通过定时器 setInterval() 不断移动盒子位置。</p>
+</blockquote>
+<p>实现步骤：</p>
+<ol>
+<li>获得盒子当前位置</li>
+<li>让盒子在当前位置加上1个移动距离</li>
+<li>利用定时器不断重复这个操作</li>
+<li>加一个结束定时器的条件</li>
+<li>注意此元素需要添加定位，才能使用element.style.left</li>
+</ol>
+<h3 id="1-6-2-动画封装"><a href="#1-6-2-动画封装" class="headerlink" title="1.6.2. 动画封装"></a>1.6.2. 动画封装</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">function</span> <span class="title function_">animate</span>(<span class="params">obj, target</span>) &#123;</span><br><span class="line">    <span class="built_in">clearInterval</span>(obj.<span class="property">timer</span>);</span><br><span class="line">    <span class="keyword">var</span> timer = <span class="built_in">setInterval</span>(<span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (obj.<span class="property">offsetLeft</span> &gt;= target) &#123;</span><br><span class="line">            <span class="comment">// 停止动画 本质是停止定时器</span></span><br><span class="line">            <span class="built_in">clearInterval</span>(obj.<span class="property">timer</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        obj.<span class="property">style</span>.<span class="property">left</span> = obj.<span class="property">offsetLeft</span> + <span class="number">1</span> + <span class="string">&#x27;px&#x27;</span>;</span><br><span class="line">    &#125;, <span class="number">30</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>如果多个元素都使用这个动画函数，每次都要var 声明定时器。</p>
+<ul>
+<li><p>我们可以给不同的元素使用不同的定时器（自己专门用自己的定时器）。</p>
+</li>
+<li><p>核心原理：利用 JS 是一门动态语言，可以很方便的<strong>给当前对象添加属性</strong>。</p>
+</li>
+<li><pre><code class="js">// var obj = &#123;&#125;;
+// obj.name = &#39;andy&#39;;
+function animate(obj, target) &#123;
+    clearInterval(obj.timer);
+    obj.timer = setInterval(function() &#123;
+        if (obj.offsetLeft &gt;= target) &#123;
+            // 停止动画 本质是停止定时器
+            clearInterval(obj.timer);
+        &#125;
+        obj.style.left = obj.offsetLeft + 1 + &#39;px&#39;;
+    &#125;, 30);
+&#125;
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">  </span><br><span class="line">- 当同一个元素多次触发同一个动画函数时，就会产生很多个计时器，时间紊乱</span><br><span class="line"></span><br><span class="line">  - 解决：先清除以前的定时器，只保留当前的一个定时器执行</span><br><span class="line"></span><br><span class="line">  - ```js</span><br><span class="line">    function animate(obj, target) &#123;</span><br><span class="line">        // 同一个元素多次触发这个动画，元素的速度会越来越快，因为开启了太多的定时器</span><br><span class="line">        // 解决方案就是 让我们元素只有一个定时器执行</span><br><span class="line">        // 先清除以前的定时器，只保留当前的一个定时器执行</span><br><span class="line">        clearInterval(obj.timer);</span><br><span class="line">        obj.timer = setInterval(function() &#123;</span><br><span class="line">            if (obj.offsetLeft &gt;= target) &#123;</span><br><span class="line">                // 停止动画 本质是停止定时器</span><br><span class="line">                clearInterval(obj.timer);</span><br><span class="line">            &#125;</span><br><span class="line">            obj.style.left = obj.offsetLeft + 1 + &#x27;px&#x27;;</span><br><span class="line">        &#125;, 30);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/04/00-00-00/" rel="prev" title="web API04">
+      <i class="fa fa-chevron-left"></i> web API04
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/06/00-00-00/" rel="next" title="web API06">
+      web API06 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#day05-Web-APIs"><span class="nav-number">1.</span> <span class="nav-text">day05 - Web APIs</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E5%85%83%E7%B4%A0%E5%81%8F%E7%A7%BB%E9%87%8F-offset-%E7%B3%BB%E5%88%97"><span class="nav-number">1.1.</span> <span class="nav-text">**1.1. **元素偏移量 offset 系列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-1-offset-%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1.1 offset 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-2-offset-%E4%B8%8E-style-%E5%8C%BA%E5%88%AB"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.1.2 offset 与 style 区别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#offset"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">offset</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#style"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">style</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-3-%E6%A1%88%E4%BE%8B%EF%BC%9A%E8%8E%B7%E5%8F%96%E9%BC%A0%E6%A0%87%E5%9C%A8%E7%9B%92%E5%AD%90%E5%86%85%E7%9A%84%E5%9D%90%E6%A0%87"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.1.3  案例：获取鼠标在盒子内的坐标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-4-%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%A8%A1%E6%80%81%E6%A1%86%E6%8B%96%E6%8B%BD"><span class="nav-number">1.1.4.</span> <span class="nav-text">1.1.4  案例：模态框拖拽</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-5-%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90"><span class="nav-number">1.1.5.</span> <span class="nav-text">1.1.5. 案例分析:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-6-%E6%A1%88%E4%BE%8B%EF%BC%9A%E4%BB%BF%E4%BA%AC%E4%B8%9C%E6%94%BE%E5%A4%A7%E9%95%9C"><span class="nav-number">1.1.6.</span> <span class="nav-text">1.1.6  案例：仿京东放大镜</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-7-%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90"><span class="nav-number">1.1.7.</span> <span class="nav-text">1.1.7. 案例分析:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E5%85%83%E7%B4%A0%E5%8F%AF%E8%A7%86%E5%8C%BA-client-%E7%B3%BB%E5%88%97"><span class="nav-number">1.2.</span> <span class="nav-text">1.2. 元素可视区 client 系列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-1-client%E6%A6%82%E8%BF%B0"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.2.1 client概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-2-%E6%B7%98%E5%AE%9D-flexible-js-%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2.2. 淘宝 flexible.js 源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AB%8B%E5%8D%B3%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">立即执行函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#pageshow%E4%B8%8Eload"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">pageshow与load</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-%E5%85%83%E7%B4%A0%E6%BB%9A%E5%8A%A8-scroll-%E7%B3%BB%E5%88%97"><span class="nav-number">1.3.</span> <span class="nav-text">1.3.元素滚动 scroll 系列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-1-scroll-%E6%A6%82%E8%BF%B0"><span class="nav-number">1.3.1.</span> <span class="nav-text">1.3.1. scroll 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-2-%E9%A1%B5%E9%9D%A2%E8%A2%AB%E5%8D%B7%E5%8E%BB%E7%9A%84%E5%A4%B4%E9%83%A8"><span class="nav-number">1.3.2.</span> <span class="nav-text">1.3.2. 页面被卷去的头部</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-3-%E6%A1%88%E4%BE%8B%EF%BC%9A%E4%BB%BF%E6%B7%98%E5%AE%9D%E5%9B%BA%E5%AE%9A%E5%8F%B3%E4%BE%A7%E4%BE%A7%E8%BE%B9%E6%A0%8F"><span class="nav-number">1.3.3.</span> <span class="nav-text">1.3.3.案例：仿淘宝固定右侧侧边栏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-4-%E6%A1%88%E4%BE%8B%E5%88%86%E6%9E%90"><span class="nav-number">1.3.4.</span> <span class="nav-text">1.3.4.案例分析:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-5-%E9%A1%B5%E9%9D%A2%E8%A2%AB%E5%8D%B7%E5%8E%BB%E7%9A%84%E5%A4%B4%E9%83%A8%E5%85%BC%E5%AE%B9%E6%80%A7%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">1.3.5.</span> <span class="nav-text">1.3.5.页面被卷去的头部兼容性解决方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-%E4%B8%89%E5%A4%A7%E7%B3%BB%E5%88%97%E6%80%BB%E7%BB%93"><span class="nav-number">1.4.</span> <span class="nav-text">1.4. 三大系列总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-5-mouseenter-%E5%92%8Cmouseover%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.5.</span> <span class="nav-text">1.5. mouseenter 和mouseover的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-6-%E5%8A%A8%E7%94%BB"><span class="nav-number">1.6.</span> <span class="nav-text">1.6. 动画</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-1-%E5%8A%A8%E7%94%BB%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">1.6.1.</span> <span class="nav-text">1.6.1. 动画实现原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-2-%E5%8A%A8%E7%94%BB%E5%B0%81%E8%A3%85"><span class="nav-number">1.6.2.</span> <span class="nav-text">1.6.2. 动画封装</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Fang Jun</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fang Jun</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

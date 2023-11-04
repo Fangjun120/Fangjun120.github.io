@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"fangjun120.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="day01 - Web APIs 学习目标： 能够通过ID来获取元素能够通过标签名来获取元素能够通过class来获取元素能够通过选择器来获取元素能够获取body和html元素能够给元素注册事件能够修改元素的内容能够区分innerText和innerHTML的区别能够修改像div这类普通元素的属性能够修改表单元素的属性能够修改元素的样式属性  1.1. Web API介绍1.1.1 API的概念AP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="web API01">
+<meta property="og:url" content="https://fangjun120.github.io/2022/03/01/00-00-00/index.html">
+<meta property="og:site_name" content="eidolon的小窝">
+<meta property="og:description" content="day01 - Web APIs 学习目标： 能够通过ID来获取元素能够通过标签名来获取元素能够通过class来获取元素能够通过选择器来获取元素能够获取body和html元素能够给元素注册事件能够修改元素的内容能够区分innerText和innerHTML的区别能够修改像div这类普通元素的属性能够修改表单元素的属性能够修改元素的样式属性  1.1. Web API介绍1.1.1 API的概念AP">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550719355829.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550731974575.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550732362134.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550733441663.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550733518278.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550733734425.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550733794816.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550734506084.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550735016756.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550735556297.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550736039005.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550736330331.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550736346822.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550736488634.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550736620181.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550736843659.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550736881832.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550736940082.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550736956754.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550737006593.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550737019729.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550737214510.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550737269546.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550737284218.png">
+<meta property="og:image" content="https://fangjun120.github.io/images1/1550737354861.png">
+<meta property="article:published_time" content="2022-02-28T16:00:00.000Z">
+<meta property="article:modified_time" content="2023-04-09T02:21:14.435Z">
+<meta property="article:author" content="Fang Jun">
+<meta property="article:tag" content="JavaScript">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fangjun120.github.io/images1/1550719355829.png">
+
+<link rel="canonical" href="https://fangjun120.github.io/2022/03/01/00-00-00/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>web API01 | eidolon的小窝</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">eidolon的小窝</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">做有趣的人</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2022/03/01/00-00-00/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fang Jun">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="eidolon的小窝">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          web API01
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-03-01 00:00:00" itemprop="dateCreated datePublished" datetime="2022-03-01T00:00:00+08:00">2022-03-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-09 10:21:14" itemprop="dateModified" datetime="2023-04-09T10:21:14+08:00">2023-04-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JavaScript/" itemprop="url" rel="index"><span itemprop="name">JavaScript</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="day01-Web-APIs"><a href="#day01-Web-APIs" class="headerlink" title="day01 - Web APIs"></a>day01 - Web APIs</h1><blockquote>
+<p>学习目标：</p>
+<p>能够通过ID来获取元素<br>能够通过标签名来获取元素<br>能够通过class来获取元素<br>能够通过选择器来获取元素<br>能够获取body和html元素<br>能够给元素注册事件<br>能够修改元素的内容<br>能够区分innerText和innerHTML的区别<br>能够修改像div这类普通元素的属性<br>能够修改表单元素的属性<br>能够修改元素的样式属性</p>
+</blockquote>
+<h2 id="1-1-Web-API介绍"><a href="#1-1-Web-API介绍" class="headerlink" title="1.1. Web API介绍"></a>1.1. Web API介绍</h2><h3 id="1-1-1-API的概念"><a href="#1-1-1-API的概念" class="headerlink" title="1.1.1 API的概念"></a>1.1.1 API的概念</h3><p>API（Application Programming Interface，应用程序编程接口）是一些预先定义的函数，目的是提供应用程序与开发人员基于某软件或硬件得以访问一组例程的能力，而又无需访问源码，无需理解其内部工作机制细节，只需直接调用使用即可。</p>
+<p><img src="/images1/1550719355829.png" alt="1550719355829"></p>
+<blockquote>
+<p>举例解释什么是API。</p>
+<p>例如，</p>
+<p>​	C语言中有一个函数 fopen()可以打开硬盘上的文件，这个函数对于我们来说，就是一个C语言提供的打开文件的工具。</p>
+<p>​	javascript中有一个函数alert()可以在页面弹一个提示框，这个函数就是js提供的一个弹框工具。</p>
+<p>这些工具（函数）由编程语言提供，内部的实现已经封装好了，我们只要学会灵活的使用这些工具即可。</p>
+</blockquote>
+<h3 id="1-1-2-Web-API的概念"><a href="#1-1-2-Web-API的概念" class="headerlink" title="1.1.2 Web  API的概念"></a>1.1.2 Web  API的概念</h3><p>​	Web API 是浏览器提供的一套操作浏览器功能和页面元素的 API ( BOM 和 DOM )。</p>
+<p>​	现阶段我们主要针对于浏览器讲解常用的 API , 主要针对浏览器做交互效果。比如我们想要浏览器弹出一个警示框， 直接使用 alert(‘弹出’)</p>
+<p>​	MDN 详细 API : <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API">https://developer.mozilla.org/zh-CN/docs/Web/API</a></p>
+<p>​	因为 Web API 很多，所以我们将这个阶段称为 Web APIs。</p>
+<p>​	此处的 Web API 特指浏览器提供的一系列API(很多函数或对象方法)，即操作网页的一系列工具。例如：操作html标签、操作页面地址的方法。</p>
+<h3 id="1-1-3-API-和-Web-API-总结"><a href="#1-1-3-API-和-Web-API-总结" class="headerlink" title="1.1.3 API 和 Web  API 总结"></a>1.1.3 API 和 Web  API 总结</h3><ol>
+<li><p>API 是为我们程序员提供的一个接口，帮助我们实现某种功能，我们会使用就可以了，不必纠结内部如何实现</p>
+</li>
+<li><p>Web API 主要是针对于浏览器提供的接口，主要针对于浏览器做交互效果。</p>
+</li>
+<li><p>Web API 一般都有输入和输出（函数的传参和返回值），Web API 很多都是方法（函数）</p>
+</li>
+<li><p>学习 Web API 可以结合前面学习内置对象方法的思路学习</p>
+</li>
+</ol>
+<h2 id="1-2-DOM-介绍"><a href="#1-2-DOM-介绍" class="headerlink" title="1.2. DOM 介绍"></a>1.2. DOM 介绍</h2><h3 id="1-2-1-什么是DOM"><a href="#1-2-1-什么是DOM" class="headerlink" title="1.2.1 什么是DOM"></a>1.2.1 什么是DOM</h3><p>​	文档对象模型（Document Object Model），是 <a target="_blank" rel="noopener" href="https://baike.baidu.com/item/W3C">W3C</a> 组织推荐的处理<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8F%AF%E6%89%A9%E5%B1%95%E7%BD%AE%E6%A0%87%E8%AF%AD%E8%A8%80">可扩展标记语言</a>（html或者xhtml）的标准<a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E7%BC%96%E7%A8%8B%E6%8E%A5%E5%8F%A3">编程接口</a>。</p>
+<p>​	W3C 已经定义了一系列的 DOM 接口，通过这些 DOM 接口可以改变网页的内容、结构和样式。</p>
+<blockquote>
+<p>DOM是W3C组织制定的一套处理 html和xml文档的规范，所有的浏览器都遵循了这套标准。</p>
+</blockquote>
+<h3 id="1-2-2-DOM树"><a href="#1-2-2-DOM树" class="headerlink" title="1.2.2. DOM树"></a>1.2.2. DOM树</h3><p><img src="/images1/1550731974575.png" alt="1550731974575"></p>
+<p>DOM树 又称为文档树模型，把文档映射成树形结构，通过节点对象对其处理，处理的结果可以加入到当前的页面。</p>
+<ul>
+<li>文档：<strong>一个页面就是一个文档，DOM中使用document表示</strong></li>
+<li>节点：<strong>网页中的所有内容，在文档树中都是节点</strong>（标签、属性、文本、注释等），使用node表示</li>
+<li>标签节点：网页中的<strong>所有标签，通常称为元素节点，又简称为“元素”</strong>，使用element表示</li>
+</ul>
+<p><img src="/images1/1550732362134.png" alt="1550732362134"></p>
+<h2 id="1-3-获取元素"><a href="#1-3-获取元素" class="headerlink" title="1.3. 获取元素"></a>1.3. 获取元素</h2><p>为什么要获取页面元素？</p>
+<p>例如：我们想要操作页面上的某部分(显示&#x2F;隐藏，动画)，需要先获取到该部分对应的元素，再对其进行操作。</p>
+<h3 id="1-3-1-根据ID获取"><a href="#1-3-1-根据ID获取" class="headerlink" title="1.3.1. 根据ID获取"></a>1.3.1. 根据ID获取</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">语法：<span class="variable language_">document</span>.<span class="title function_">getElementById</span>(id)</span><br><span class="line">作用：根据<span class="variable constant_">ID</span>获取元素对象</span><br><span class="line">参数：id值，区分大小写的字符串</span><br><span class="line">返回值：元素对象 或 <span class="literal">null</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>案例代码</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;time&quot;</span>&gt;</span>2019-9-9<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 因为我们文档页面从上往下加载，所以先得有标签 所以我们script写到标签的下面</span></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">//返回的是一个元素对象</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> timer = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;time&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">console</span>.<span class="title function_">log</span>(timer);</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="keyword">typeof</span> timer);</span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// console.dir 打印我们返回的元素对象 更好的查看里面的属性和方法</span></span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">console</span>.<span class="title function_">dir</span>(timer);</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-2-根据标签名获取元素"><a href="#1-3-2-根据标签名获取元素" class="headerlink" title="1.3.2. 根据标签名获取元素"></a>1.3.2. 根据标签名获取元素</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">语法：document.getElementsByTagName(&#x27;标签名&#x27;) 或者 element.getElementsByTagName(&#x27;标签名&#x27;) </span><br><span class="line">作用：根据标签名获取元素对象</span><br><span class="line">参数：标签名</span><br><span class="line">返回值：元素对象集合（伪数组，数组元素是元素对象）</span><br></pre></td></tr></table></figure>
+
+<p><strong>案例代码</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span>&gt;</span>知否知否，应是等你好久11<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span>&gt;</span>知否知否，应是等你好久22<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span>&gt;</span>知否知否，应是等你好久33<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">ul</span> <span class="attr">id</span>=<span class="string">&quot;nav&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span>&gt;</span>生僻字<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span>&gt;</span>生僻字<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">li</span>&gt;</span>生僻字<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 1.返回的是 获取过来元素对象的集合 以伪数组的形式存储的</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> lis = <span class="variable language_">document</span>.<span class="title function_">getElementsByTagName</span>(<span class="string">&#x27;li&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">console</span>.<span class="title function_">log</span>(lis);</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">console</span>.<span class="title function_">log</span>(lis[<span class="number">0</span>]);</span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 2. element.getElementsByTagName()  可以得到这个元素里面的某些标签</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> nav = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;nav&#x27;</span>); <span class="comment">// 这个获得nav 元素</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> navLis = nav.<span class="title function_">getElementsByTagName</span>(<span class="string">&#x27;li&#x27;</span>);<span class="comment">//通过这个方法可以只获取下面的五个li</span></span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">console</span>.<span class="title function_">log</span>(navLis);</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="/images1/1550733441663.png" alt="1550733441663"></p>
+<p>注意：getElementsByTagName()<strong>获取到是动态集合</strong>，即：当页面增加了标签，这个集合中也就增加了元素。</p>
+<h3 id="1-3-3-H5新增获取元素方式"><a href="#1-3-3-H5新增获取元素方式" class="headerlink" title="1.3.3. H5新增获取元素方式"></a>1.3.3. H5新增获取元素方式</h3><p><img src="/images1/1550733518278.png" alt="1550733518278"></p>
+<p><img src="/images1/1550733734425.png" alt="1550733734425"></p>
+<p><strong>案例代码</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;box&quot;</span>&gt;</span>盒子1<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;box&quot;</span>&gt;</span>盒子2<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;nav&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">ul</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">li</span>&gt;</span>首页<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">li</span>&gt;</span>产品<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 1. getElementsByClassName 根据类名获得某些元素集合</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> boxs = <span class="variable language_">document</span>.<span class="title function_">getElementsByClassName</span>(<span class="string">&#x27;box&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">console</span>.<span class="title function_">log</span>(boxs);</span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 2. querySelector 返回指定选择器的第一个元素对象</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> firstBox = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;.box&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">console</span>.<span class="title function_">log</span>(firstBox);</span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> nav = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;#nav&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">console</span>.<span class="title function_">log</span>(nav);</span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> li = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;li&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">console</span>.<span class="title function_">log</span>(li);</span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 3. querySelectorAll()返回指定选择器的所有元素对象集合</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> allBox = <span class="variable language_">document</span>.<span class="title function_">querySelectorAll</span>(<span class="string">&#x27;.box&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">console</span>.<span class="title function_">log</span>(allBox);</span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> lis = <span class="variable language_">document</span>.<span class="title function_">querySelectorAll</span>(<span class="string">&#x27;li&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">console</span>.<span class="title function_">log</span>(lis);</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-4-获取特殊元素（body，html）"><a href="#1-3-4-获取特殊元素（body，html）" class="headerlink" title="1.3.4 获取特殊元素（body，html）"></a>1.3.4 获取特殊元素（body，html）</h3><p><img src="/images1/1550733794816.png" alt="1550733794816"></p>
+<h2 id="1-4-事件基础"><a href="#1-4-事件基础" class="headerlink" title="1.4. 事件基础"></a>1.4. 事件基础</h2><h3 id="1-4-1-事件概述"><a href="#1-4-1-事件概述" class="headerlink" title="1.4.1. 事件概述"></a>1.4.1. 事件概述</h3><p>JavaScript 使我们有能力创建动态页面，而事件是可以被 JavaScript 侦测到的行为。</p>
+<p>简单理解： <strong>触发— 响应机制</strong>。</p>
+<p>​	网页中的每个元素都可以产生某些可以触发 JavaScript 的事件，例如，我们可以在用户点击某按钮时产生一个 事件，然后去执行某些操作。</p>
+<h3 id="1-4-2-事件三要素"><a href="#1-4-2-事件三要素" class="headerlink" title="1.4.2. 事件三要素"></a>1.4.2. 事件三要素</h3><ul>
+<li>事件源（谁）：触发事件的元素</li>
+<li>事件类型（什么事件）： 例如 click 点击事件</li>
+<li>事件处理程序（做啥）：事件触发后要执行的代码(函数形式)，事件处理函数</li>
+</ul>
+<p><strong>案例代码</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">&quot;btn&quot;</span>&gt;</span>唐伯虎<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 点击一个按钮，弹出对话框</span></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 1. 事件是有三部分组成  事件源  事件类型  事件处理程序   我们也称为事件三要素</span></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">//(1) 事件源 事件被触发的对象   谁  按钮</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> btn = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;btn&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="comment">//(2) 事件类型  如何触发 什么事件 比如鼠标点击(onclick) 还是鼠标经过 还是键盘按下</span></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">//(3) 事件处理程序  通过一个函数赋值的方式 完成</span></span></span><br><span class="line"><span class="language-javascript">        btn.<span class="property">onclick</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">            <span class="title function_">alert</span>(<span class="string">&#x27;点秋香&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-4-4-常见的鼠标事件"><a href="#1-4-4-常见的鼠标事件" class="headerlink" title="1.4.4. 常见的鼠标事件"></a>1.4.4. 常见的鼠标事件</h3><p><img src="/images1/1550734506084.png" alt="1550734506084"></p>
+<h2 id="1-5-操作元素"><a href="#1-5-操作元素" class="headerlink" title="1.5. 操作元素"></a>1.5. 操作元素</h2><p>​	JavaScript的 DOM 操作可以改变网页内容、结构和样式，我们可以利用 DOM 操作元素来改变元素里面的内容、属性等。（注意：这些操作都是通过元素对象的属性实现的）</p>
+<h3 id="1-5-1-改变元素内容（获取或设置）"><a href="#1-5-1-改变元素内容（获取或设置）" class="headerlink" title="1.5.1. 改变元素内容（获取或设置）"></a>1.5.1. 改变元素内容（获取或设置）</h3><p><img src="/images1/1550735016756.png" alt="1550735016756"></p>
+<p><strong>innerText改变元素内容</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span>&gt;</span>显示当前系统时间<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>某个时间<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span>1123<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 当我们点击了按钮，  div里面的文字会发生变化</span></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 1. 获取元素 </span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> btn = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;button&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> div = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;div&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 2.注册事件</span></span></span><br><span class="line"><span class="language-javascript">        btn.<span class="property">onclick</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">            div.<span class="property">innerText</span> = <span class="string">&#x27;2019-6-6&#x27;</span>;</span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">		<span class="comment">// 也可以不添加事件，这样页面一刷新就会变化</span></span></span><br><span class="line"><span class="language-javascript">		<span class="keyword">var</span> p = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;p&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">		p.<span class="property">innerText</span> = <span class="string">&#x27;12312&#x27;</span>;</span></span><br><span class="line"><span class="language-javascript">       </span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>innerText和innerHTML的区别</strong></p>
+<ul>
+<li>获取内容时的区别：</li>
+</ul>
+<p>​	innerText会去除空格和换行，且去除标签；而innerHTML会保留空格和换行	</p>
+<ul>
+<li>设置内容时的区别：</li>
+</ul>
+<p>​	innerText不会识别html标签，若有标签会变成字符串直接显示，而innerHTML会识别</p>
+<p><strong>案例代码</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">p</span>&gt;</span></span><br><span class="line">        我是文字</span><br><span class="line">        <span class="tag">&lt;<span class="name">span</span>&gt;</span>123<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 1. innerText 不识别html标签 非标准  去除空格和换行</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> div = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;div&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// div.innerText = &#x27;&lt;strong&gt;今天是：&lt;/strong&gt; 2019&#x27;;</span></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 2. innerHTML 识别html标签 W3C标准 保留空格和换行的</span></span></span><br><span class="line"><span class="language-javascript">        div.<span class="property">innerHTML</span> = <span class="string">&#x27;&lt;strong&gt;今天是：&lt;/strong&gt; 2019&#x27;</span>;</span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 这两个属性是可读写的  可以获取元素里面的内容</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> p = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;p&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">console</span>.<span class="title function_">log</span>(p.<span class="property">innerText</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="variable language_">console</span>.<span class="title function_">log</span>(p.<span class="property">innerHTML</span>);</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-5-2-常用元素的属性操作"><a href="#1-5-2-常用元素的属性操作" class="headerlink" title="1.5.2. 常用元素的属性操作"></a>1.5.2. 常用元素的属性操作</h3><p><img src="/images1/1550735556297.png" alt="1550735556297"></p>
+<p><strong>获取属性的值</strong></p>
+<blockquote>
+<p>元素对象.属性名</p>
+</blockquote>
+<p><strong>设置属性的值</strong></p>
+<blockquote>
+<p>元素对象.属性名 &#x3D; 值</p>
+</blockquote>
+<p><strong>案例代码</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">&quot;ldh&quot;</span>&gt;</span>刘德华<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">&quot;zxy&quot;</span>&gt;</span>张学友<span class="tag">&lt;/<span class="name">button</span>&gt;</span> <span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;images1/ldh.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;&quot;</span> <span class="attr">title</span>=<span class="string">&quot;刘德华&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 修改元素属性  src</span></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 1. 获取元素</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> ldh = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;ldh&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> zxy = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;zxy&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> img = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;img&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 2. 注册事件  处理程序</span></span></span><br><span class="line"><span class="language-javascript">        zxy.<span class="property">onclick</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">            img.<span class="property">src</span> = <span class="string">&#x27;images1/zxy.jpg&#x27;</span>;</span></span><br><span class="line"><span class="language-javascript">            img.<span class="property">title</span> = <span class="string">&#x27;张学友&#x27;</span>;</span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">        ldh.<span class="property">onclick</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">            img.<span class="property">src</span> = <span class="string">&#x27;images1/ldh.jpg&#x27;</span>;</span></span><br><span class="line"><span class="language-javascript">            img.<span class="property">title</span> = <span class="string">&#x27;刘德华&#x27;</span>;</span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-5-4-表单元素的属性操作"><a href="#1-5-4-表单元素的属性操作" class="headerlink" title="1.5.4. 表单元素的属性操作"></a>1.5.4. 表单元素的属性操作</h3><p><img src="/images1/1550736039005.png" alt="1550736039005"></p>
+<p><strong>获取属性的值</strong></p>
+<blockquote>
+<p>元素对象.属性名</p>
+</blockquote>
+<p><strong>设置属性的值</strong></p>
+<blockquote>
+<p>元素对象.属性名 &#x3D; 值</p>
+<p>表单元素中有一些属性如：disabled、checked、selected，元素对象的这些属性的值是布尔型。</p>
+</blockquote>
+<p><strong>案例代码</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span>&gt;</span>按钮<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">value</span>=<span class="string">&quot;输入内容&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 1. 获取元素</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> btn = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;button&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> input = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;input&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 2. 注册事件 处理程序</span></span></span><br><span class="line"><span class="language-javascript">        btn.<span class="property">onclick</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">            <span class="comment">// 表单里面的值 文字内容是通过 value 来修改的</span></span></span><br><span class="line"><span class="language-javascript">            input.<span class="property">value</span> = <span class="string">&#x27;被点击了&#x27;</span>;</span></span><br><span class="line"><span class="language-javascript">            <span class="comment">// 如果想要某个表单被禁用 不能再点击 disabled  我们想要这个按钮 button禁用</span></span></span><br><span class="line"><span class="language-javascript">            <span class="comment">// btn.disabled = true;</span></span></span><br><span class="line"><span class="language-javascript">            <span class="variable language_">this</span>.<span class="property">disabled</span> = <span class="literal">true</span>;</span></span><br><span class="line"><span class="language-javascript">            <span class="comment">// this 指向的是事件函数的调用者 btn</span></span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-5-5-案例：仿京东显示密码"><a href="#1-5-5-案例：仿京东显示密码" class="headerlink" title="1.5.5. 案例：仿京东显示密码"></a>1.5.5. 案例：仿京东显示密码</h3><p><img src="/images1/1550736330331.png" alt="1550736330331"></p>
+<p><img src="/images1/1550736346822.png" alt="1550736346822"></p>
+<h3 id="1-5-6-样式属性操作"><a href="#1-5-6-样式属性操作" class="headerlink" title="1.5.6. 样式属性操作"></a>1.5.6. 样式属性操作</h3><p>我们可以通过 JS 修改元素的大小、颜色、位置等样式。</p>
+<p><strong>常用方式</strong></p>
+<p><img src="/images1/1550736488634.png" alt="1550736488634"></p>
+<h4 id="方式1：通过操作style属性"><a href="#方式1：通过操作style属性" class="headerlink" title="方式1：通过操作style属性"></a>方式1：通过操作style属性</h4><blockquote>
+<p>元素对象的style属性也是一个对象！</p>
+<p>元素对象.style.样式属性 &#x3D; 值;</p>
+</blockquote>
+<p><img src="/images1/1550736620181.png" alt="1550736620181"></p>
+<p><strong>案例代码</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 1. 获取元素</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> div = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;div&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 2. 注册事件 处理程序</span></span></span><br><span class="line"><span class="language-javascript">        div.<span class="property">onclick</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">            <span class="comment">// div.style里面的属性 采取驼峰命名法 </span></span></span><br><span class="line"><span class="language-javascript">            <span class="variable language_">this</span>.<span class="property">style</span>.<span class="property">backgroundColor</span> = <span class="string">&#x27;purple&#x27;</span>;</span></span><br><span class="line"><span class="language-javascript">            <span class="variable language_">this</span>.<span class="property">style</span>.<span class="property">width</span> = <span class="string">&#x27;250px&#x27;</span>;</span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="案例：淘宝点击关闭二维码"><a href="#案例：淘宝点击关闭二维码" class="headerlink" title="案例：淘宝点击关闭二维码"></a>案例：淘宝点击关闭二维码</h4><p><img src="/images1/1550736843659.png" alt="1550736843659"></p>
+<p><img src="/images1/1550736881832.png" alt="1550736881832"></p>
+<h4 id="案例：循环精灵图背景"><a href="#案例：循环精灵图背景" class="headerlink" title="案例：循环精灵图背景"></a>案例：循环精灵图背景</h4><p><img src="/images1/1550736940082.png" alt="1550736940082"></p>
+<p><img src="/images1/1550736956754.png" alt="1550736956754"></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 获取元素 所有的小li </span></span><br><span class="line"><span class="keyword">var</span> lis = <span class="variable language_">document</span>.<span class="title function_">querySelectorAll</span>(<span class="string">&#x27;li&#x27;</span>);</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; lis.<span class="property">length</span>; i++) &#123;</span><br><span class="line">    <span class="comment">// 让索引号 乘以 44 就是每个li 的背景y坐标  -index就是我们的y坐标</span></span><br><span class="line">    <span class="keyword">var</span> index = i * <span class="number">44</span>;</span><br><span class="line">    lis[i].<span class="property">style</span>.<span class="property">backgroundPosition</span> = <span class="string">&#x27;0 -&#x27;</span> + index + <span class="string">&#x27;px&#x27;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="案例：显示隐藏文本框内容"><a href="#案例：显示隐藏文本框内容" class="headerlink" title="案例：显示隐藏文本框内容"></a>案例：显示隐藏文本框内容</h4><p><img src="/images1/1550737006593.png" alt="1550737006593"></p>
+<p><img src="/images1/1550737019729.png" alt="1550737019729"></p>
+<h4 id="方式2：通过操作className属性"><a href="#方式2：通过操作className属性" class="headerlink" title="方式2：通过操作className属性"></a>方式2：通过操作className属性</h4><blockquote>
+<p>元素对象.className &#x3D; 值;</p>
+<p>因为class是关键字，所有使用className。</p>
+</blockquote>
+<p><img src="/images1/1550737214510.png" alt="1550737214510"></p>
+<p><strong>案例代码</strong></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">&quot;first&quot;</span>&gt;</span>文本<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="comment">// 1. 使用 element.style 获得修改元素样式  如果样式比较少 或者 功能简单的情况下使用</span></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">var</span> test = <span class="variable language_">document</span>.<span class="title function_">querySelector</span>(<span class="string">&#x27;div&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript">        test.<span class="property">onclick</span> = <span class="keyword">function</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">            <span class="comment">// 2. 我们可以通过 修改元素的className更改元素的样式 适合于样式较多或者功能复杂的情况</span></span></span><br><span class="line"><span class="language-javascript">            <span class="comment">// 需要在css中提前定义该类的样式</span></span></span><br><span class="line"><span class="language-javascript">            <span class="comment">// 3. 该方法会替换类名，如果想要保留原先的类名，我们可以这么做 多类名选择器</span></span></span><br><span class="line"><span class="language-javascript">            <span class="comment">// this.className = &#x27;change&#x27;;</span></span></span><br><span class="line"><span class="language-javascript">            <span class="variable language_">this</span>.<span class="property">className</span> = <span class="string">&#x27;first change&#x27;</span>;</span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">		<span class="comment">// 即把繁复的样式写在css中，通过js定义类名来使之生效</span></span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span> </span><br></pre></td></tr></table></figure>
+
+<h4 id="案例：密码框格式提示错误信息"><a href="#案例：密码框格式提示错误信息" class="headerlink" title="案例：密码框格式提示错误信息"></a>案例：密码框格式提示错误信息</h4><p><img src="/images1/1550737269546.png" alt="1550737269546"></p>
+<p><img src="/images1/1550737284218.png" alt="1550737284218"></p>
+<h2 id="1-6-今日总结"><a href="#1-6-今日总结" class="headerlink" title="1.6. 今日总结"></a>1.6. 今日总结</h2><p><img src="/images1/1550737354861.png" alt="1550737354861"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/02/15/00-00-00/" rel="prev" title="前端路由">
+      <i class="fa fa-chevron-left"></i> 前端路由
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/03/02/00-00-00/" rel="next" title="web API02">
+      web API02 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#day01-Web-APIs"><span class="nav-number">1.</span> <span class="nav-text">day01 - Web APIs</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-Web-API%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">1.1. Web API介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-1-API%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1.1 API的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-2-Web-API%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.1.2 Web  API的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-3-API-%E5%92%8C-Web-API-%E6%80%BB%E7%BB%93"><span class="nav-number">1.1.3.</span> <span class="nav-text">1.1.3 API 和 Web  API 总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-DOM-%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.2.</span> <span class="nav-text">1.2. DOM 介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-1-%E4%BB%80%E4%B9%88%E6%98%AFDOM"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.2.1 什么是DOM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-2-DOM%E6%A0%91"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2.2. DOM树</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-%E8%8E%B7%E5%8F%96%E5%85%83%E7%B4%A0"><span class="nav-number">1.3.</span> <span class="nav-text">1.3. 获取元素</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-1-%E6%A0%B9%E6%8D%AEID%E8%8E%B7%E5%8F%96"><span class="nav-number">1.3.1.</span> <span class="nav-text">1.3.1. 根据ID获取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-2-%E6%A0%B9%E6%8D%AE%E6%A0%87%E7%AD%BE%E5%90%8D%E8%8E%B7%E5%8F%96%E5%85%83%E7%B4%A0"><span class="nav-number">1.3.2.</span> <span class="nav-text">1.3.2. 根据标签名获取元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-3-H5%E6%96%B0%E5%A2%9E%E8%8E%B7%E5%8F%96%E5%85%83%E7%B4%A0%E6%96%B9%E5%BC%8F"><span class="nav-number">1.3.3.</span> <span class="nav-text">1.3.3. H5新增获取元素方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-4-%E8%8E%B7%E5%8F%96%E7%89%B9%E6%AE%8A%E5%85%83%E7%B4%A0%EF%BC%88body%EF%BC%8Chtml%EF%BC%89"><span class="nav-number">1.3.4.</span> <span class="nav-text">1.3.4 获取特殊元素（body，html）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-%E4%BA%8B%E4%BB%B6%E5%9F%BA%E7%A1%80"><span class="nav-number">1.4.</span> <span class="nav-text">1.4. 事件基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-1-%E4%BA%8B%E4%BB%B6%E6%A6%82%E8%BF%B0"><span class="nav-number">1.4.1.</span> <span class="nav-text">1.4.1. 事件概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-2-%E4%BA%8B%E4%BB%B6%E4%B8%89%E8%A6%81%E7%B4%A0"><span class="nav-number">1.4.2.</span> <span class="nav-text">1.4.2. 事件三要素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-4-%E5%B8%B8%E8%A7%81%E7%9A%84%E9%BC%A0%E6%A0%87%E4%BA%8B%E4%BB%B6"><span class="nav-number">1.4.3.</span> <span class="nav-text">1.4.4. 常见的鼠标事件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-5-%E6%93%8D%E4%BD%9C%E5%85%83%E7%B4%A0"><span class="nav-number">1.5.</span> <span class="nav-text">1.5. 操作元素</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-1-%E6%94%B9%E5%8F%98%E5%85%83%E7%B4%A0%E5%86%85%E5%AE%B9%EF%BC%88%E8%8E%B7%E5%8F%96%E6%88%96%E8%AE%BE%E7%BD%AE%EF%BC%89"><span class="nav-number">1.5.1.</span> <span class="nav-text">1.5.1. 改变元素内容（获取或设置）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-2-%E5%B8%B8%E7%94%A8%E5%85%83%E7%B4%A0%E7%9A%84%E5%B1%9E%E6%80%A7%E6%93%8D%E4%BD%9C"><span class="nav-number">1.5.2.</span> <span class="nav-text">1.5.2. 常用元素的属性操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-4-%E8%A1%A8%E5%8D%95%E5%85%83%E7%B4%A0%E7%9A%84%E5%B1%9E%E6%80%A7%E6%93%8D%E4%BD%9C"><span class="nav-number">1.5.3.</span> <span class="nav-text">1.5.4. 表单元素的属性操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-5-%E6%A1%88%E4%BE%8B%EF%BC%9A%E4%BB%BF%E4%BA%AC%E4%B8%9C%E6%98%BE%E7%A4%BA%E5%AF%86%E7%A0%81"><span class="nav-number">1.5.4.</span> <span class="nav-text">1.5.5. 案例：仿京东显示密码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-6-%E6%A0%B7%E5%BC%8F%E5%B1%9E%E6%80%A7%E6%93%8D%E4%BD%9C"><span class="nav-number">1.5.5.</span> <span class="nav-text">1.5.6. 样式属性操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E5%BC%8F1%EF%BC%9A%E9%80%9A%E8%BF%87%E6%93%8D%E4%BD%9Cstyle%E5%B1%9E%E6%80%A7"><span class="nav-number">1.5.5.1.</span> <span class="nav-text">方式1：通过操作style属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%B7%98%E5%AE%9D%E7%82%B9%E5%87%BB%E5%85%B3%E9%97%AD%E4%BA%8C%E7%BB%B4%E7%A0%81"><span class="nav-number">1.5.5.2.</span> <span class="nav-text">案例：淘宝点击关闭二维码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%EF%BC%9A%E5%BE%AA%E7%8E%AF%E7%B2%BE%E7%81%B5%E5%9B%BE%E8%83%8C%E6%99%AF"><span class="nav-number">1.5.5.3.</span> <span class="nav-text">案例：循环精灵图背景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%EF%BC%9A%E6%98%BE%E7%A4%BA%E9%9A%90%E8%97%8F%E6%96%87%E6%9C%AC%E6%A1%86%E5%86%85%E5%AE%B9"><span class="nav-number">1.5.5.4.</span> <span class="nav-text">案例：显示隐藏文本框内容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E5%BC%8F2%EF%BC%9A%E9%80%9A%E8%BF%87%E6%93%8D%E4%BD%9CclassName%E5%B1%9E%E6%80%A7"><span class="nav-number">1.5.5.5.</span> <span class="nav-text">方式2：通过操作className属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B%EF%BC%9A%E5%AF%86%E7%A0%81%E6%A1%86%E6%A0%BC%E5%BC%8F%E6%8F%90%E7%A4%BA%E9%94%99%E8%AF%AF%E4%BF%A1%E6%81%AF"><span class="nav-number">1.5.5.6.</span> <span class="nav-text">案例：密码框格式提示错误信息</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-6-%E4%BB%8A%E6%97%A5%E6%80%BB%E7%BB%93"><span class="nav-number">1.6.</span> <span class="nav-text">1.6. 今日总结</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Fang Jun</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fang Jun</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
