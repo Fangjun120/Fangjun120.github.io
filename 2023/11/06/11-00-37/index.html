@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"fangjun120.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Spring家族Spring发展到今天已经形成了一种开发生态圈，Spring提供了若干个子项目，每个项目用于完成特定的功能。而我们在项目开发时，一般会偏向于选择这一套spring家族的技术，来解决对应领域的问题，那我们称这一套技术为spring全家桶。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java-Maven">
+<meta property="og:url" content="https://fangjun120.github.io/2023/11/06/11-00-37/index.html">
+<meta property="og:site_name" content="eidolon的小窝">
+<meta property="og:description" content="Spring家族Spring发展到今天已经形成了一种开发生态圈，Spring提供了若干个子项目，每个项目用于完成特定的功能。而我们在项目开发时，一般会偏向于选择这一套spring家族的技术，来解决对应领域的问题，那我们称这一套技术为spring全家桶。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fangjun120.github.io/E:/BaiduSyncdisk/%E9%BB%91%E9%A9%AC/pic/http%E8%AF%B7%E6%B1%82%E6%A0%BC%E5%BC%8F.jpg">
+<meta property="og:image" content="https://fangjun120.github.io/E:/BaiduSyncdisk/%E9%BB%91%E9%A9%AC/pic/http%E5%93%8D%E5%BA%94%E6%A0%BC%E5%BC%8F.jpg">
+<meta property="article:published_time" content="2023-11-06T03:00:37.000Z">
+<meta property="article:modified_time" content="2023-11-06T07:30:39.074Z">
+<meta property="article:author" content="Fang Jun">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fangjun120.github.io/E:/BaiduSyncdisk/%E9%BB%91%E9%A9%AC/pic/http%E8%AF%B7%E6%B1%82%E6%A0%BC%E5%BC%8F.jpg">
+
+<link rel="canonical" href="https://fangjun120.github.io/2023/11/06/11-00-37/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java-Maven | eidolon的小窝</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">eidolon的小窝</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">做有趣的人</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2023/11/06/11-00-37/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fang Jun">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="eidolon的小窝">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java-Maven
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-11-06 11:00:37 / 修改时间：15:30:39" itemprop="dateCreated datePublished" datetime="2023-11-06T11:00:37+08:00">2023-11-06</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="Spring家族"><a href="#Spring家族" class="headerlink" title="Spring家族"></a>Spring家族</h2><p>Spring发展到今天已经形成了一种开发生态圈，Spring提供了若干个子项目，每个项目用于完成特定的功能。而我们在项目开发时，一般会偏向于选择这一套spring家族的技术，来解决对应领域的问题，那我们称这一套技术为<strong>spring全家桶</strong>。</p>
+<span id="more"></span>
+
+<p>Spring家族旗下这么多的技术，最基础、最核心的是 <strong>SpringFramework</strong>。其他的spring家族的技术，都是基于SpringFramework的，SpringFramework中提供很多实用功能，如：依赖注入、事务管理、web开发支持、数据访问、消息服务等等。</p>
+<p>在项目中，直接基于SpringFramework进行开发，存在两个问题：配置繁琐、入门难度大。</p>
+<p>基于此，spring官方推荐我们从另外一个项目开始学习，那就是目前最火爆的SpringBoot。 </p>
+<p>通过springboot就可以快速的帮我们构建应用程序，所以springboot呢，最大的特点有两个 </p>
+<ul>
+<li>简化配置</li>
+<li>快速开发</li>
+</ul>
+<p><strong>Spring Boot 可以帮助我们非常快速的构建应用程序、简化开发、提高效率 。</strong></p>
+<h2 id="HTTP协议"><a href="#HTTP协议" class="headerlink" title="HTTP协议"></a>HTTP协议</h2><p>超文本传输协议，规定了浏览器和服务器之间数据传输的规则。</p>
+<ul>
+<li>基于TCP协议：面向连接，安全</li>
+<li>基于请求-响应模型的：一次请求对应一次响应</li>
+<li>HTTP协议是无状态的协议：对于事务处理没有记忆能力。每次请求-响应都是独立的。<ul>
+<li>缺点：多次请求间不能共享数据。</li>
+<li>优点：速度快</li>
+</ul>
+</li>
+</ul>
+<h3 id="请求数据"><a href="#请求数据" class="headerlink" title="请求数据"></a>请求数据</h3><p><img src="/E:/BaiduSyncdisk/%E9%BB%91%E9%A9%AC/pic/http%E8%AF%B7%E6%B1%82%E6%A0%BC%E5%BC%8F.jpg"></p>
+<table>
+<thead>
+<tr>
+<th>Host</th>
+<th>请求的主机名</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>User-Agent</td>
+<td>浏览器版本，例如Chrome浏览器的标识类似Mozilla&#x2F;5.0 … Chrome&#x2F;79，IE浏览器的标识类似Mozilla&#x2F;5.0 (Windows NT …) like Gecko</td>
+</tr>
+<tr>
+<td>Accept</td>
+<td>表示浏览器能接收的资源类型，如text&#x2F;*，image&#x2F;<em>或者</em>&#x2F;*表示所有；</td>
+</tr>
+<tr>
+<td>Accept-Language</td>
+<td>表示浏览器偏好的语言，服务器可以据此返回不同语言的网页；</td>
+</tr>
+<tr>
+<td>Accept-Encoding</td>
+<td>表示浏览器可以支持的压缩类型，例如gzip, deflate等。</td>
+</tr>
+<tr>
+<td>Content-Type</td>
+<td>请求主体的数据类型。</td>
+</tr>
+<tr>
+<td>Content-Length</td>
+<td>请求主体的大小（单位：字节）。</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>区别方式</th>
+<th>GET请求</th>
+<th>POST请求</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>请求参数</td>
+<td>请求参数在请求行中。<br/>例：&#x2F;brand&#x2F;findAll?name&#x3D;OPPO&amp;status&#x3D;1</td>
+<td>请求参数在请求体中</td>
+</tr>
+<tr>
+<td>请求参数长度</td>
+<td>请求参数长度有限制(浏览器不同限制也不同)</td>
+<td>请求参数长度没有限制</td>
+</tr>
+<tr>
+<td>安全性</td>
+<td>安全性低。原因：请求参数暴露在浏览器地址栏中。</td>
+<td>安全性相对高</td>
+</tr>
+</tbody></table>
+<h3 id="响应协议"><a href="#响应协议" class="headerlink" title="响应协议"></a>响应协议</h3><p><img src="/E:/BaiduSyncdisk/%E9%BB%91%E9%A9%AC/pic/http%E5%93%8D%E5%BA%94%E6%A0%BC%E5%BC%8F.jpg"></p>
+<table>
+<thead>
+<tr>
+<th>状态码分类</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1xx</td>
+<td><strong>响应中</strong> — 临时状态码。表示请求已经接受，告诉客户端应该继续请求或者如果已经完成则忽略</td>
+</tr>
+<tr>
+<td>2xx</td>
+<td><strong>成功</strong> — 表示请求已经被成功接收，处理已完成</td>
+</tr>
+<tr>
+<td>3xx</td>
+<td><strong>重定向</strong> — 重定向到其它地方，让客户端再发起一个请求以完成整个处理</td>
+</tr>
+<tr>
+<td>4xx</td>
+<td><strong>客户端错误</strong> — 处理发生错误，责任在客户端，如：客户端的请求一个不存在的资源，客户端未被授权，禁止访问等</td>
+</tr>
+<tr>
+<td>5xx</td>
+<td><strong>服务器端错误</strong> — 处理发生错误，责任在服务端，如：服务端抛出异常，路由出错，HTTP版本不支持等</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>Content-Type</th>
+<th>表示该响应内容的类型，例如text&#x2F;html，application&#x2F;json。</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Content-Length</td>
+<td>表示该响应内容的长度（字节数）。</td>
+</tr>
+<tr>
+<td>Content-Encoding</td>
+<td>表示该响应压缩算法，例如gzip。</td>
+</tr>
+<tr>
+<td>Cache-Control</td>
+<td>指示客户端应如何缓存，例如max-age&#x3D;300表示可以最多缓存300秒。</td>
+</tr>
+<tr>
+<td>Set-Cookie</td>
+<td>告诉浏览器为当前页面所在的域设置cookie。</td>
+</tr>
+</tbody></table>
+<h3 id="协议解析"><a href="#协议解析" class="headerlink" title="协议解析"></a>协议解析</h3><p>在B&#x2F;S架构中，后端程序需要接收浏览器的请求，解析http协议，同时把需要响应的数据封装为http协议返回。http协议的解析和处理又臭又长，已经有很多现成的可以直接使用，即Web服务器，其中比较流行的是Tomcat。</p>
+<h2 id="Web服务器-Tomcat"><a href="#Web服务器-Tomcat" class="headerlink" title="Web服务器-Tomcat"></a>Web服务器-Tomcat</h2><p>Web服务器是一个软件程序，对HTTP协议的操作进行封装，使得程序员不必直接对协议进行操作，让Web开发更加便捷。主要功能是”提供网上信息浏览服务”。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/11/05/11-00-37/" rel="prev" title="java-Maven">
+      <i class="fa fa-chevron-left"></i> java-Maven
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring%E5%AE%B6%E6%97%8F"><span class="nav-number">1.</span> <span class="nav-text">Spring家族</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HTTP%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.</span> <span class="nav-text">HTTP协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E6%95%B0%E6%8D%AE"><span class="nav-number">2.1.</span> <span class="nav-text">请求数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%8D%E5%BA%94%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.2.</span> <span class="nav-text">响应协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E8%A7%A3%E6%9E%90"><span class="nav-number">2.3.</span> <span class="nav-text">协议解析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Web%E6%9C%8D%E5%8A%A1%E5%99%A8-Tomcat"><span class="nav-number">3.</span> <span class="nav-text">Web服务器-Tomcat</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Fang Jun</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">73</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fang Jun</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
