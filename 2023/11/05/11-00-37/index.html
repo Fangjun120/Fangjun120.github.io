@@ -27,15 +27,16 @@
 <meta property="og:site_name" content="eidolon的小窝">
 <meta property="og:description" content="介绍apache旗下的一个开源项目，是一款用于管理和构建java项目的工具。基于项目对象模型(POM)的概念，通过一小段描述信息来管理项目的构建。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="e:/BaiduSyncdisk/%E9%BB%91%E9%A9%AC/pic/%E5%88%9B%E5%BB%BAmaven%E9%A1%B9%E7%9B%AE.jpg">
-<meta property="og:image" content="e:/BaiduSyncdisk/%E9%BB%91%E9%A9%AC/pic/%E5%AF%BC%E5%85%A5maven%E9%A1%B9%E7%9B%AE.jpg">
-<meta property="og:image" content="e:/BaiduSyncdisk/%E9%BB%91%E9%A9%AC/pic/maven%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.jpg">
+<meta property="og:image" content="https://fangjun120.github.io/pic/maven%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84.jpg">
+<meta property="og:image" content="https://fangjun120.github.io/pic/%E5%88%9B%E5%BB%BAmaven%E9%A1%B9%E7%9B%AE.jpg">
+<meta property="og:image" content="https://fangjun120.github.io/pic/%E5%AF%BC%E5%85%A5maven%E9%A1%B9%E7%9B%AE.jpg">
+<meta property="og:image" content="https://fangjun120.github.io/pic/maven%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.jpg">
 <meta property="article:published_time" content="2023-11-05T03:00:37.000Z">
-<meta property="article:modified_time" content="2023-11-06T07:29:16.370Z">
+<meta property="article:modified_time" content="2023-11-06T07:35:20.290Z">
 <meta property="article:author" content="Fang Jun">
 <meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="e:/BaiduSyncdisk/%E9%BB%91%E9%A9%AC/pic/%E5%88%9B%E5%BB%BAmaven%E9%A1%B9%E7%9B%AE.jpg">
+<meta name="twitter:image" content="https://fangjun120.github.io/pic/maven%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84.jpg">
 
 <link rel="canonical" href="https://fangjun120.github.io/2023/11/05/11-00-37/">
 
@@ -224,7 +225,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-11-06 15:29:16" itemprop="dateModified" datetime="2023-11-06T15:29:16+08:00">2023-11-06</time>
+                <time title="修改时间：2023-11-06 15:35:20" itemprop="dateModified" datetime="2023-11-06T15:35:20+08:00">2023-11-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -253,28 +254,46 @@
 <ul>
 <li><p>方便的依赖管理</p>
 <ul>
-<li><p>之前需要手动导入jar包，很麻烦。maven可以方便快捷的管理项目依赖的资源(jar包)，避免版本冲突问题，在配置文件中声明依赖的包，maven会去仓库查找这个jar包并下载，像flutter的配置一样。</p>
-</li>
-<li><pre><code class="xml">&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-boot-dependencies&lt;/artifactId&gt;
-    &lt;version&gt;2.2.13.RELEASE&lt;/version&gt;
-    &lt;type&gt;pom&lt;/type&gt;
-    &lt;scope&gt;import&lt;/scope&gt;
-&lt;/dependency&gt;
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- 统一的项目结构</span><br><span class="line"></span><br><span class="line">  - 在不同的IDE中生成java项目会提供不同的项目结构，使用maven会生成标准统一的项目结构。</span><br><span class="line">  - ![](E:/BaiduSyncdisk/黑马/pic/maven项目结构.jpg)</span><br><span class="line"></span><br><span class="line">- 标准的项目构建流程</span><br><span class="line"></span><br><span class="line">  - 标准跨平台（Linux、Windows、MacOS）的自动化项目构建方式，快捷完成编译测试打包发布等一系列任务</span><br><span class="line"></span><br><span class="line">## 安装</span><br><span class="line"></span><br><span class="line">- 解压安装包 apache-maven-3.6.1-bin.zip 。</span><br><span class="line"></span><br><span class="line">- 配置本地仓库：修改 conf/settings.xml 中的 &lt;localRepository&gt; 为一个指定目录。</span><br><span class="line"></span><br><span class="line">  - &lt;localRepository&gt;E:\develop\apache-maven-3.6.1\mvn_repo&lt;/localRepository&gt;</span><br><span class="line"></span><br><span class="line">- 配置阿里云私服(中央仓库下载慢)：修改 conf/settings.xml 中的 &lt;mirrors&gt;标签，为其添加如下子标签：</span><br><span class="line"></span><br><span class="line">  - ```xml</span><br><span class="line">    &lt;mirror&gt;  </span><br><span class="line">        &lt;id&gt;alimaven&lt;/id&gt;  </span><br><span class="line">        &lt;name&gt;aliyun maven&lt;/name&gt;  </span><br><span class="line">        &lt;url&gt;http://maven.aliyun.com/nexus/content/groups/public/&lt;/url&gt;</span><br><span class="line">        &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;          </span><br><span class="line">    &lt;/mirror&gt;</span><br></pre></td></tr></table></figure>
-</code></pre>
-</li>
+<li>之前需要手动导入jar包，很麻烦。maven可以方便快捷的管理项目依赖的资源(jar包)，避免版本冲突问题，在配置文件中声明依赖的包，maven会去仓库查找这个jar包并下载，像flutter的配置一样。</li>
 </ul>
 </li>
-<li><p>配置环境变量: MAVEN_HOME 为maven的解压目录，并将其bin目录加入PATH环境变量。</p>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-dependencies<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2.13.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">type</span>&gt;</span>pom<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">scope</span>&gt;</span>import<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>统一的项目结构</p>
+<ul>
+<li>在不同的IDE中生成java项目会提供不同的项目结构，使用maven会生成标准统一的项目结构。</li>
+<li><img src="/pic/maven%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84.jpg"></li>
+</ul>
 </li>
+<li><p>标准的项目构建流程</p>
+<ul>
+<li>标准跨平台（Linux、Windows、MacOS）的自动化项目构建方式，快捷完成编译测试打包发布等一系列任务</li>
+</ul>
+</li>
+</ul>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><ul>
+<li><p>解压安装包 apache-maven-3.6.1-bin.zip 。</p>
+</li>
+<li><p>配置本地仓库：修改 conf&#x2F;settings.xml 中的 <localRepository> 为一个指定目录。</p>
+<ul>
+<li><localRepository>E:\develop\apache-maven-3.6.1\mvn_repo</localRepository></li>
+</ul>
+</li>
+<li><p>配置阿里云私服(中央仓库下载慢)：修改 conf&#x2F;settings.xml 中的 <mirrors>标签，为其添加如下子标签：</p>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mirror</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">id</span>&gt;</span>alimaven<span class="tag">&lt;/<span class="name">id</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">name</span>&gt;</span>aliyun maven<span class="tag">&lt;/<span class="name">name</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">url</span>&gt;</span>http://maven.aliyun.com/nexus/content/groups/public/<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mirrorOf</span>&gt;</span>central<span class="tag">&lt;/<span class="name">mirrorOf</span>&gt;</span>          </span><br><span class="line"><span class="tag">&lt;/<span class="name">mirror</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>配置环境变量: MAVEN_HOME 为maven的解压目录，并将其bin目录加入PATH环境变量。</li>
 </ul>
 <h2 id="配置maven环境"><a href="#配置maven环境" class="headerlink" title="配置maven环境"></a>配置maven环境</h2><ul>
 <li>选择 IDEA中 File –&gt; Settings –&gt; Build,Execution,Deployment –&gt; Build Tools –&gt; Maven</li>
 <li>设置 IDEA 使用本地安装的 Maven，并修改配置文件及本地仓库路径</li>
 </ul>
-<h2 id="创建maven项目"><a href="#创建maven项目" class="headerlink" title="创建maven项目"></a>创建maven项目</h2><img src="E:/BaiduSyncdisk/黑马/pic/创建maven项目.jpg" style="zoom:67%;" />
+<h2 id="创建maven项目"><a href="#创建maven项目" class="headerlink" title="创建maven项目"></a>创建maven项目</h2><img src="/pic/创建maven项目.jpg" style="zoom:67%;" />
 
 <h3 id="坐标"><a href="#坐标" class="headerlink" title="坐标"></a>坐标</h3><p>Maven 中的坐标是资源的唯一标识，通过该坐标可以唯一定位资源位置。使用坐标来定义项目或引入项目中需要的依赖。</p>
 <ul>
@@ -283,7 +302,7 @@
 <li>version：定义当前项目版本号</li>
 </ul>
 <h3 id="导入项目"><a href="#导入项目" class="headerlink" title="导入项目."></a>导入项目.</h3><p>右侧的maven选项卡中点击+，选中要导入项目的<code>pom.xml</code>即可。</p>
-<img src="E:/BaiduSyncdisk/黑马/pic/导入maven项目.jpg" style="zoom:50%;" />
+<img src="/pic/导入maven项目.jpg" style="zoom:50%;" />
 
 <h2 id="依赖管理"><a href="#依赖管理" class="headerlink" title="依赖管理"></a>依赖管理</h2><h3 id="依赖配置"><a href="#依赖配置" class="headerlink" title="依赖配置"></a>依赖配置</h3><p><a target="_blank" rel="noopener" href="https://mvnrepository.com/">https://mvnrepository.com/</a></p>
 <ul>
@@ -357,7 +376,7 @@
 <li>site：生成报告、发布站点等。</li>
 </ul>
 <p>每套生命周期包含一些阶段（phase），阶段是有顺序的，后面的阶段依赖于前面的阶段。</p>
-<img src="E:/BaiduSyncdisk/黑马/pic/maven生命周期.jpg" style="zoom: 80%;" />
+<img src="/pic/maven生命周期.jpg" style="zoom: 80%;" />
 
 <p>重点关注其中五个：</p>
 <ul>
@@ -390,8 +409,8 @@
       <i class="fa fa-chevron-left"></i> java高级
     </a></div>
       <div class="post-nav-item">
-    <a href="/2023/11/06/11-00-37/" rel="next" title="java-Maven">
-      java-Maven <i class="fa fa-chevron-right"></i>
+    <a href="/2023/11/06/11-00-37/" rel="next" title="java-Web开发">
+      java-Web开发 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -451,7 +470,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEmaven%E7%8E%AF%E5%A2%83"><span class="nav-number">2.</span> <span class="nav-text">配置maven环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAmaven%E9%A1%B9%E7%9B%AE"><span class="nav-number">3.</span> <span class="nav-text">创建maven项目</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%90%E6%A0%87"><span class="nav-number">3.1.</span> <span class="nav-text">坐标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E9%A1%B9%E7%9B%AE"><span class="nav-number">3.2.</span> <span class="nav-text">导入项目.</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86"><span class="nav-number">4.</span> <span class="nav-text">依赖管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE"><span class="nav-number">4.1.</span> <span class="nav-text">依赖配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E4%BC%A0%E9%80%92"><span class="nav-number">4.2.</span> <span class="nav-text">依赖传递</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%92%E9%99%A4%E4%BE%9D%E8%B5%96"><span class="nav-number">4.2.1.</span> <span class="nav-text">排除依赖</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4"><span class="nav-number">4.3.</span> <span class="nav-text">依赖范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">4.4.</span> <span class="nav-text">生命周期</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEmaven%E7%8E%AF%E5%A2%83"><span class="nav-number">3.</span> <span class="nav-text">配置maven环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAmaven%E9%A1%B9%E7%9B%AE"><span class="nav-number">4.</span> <span class="nav-text">创建maven项目</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%90%E6%A0%87"><span class="nav-number">4.1.</span> <span class="nav-text">坐标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E9%A1%B9%E7%9B%AE"><span class="nav-number">4.2.</span> <span class="nav-text">导入项目.</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E7%AE%A1%E7%90%86"><span class="nav-number">5.</span> <span class="nav-text">依赖管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E9%85%8D%E7%BD%AE"><span class="nav-number">5.1.</span> <span class="nav-text">依赖配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E4%BC%A0%E9%80%92"><span class="nav-number">5.2.</span> <span class="nav-text">依赖传递</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%92%E9%99%A4%E4%BE%9D%E8%B5%96"><span class="nav-number">5.2.1.</span> <span class="nav-text">排除依赖</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4"><span class="nav-number">5.3.</span> <span class="nav-text">依赖范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">5.4.</span> <span class="nav-text">生命周期</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
