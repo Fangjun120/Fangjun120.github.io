@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"fangjun120.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="项目结构Springboot中的请求和响应 用于后端与前端的交互，Mybatis为三层架构中的Dao持久层提供了更方便的管理，在mybatis中一般称为mapper。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java-Web案例">
+<meta property="og:url" content="https://fangjun120.github.io/2023/11/12/11-00-37/index.html">
+<meta property="og:site_name" content="eidolon的小窝">
+<meta property="og:description" content="项目结构Springboot中的请求和响应 用于后端与前端的交互，Mybatis为三层架构中的Dao持久层提供了更方便的管理，在mybatis中一般称为mapper。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fangjun120.github.io/pic/javaWeb%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84.jpg">
+<meta property="og:image" content="https://fangjun120.github.io/pic/web%E5%B7%A5%E7%A8%8B%E7%BB%93%E6%9E%84.jpg">
+<meta property="og:image" content="https://fangjun120.github.io/pic/pagehelper.png">
+<meta property="og:image" content="https://fangjun120.github.io/pic/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%AF%B9%E6%AF%94.png">
+<meta property="article:published_time" content="2023-11-12T03:00:37.000Z">
+<meta property="article:modified_time" content="2023-11-12T08:46:27.310Z">
+<meta property="article:author" content="Fang Jun">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fangjun120.github.io/pic/javaWeb%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84.jpg">
+
+<link rel="canonical" href="https://fangjun120.github.io/2023/11/12/11-00-37/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java-Web案例 | eidolon的小窝</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">eidolon的小窝</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">做有趣的人</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2023/11/12/11-00-37/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fang Jun">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="eidolon的小窝">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java-Web案例
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-11-12 11:00:37 / 修改时间：16:46:27" itemprop="dateCreated datePublished" datetime="2023-11-12T11:00:37+08:00">2023-11-12</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><p>Springboot中的请求和响应 用于后端与前端的交互，Mybatis为三层架构中的Dao持久层提供了更方便的管理，在mybatis中一般称为mapper。</p>
+<span id="more"></span>
+
+<p>目录结构如下：</p>
+<img src="/pic/javaWeb项目结构.jpg" style="zoom: 80%;" />
+
+<img src="/pic/web工程结构.jpg" style="zoom:80%;" />
+
+<h2 id="开发规范"><a href="#开发规范" class="headerlink" title="开发规范"></a>开发规范</h2><h3 id="REST"><a href="#REST" class="headerlink" title="REST"></a>REST</h3><p>于当前最为主流的开发模式是前后端分离模式，开发人员都需要根据提前定义好的接口文档，来进行前后端功能的开发。</p>
+<p>在前后端交互时，基于当前主流的REST风格的API接口进行交互。</p>
+<h4 id="传统URL风格"><a href="#传统URL风格" class="headerlink" title="传统URL风格"></a>传统URL风格</h4><ul>
+<li><p><code>http://localhost:8080/user/getById?id=1</code> GET：查询id为1的用户</p>
+</li>
+<li><p><code>http://localhost:8080/user/saveUser </code>POST：新增用户</p>
+</li>
+<li><p><code>http://localhost:8080/user/updateUser</code> POST：修改用户</p>
+</li>
+<li><p><code>http://localhost:8080/user/deleteUser?id=1</code> GET：删除id为1的用户</p>
+</li>
+</ul>
+<p>传统URL，定义比较复杂，而且将资源的访问行为对外暴露出来了。</p>
+<h4 id="基于REST风格URL"><a href="#基于REST风格URL" class="headerlink" title="基于REST风格URL"></a>基于REST风格URL</h4><ul>
+<li><code>http://localhost:8080/users/1</code> GET：查询id为1的用户</li>
+<li><code>http://localhost:8080/users</code> POST：新增用户</li>
+<li><code>http://localhost:8080/users</code>PUT：修改用户</li>
+<li><code>http://localhost:8080/users/1</code> DELETE：删除id为1的用户</li>
+</ul>
+<p>通过URL定位要操作的资源，通过不同的请求方式来描述具体的操作，比如用get执行查询操作；post执行增加操作；put执行修改操作；delete执行删除操作。</p>
+<p>由于参数写在路径中，因此需要使用路径参数的解析方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping(&quot;/path/&#123;id&#125;/&#123;name&#125;&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">pathParam2</span><span class="params">(<span class="meta">@PathVariable</span> Integer id, <span class="meta">@PathVariable</span> String name)</span>&#123;</span><br><span class="line">    System.out.println(id+ <span class="string">&quot; : &quot;</span> +name);</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;OK&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="特定请求的mapping标签"><a href="#特定请求的mapping标签" class="headerlink" title="特定请求的mapping标签"></a>特定请求的mapping标签</h4><p>使用rest风格的url，在controller层需要<strong>指定请求的方法</strong>，如果使用原本的RequestMapping标签，需要在method中指定，比较臃肿。</p>
+<p>spring提供了相应的衍生注解，使用<code>@xxxMapping</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DeptController</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> DeptService deptService;</span><br><span class="line">    <span class="comment">//@RequestMapping(value = &quot;/depts&quot; , method = RequestMethod.GET)</span></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/depts&quot;)</span></span><br><span class="line">    <span class="comment">//PostMapping,PutMapping,DeleteMapping</span></span><br><span class="line">    <span class="keyword">public</span> Result <span class="title function_">list</span><span class="params">()</span>&#123;</span><br><span class="line">        log.info(<span class="string">&quot;查询所有部门数据&quot;</span>);</span><br><span class="line">        List&lt;Dept&gt; deptList = deptService.list();</span><br><span class="line">        <span class="keyword">return</span> Result.success(deptList);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="统一响应结果"><a href="#统一响应结果" class="headerlink" title="统一响应结果"></a>统一响应结果</h3><p>前后端工程在进行交互时，使用统一响应结果 Result。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@NoArgsConstructor</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Result</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Integer code;<span class="comment">//响应码，1 代表成功; 0 代表失败</span></span><br><span class="line">    <span class="keyword">private</span> String msg; <span class="comment">//响应信息 描述字符串</span></span><br><span class="line">    <span class="keyword">private</span> Object data; <span class="comment">//返回的数据</span></span><br><span class="line">    <span class="comment">//增删改 成功响应</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Result <span class="title function_">success</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="number">1</span>,<span class="string">&quot;success&quot;</span>,<span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//查询 成功响应</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Result <span class="title function_">success</span><span class="params">(Object data)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="number">1</span>,<span class="string">&quot;success&quot;</span>,data);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//失败响应</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Result <span class="title function_">error</span><span class="params">(String msg)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">Result</span>(<span class="number">0</span>,msg,<span class="literal">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="分页查询"><a href="#分页查询" class="headerlink" title="分页查询"></a>分页查询</h2><h3 id="分析与实现"><a href="#分析与实现" class="headerlink" title="分析与实现"></a>分析与实现</h3><p>当查询数据较多时，需要分页展示。在MySQL数据库中，使用<code>LIMIT</code>关键字来进行分页查询。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 参数1：起始索引</span></span><br><span class="line"><span class="comment">-- 参数2：查询返回的记录数量</span></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> emp limit <span class="number">0</span>,<span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+
+<p>前端给后端传递的参数是当前页码和每页记录数量，后端给前端返回数据列表和总记录数，可以把数据列表和总记录数定义为<strong>实体类返回</strong>。</p>
+<p><strong>EmpController</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/emps&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">EmpController</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> EmpService empService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//条件分页查询</span></span><br><span class="line">    <span class="meta">@GetMapping</span></span><br><span class="line">    <span class="keyword">public</span> Result <span class="title function_">page</span><span class="params">(<span class="meta">@RequestParam(defaultValue = &quot;1&quot;)</span> Integer page,</span></span><br><span class="line"><span class="params">                       <span class="meta">@RequestParam(defaultValue = &quot;10&quot;)</span> Integer pageSize)</span> &#123;</span><br><span class="line">        <span class="comment">//记录日志</span></span><br><span class="line">        log.info(<span class="string">&quot;分页查询，参数：&#123;&#125;,&#123;&#125;&quot;</span>, page, pageSize);</span><br><span class="line">        <span class="comment">//调用业务层分页查询功能</span></span><br><span class="line">        <span class="type">PageBean</span> <span class="variable">pageBean</span> <span class="operator">=</span> empService.page(page, pageSize);</span><br><span class="line">        <span class="comment">//响应</span></span><br><span class="line">        <span class="keyword">return</span> Result.success(pageBean);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>@RequestParam(defaultValue&#x3D;”默认值”)   &#x2F;&#x2F;设置请求参数默认值</p>
+</blockquote>
+<p><strong>EmpService</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">EmpService</span> &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 条件分页查询</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> page 页码</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> pageSize 每页展示记录数</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    PageBean <span class="title function_">page</span><span class="params">(Integer page, Integer pageSize)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>EmpServiceImpl</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">EmpServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">EmpService</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> EmpMapper empMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> PageBean <span class="title function_">page</span><span class="params">(Integer page, Integer pageSize)</span> &#123;</span><br><span class="line">        <span class="comment">//1、获取总记录数</span></span><br><span class="line">        <span class="type">Long</span> <span class="variable">count</span> <span class="operator">=</span> empMapper.count();</span><br><span class="line"></span><br><span class="line">        <span class="comment">//2、获取分页查询结果列表</span></span><br><span class="line">        <span class="type">Integer</span> <span class="variable">start</span> <span class="operator">=</span> (page - <span class="number">1</span>) * pageSize; <span class="comment">//计算起始索引 , 公式: (页码-1)*页大小</span></span><br><span class="line">        List&lt;Emp&gt; empList = empMapper.list(start, pageSize);</span><br><span class="line">        <span class="comment">//3、封装PageBean对象</span></span><br><span class="line">        <span class="type">PageBean</span> <span class="variable">pageBean</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PageBean</span>(count , empList);</span><br><span class="line">        <span class="keyword">return</span> pageBean;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>EmpMapper</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Mapper</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">EmpMapper</span> &#123;</span><br><span class="line">    <span class="comment">//获取总记录数</span></span><br><span class="line">    <span class="meta">@Select(&quot;select count(*) from emp&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Long <span class="title function_">count</span><span class="params">()</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//获取当前页的结果列表</span></span><br><span class="line">    <span class="meta">@Select(&quot;select * from emp limit #&#123;start&#125;, #&#123;pageSize&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> List&lt;Emp&gt; <span class="title function_">list</span><span class="params">(Integer start, Integer pageSize)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="PageHelper插件"><a href="#PageHelper插件" class="headerlink" title="PageHelper插件"></a>PageHelper插件</h3><p>PageHelper是Mybatis的一款功能强大、方便易用的分页插件，支持任何形式的单标、多表的分页查询。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.github.pagehelper<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>pagehelper-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.4.2<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/pic/pagehelper.png"></p>
+<h2 id="上传文件"><a href="#上传文件" class="headerlink" title="上传文件"></a>上传文件</h2><p>文件上传，是指将本地图片、视频、音频等文件上传到服务器，供其他用户浏览或下载的过程。<br>文件上传在项目中应用非常广泛，我们经常发微博、发微信朋友圈都用到了文件上传功能。</p>
+<p>后端接收到前端的请求后，会将图片保存为临时文件，当请求结束后，临时文件会被删除。因此需要将临时文件存储起来。</p>
+<h3 id="本地存储"><a href="#本地存储" class="headerlink" title="本地存储"></a>本地存储</h3><p>在服务端，接收到上传上来的文件之后，将文件存储在本地服务器磁盘中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UploadController</span> &#123;</span><br><span class="line">    <span class="meta">@PostMapping(&quot;/upload&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Result <span class="title function_">upload</span><span class="params">(String username, Integer age, MultipartFile image)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        log.info(<span class="string">&quot;文件上传：&#123;&#125;,&#123;&#125;,&#123;&#125;&quot;</span>,username,age,image);</span><br><span class="line">        <span class="comment">//获取原始文件名</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">originalFilename</span> <span class="operator">=</span> image.getOriginalFilename();</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//构建新的文件名，当不同用户上传了两个相同名字的文件，会产生覆盖</span></span><br><span class="line">        <span class="comment">//用uuid(通用唯一识别码)获取随机文件名，保证每次上传文件时文件名都唯一的</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">extname</span> <span class="operator">=</span> originalFilename.substring(originalFilename.lastIndexOf(<span class="string">&quot;.&quot;</span>));<span class="comment">//文件扩展名</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">newFileName</span> <span class="operator">=</span> UUID.randomUUID().toString()+extname;<span class="comment">//随机名+文件扩展名</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">//将文件存储在服务器的磁盘目录</span></span><br><span class="line">        image.transferTo(<span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;E:/images/&quot;</span>+originalFilename));</span><br><span class="line">        <span class="keyword">return</span> Result.success();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在SpringBoot中，文件上传时默认单个文件最大大小为1M</p>
+<p>那么如果需要上传大文件，可以在application.properties进行如下配置：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#配置单个文件最大上传大小</span></span><br><span class="line"><span class="attr">spring.servlet.multipart.max-file-size</span>=<span class="string">10MB</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">#配置单个请求最大上传大小(一次请求可以上传多个文件)</span></span><br><span class="line"><span class="attr">spring.servlet.multipart.max-request-size</span>=<span class="string">100MB</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="云存储"><a href="#云存储" class="headerlink" title="云存储"></a>云存储</h3><p>阿里云对象存储OSS（Object Storage Service），是一款海量、安全、低成本、高可靠的云存储服务。使用OSS，可以通过网络随时存储和调用包括文本、图片、音频和视频等在内的各种文件，和七牛云一样。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AliOSSUtils</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">String</span> <span class="variable">endpoint</span> <span class="operator">=</span> <span class="string">&quot;https://oss-cn-shanghai.aliyuncs.com&quot;</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">String</span> <span class="variable">accessKeyId</span> <span class="operator">=</span> <span class="string">&quot;LTAI5t9MZK8iq5T2Av5GLDxX&quot;</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">String</span> <span class="variable">accessKeySecret</span> <span class="operator">=</span> <span class="string">&quot;C0IrHzKZGKqU8S7YQcevcotD3Zd5Tc&quot;</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">String</span> <span class="variable">bucketName</span> <span class="operator">=</span> <span class="string">&quot;web-framework01&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">upload</span><span class="params">(MultipartFile multipartFile)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="comment">// 获取上传的文件的输入流</span></span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> multipartFile.getInputStream();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 避免文件覆盖</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">originalFilename</span> <span class="operator">=</span> multipartFile.getOriginalFilename();</span><br><span class="line">        <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> UUID.randomUUID().toString() + originalFilename.substring(originalFilename.lastIndexOf(<span class="string">&quot;.&quot;</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//上传文件到 OSS</span></span><br><span class="line">        <span class="type">OSS</span> <span class="variable">ossClient</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OSSClientBuilder</span>().build(endpoint, accessKeyId, accessKeySecret);</span><br><span class="line">        ossClient.putObject(bucketName, fileName, inputStream);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//文件访问路径</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> endpoint.split(<span class="string">&quot;//&quot;</span>)[<span class="number">0</span>] + <span class="string">&quot;//&quot;</span> + bucketName + <span class="string">&quot;.&quot;</span> + endpoint.split(<span class="string">&quot;//&quot;</span>)[<span class="number">1</span>] + <span class="string">&quot;/&quot;</span> + fileName;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 关闭ossClient</span></span><br><span class="line">        ossClient.shutdown();</span><br><span class="line">        <span class="keyword">return</span> url;<span class="comment">// 把上传到oss的路径返回</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h2><h3 id="参数配置化"><a href="#参数配置化" class="headerlink" title="参数配置化"></a>参数配置化</h3><p>第三方服务，如阿里云oss，需要很多参数配置，之前是写在代码片段中，不便于维护和管理。可以将这些参数交给配置文件来管理。</p>
+<p>application.properties是springboot项目默认的配置文件，所以springboot程序在启动时会默认读取application.properties配置文件，而我们可以使用一个现成的注解：@Value，获取配置文件中的数据。</p>
+<p>@Value 注解通常用于外部配置的属性注入，具体用法为： @Value(“${配置文件中的key}”)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AliOSSUtils</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;aliyun.oss.endpoint&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String endpoint;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;aliyun.oss.accessKeyId&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String accessKeyId;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;aliyun.oss.accessKeySecret&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String accessKeySecret;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;aliyun.oss.bucketName&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String bucketName;</span><br><span class="line"> 	</span><br><span class="line"> 	<span class="comment">//省略其他代码...</span></span><br><span class="line"> &#125;   </span><br></pre></td></tr></table></figure>
+
+<p>以上的方法，在每一个成员上都要加一行注解，略显臃肿。当<strong>配置项的名字和变量名一样</strong>时，可以使用<code>@ConfigurationProperties</code>批量的<strong>将外部的属性配置注入到bean对象的属性</strong>中。</p>
+<h4 id="ConfigurationProperties"><a href="#ConfigurationProperties" class="headerlink" title="@ConfigurationProperties"></a>@ConfigurationProperties</h4><p>需要引入依赖，否则会有警告</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-configuration-processor<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>先创建bean对象</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*阿里云OSS相关配置*/</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;aliyun.oss&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AliOSSProperties</span> &#123;</span><br><span class="line">    <span class="comment">//区域</span></span><br><span class="line">    <span class="keyword">private</span> String endpoint;</span><br><span class="line">    <span class="comment">//身份ID</span></span><br><span class="line">    <span class="keyword">private</span> String accessKeyId ;</span><br><span class="line">    <span class="comment">//身份密钥</span></span><br><span class="line">    <span class="keyword">private</span> String accessKeySecret ;</span><br><span class="line">    <span class="comment">//存储空间</span></span><br><span class="line">    <span class="keyword">private</span> String bucketName;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>AliOSSUtils工具类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span> <span class="comment">//当前类对象由Spring创建和管理</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AliOSSUtils</span> &#123;</span><br><span class="line">    <span class="comment">//注入配置参数实体类对象</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> AliOSSProperties aliOSSProperties;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">upload</span><span class="params">(MultipartFile multipartFile)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="comment">// 获取上传的文件的输入流</span></span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> multipartFile.getInputStream();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 避免文件覆盖</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">originalFilename</span> <span class="operator">=</span> multipartFile.getOriginalFilename();</span><br><span class="line">        <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> UUID.randomUUID().toString() + originalFilename.substring(originalFilename.lastIndexOf(<span class="string">&quot;.&quot;</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//上传文件到 OSS</span></span><br><span class="line">        <span class="type">OSS</span> <span class="variable">ossClient</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OSSClientBuilder</span>().build(aliOSSProperties.getEndpoint(),</span><br><span class="line">                aliOSSProperties.getAccessKeyId(), aliOSSProperties.getAccessKeySecret());</span><br><span class="line">        ossClient.putObject(aliOSSProperties.getBucketName(), fileName, inputStream);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//文件访问路径</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span>aliOSSProperties.getEndpoint().split(<span class="string">&quot;//&quot;</span>)[<span class="number">0</span>] + <span class="string">&quot;//&quot;</span> + aliOSSProperties.getBucketName() + <span class="string">&quot;.&quot;</span> + aliOSSProperties.getEndpoint().split(<span class="string">&quot;//&quot;</span>)[<span class="number">1</span>] + <span class="string">&quot;/&quot;</span> + fileName;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 关闭ossClient</span></span><br><span class="line">        ossClient.shutdown();</span><br><span class="line">        <span class="keyword">return</span> url;<span class="comment">// 把上传到oss的路径返回</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="yml配置文件"><a href="#yml配置文件" class="headerlink" title="yml配置文件"></a>yml配置文件</h3><p>前面我们一直使用springboot项目创建完毕后自带的application.properties进行属性的配置，在springboot项目中支持多种配置方式，比如yml格式的配置文件。</p>
+<img src="/pic/配置文件对比.png" style="zoom:67%;" />
+
+<h4 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h4><ul>
+<li>容易阅读</li>
+<li>容易与脚本语言交互</li>
+<li>以数据为核心，重数据轻格式</li>
+</ul>
+<h4 id="基本语法"><a href="#基本语法" class="headerlink" title="基本语法"></a>基本语法</h4><ul>
+<li>大小写敏感</li>
+<li>数值前边必须有空格，作为分隔符</li>
+<li>使用缩进表示层级关系，缩进时，不允许使用Tab键，只能用空格（idea中会自动将Tab转换为空格）</li>
+<li>缩进的空格数目不重要，只要相同层级的元素左侧对齐即可</li>
+<li><code>#</code>表示注释，从这个字符一直到行尾，都会被解析器忽略</li>
+</ul>
+<h4 id="数据格式"><a href="#数据格式" class="headerlink" title="数据格式"></a>数据格式</h4><p>常见的有两类：</p>
+<ul>
+<li>对象&#x2F;Map集合</li>
+</ul>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">user:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">zhangsan</span></span><br><span class="line">  <span class="attr">age:</span> <span class="number">18</span></span><br><span class="line">  <span class="attr">password:</span> <span class="number">123456</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>数组&#x2F;List&#x2F;Set集合</li>
+</ul>
+<figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">hobby:</span> </span><br><span class="line">  <span class="bullet">-</span> <span class="string">java</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">game</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">sport</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><p>直接将<code>application.properties</code>替换成<code>application.yml</code>后，程序也能正常运行</p>
+<h2 id="登录校验"><a href="#登录校验" class="headerlink" title="登录校验"></a>登录校验</h2><p>登录校验，指的是我们在服务器端接收到浏览器发送过来的请求之后，首先我们要对请求进行校验。</p>
+<p>先要校验一下用户登录了没有，如果用户已经登录了，就直接执行对应的业务操作就可以了；如果用户没有登录，此时就不允许他执行相关的业务操作，直接给前端响应一个错误的结果，最终跳转到登录页面，要求他登录成功之后，再来访问对应的数据。</p>
+<p>但是HTTP协议是无状态协议。是每一次请求都是独立的，下一次请求并不会携带上一次请求的数据，所以是无法判断这个员工到底登陆了没有。</p>
+<p>实现思路可以分为两部分：</p>
+<ol>
+<li><p>在员工登录成功后，需要将用户登录成功的信息存起来，记录用户已经登录成功的标记。</p>
+</li>
+<li><p>在浏览器发起请求时，需要在服务端进行统一拦截，拦截后进行登录校验。</p>
+</li>
+</ol>
+<p>这涉及到web开发中的两个技术：</p>
+<ul>
+<li>会话技术</li>
+<li>统一拦截技术</li>
+</ul>
+<h3 id="会话技术"><a href="#会话技术" class="headerlink" title="会话技术"></a>会话技术</h3><p>在web开发当中，浏览器与服务器之间的一次连接，就称为一次会话。</p>
+<h3 id="JWT令牌"><a href="#JWT令牌" class="headerlink" title="JWT令牌"></a>JWT令牌</h3><h3 id="过滤器Filter"><a href="#过滤器Filter" class="headerlink" title="过滤器Filter"></a>过滤器Filter</h3><h3 id="拦截器Interceptor"><a href="#拦截器Interceptor" class="headerlink" title="拦截器Interceptor"></a>拦截器Interceptor</h3>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/11/09/11-00-37/" rel="prev" title="java-Mybatis">
+      <i class="fa fa-chevron-left"></i> java-Mybatis
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">项目结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E8%A7%84%E8%8C%83"><span class="nav-number">2.</span> <span class="nav-text">开发规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#REST"><span class="nav-number">2.1.</span> <span class="nav-text">REST</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9FURL%E9%A3%8E%E6%A0%BC"><span class="nav-number">2.1.1.</span> <span class="nav-text">传统URL风格</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8EREST%E9%A3%8E%E6%A0%BCURL"><span class="nav-number">2.1.2.</span> <span class="nav-text">基于REST风格URL</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%B9%E5%AE%9A%E8%AF%B7%E6%B1%82%E7%9A%84mapping%E6%A0%87%E7%AD%BE"><span class="nav-number">2.1.3.</span> <span class="nav-text">特定请求的mapping标签</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%9F%E4%B8%80%E5%93%8D%E5%BA%94%E7%BB%93%E6%9E%9C"><span class="nav-number">2.2.</span> <span class="nav-text">统一响应结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E9%A1%B5%E6%9F%A5%E8%AF%A2"><span class="nav-number">3.</span> <span class="nav-text">分页查询</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E4%B8%8E%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.1.</span> <span class="nav-text">分析与实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PageHelper%E6%8F%92%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">PageHelper插件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6"><span class="nav-number">4.</span> <span class="nav-text">上传文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E5%AD%98%E5%82%A8"><span class="nav-number">4.1.</span> <span class="nav-text">本地存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%91%E5%AD%98%E5%82%A8"><span class="nav-number">4.2.</span> <span class="nav-text">云存储</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">5.</span> <span class="nav-text">配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE%E5%8C%96"><span class="nav-number">5.1.</span> <span class="nav-text">参数配置化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ConfigurationProperties"><span class="nav-number">5.1.1.</span> <span class="nav-text">@ConfigurationProperties</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#yml%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">5.2.</span> <span class="nav-text">yml配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%B9%E7%82%B9"><span class="nav-number">5.2.1.</span> <span class="nav-text">特点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="nav-number">5.2.2.</span> <span class="nav-text">基本语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F"><span class="nav-number">5.2.3.</span> <span class="nav-text">数据格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">5.2.4.</span> <span class="nav-text">使用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%99%BB%E5%BD%95%E6%A0%A1%E9%AA%8C"><span class="nav-number">6.</span> <span class="nav-text">登录校验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%9A%E8%AF%9D%E6%8A%80%E6%9C%AF"><span class="nav-number">6.1.</span> <span class="nav-text">会话技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JWT%E4%BB%A4%E7%89%8C"><span class="nav-number">6.2.</span> <span class="nav-text">JWT令牌</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E5%99%A8Filter"><span class="nav-number">6.3.</span> <span class="nav-text">过滤器Filter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%A6%E6%88%AA%E5%99%A8Interceptor"><span class="nav-number">6.4.</span> <span class="nav-text">拦截器Interceptor</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Fang Jun</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">76</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fang Jun</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
