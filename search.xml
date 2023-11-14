@@ -8839,13 +8839,13 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 </li>
 </ul>
 <h3 id="预编译SQL"><a href="#预编译SQL" class="headerlink" title="预编译SQL"></a>预编译SQL</h3><p>打开日志，上面的程序执行时会输出执行了哪条sql语句，结果如下：</p>
-<p><img src="D:/blog/source/pic/sql语句执行.jpg"></p>
+<p><img src="/pic/sql%E8%AF%AD%E5%8F%A5%E6%89%A7%E8%A1%8C.jpg"></p>
 <p>其中，？是<strong>参数占位符</strong>，最终执行时会用实际参数替换掉参数占位符执行，<strong>生成的是预编译的SQL语句</strong>。这样设计的意义在于：</p>
 <ul>
 <li>性能好<ul>
 <li>数据库在收到sql语句后并不是立刻执行，要先经过<strong>语法解析检查-&gt;优化-&gt;编译步骤</strong>，然后才执行，数据库会把这三个步骤缓存起来，碰到相同的语句就直接从缓存中查找，可以直接执行。</li>
 <li>因此，如果直接把参数填进去，每当id不同会被认为是不同的语句，从而多次执行前面的步骤。利用预编译，不管id为多少，只需要编译一次就可以直接执行。</li>
-<li><img src="D:/blog/source/pic/SQL预编译.jpg" style="zoom:67%;" /></li>
+<li><img src="/pic/SQL预编译.jpg" style="zoom:67%;" /></li>
 </ul>
 </li>
 <li>更安全(防止SQL注入)<ul>
@@ -9446,7 +9446,7 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*阿里云OSS相关配置*/</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@ConfigurationProperties(prefix = &quot;aliyun.oss&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AliOSSProperties</span> &#123;</span><br><span class="line">    <span class="comment">//区域</span></span><br><span class="line">    <span class="keyword">private</span> String endpoint;</span><br><span class="line">    <span class="comment">//身份ID</span></span><br><span class="line">    <span class="keyword">private</span> String accessKeyId ;</span><br><span class="line">    <span class="comment">//身份密钥</span></span><br><span class="line">    <span class="keyword">private</span> String accessKeySecret ;</span><br><span class="line">    <span class="comment">//存储空间</span></span><br><span class="line">    <span class="keyword">private</span> String bucketName;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>AliOSSUtils工具类：</p>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span> <span class="comment">//当前类对象由Spring创建和管理</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AliOSSUtils</span> &#123;</span><br><span class="line">    <span class="comment">//注入配置参数实体类对象</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> AliOSSProperties aliOSSProperties;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">upload</span><span class="params">(MultipartFile multipartFile)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="comment">// 获取上传的文件的输入流</span></span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> multipartFile.getInputStream();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 避免文件覆盖</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">originalFilename</span> <span class="operator">=</span> multipartFile.getOriginalFilename();</span><br><span class="line">        <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> UUID.randomUUID().toString() + originalFilename.substring(originalFilename.lastIndexOf(<span class="string">&quot;.&quot;</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//上传文件到 OSS</span></span><br><span class="line">        <span class="type">OSS</span> <span class="variable">ossClient</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OSSClientBuilder</span>().build(aliOSSProperties.getEndpoint(),</span><br><span class="line">                aliOSSProperties.getAccessKeyId(), aliOSSProperties.getAccessKeySecret());</span><br><span class="line">        ossClient.putObject(aliOSSProperties.getBucketName(), fileName, inputStream);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//文件访问路径</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span>aliOSSProperties.getEndpoint().split(<span class="string">&quot;//&quot;</span>)[<span class="number">0</span>] + <span class="string">&quot;//&quot;</span> + aliOSSProperties.getBucketName() + <span class="string">&quot;.&quot;</span> + aliOSSProperties.getEndpoint().split(<span class="string">&quot;//&quot;</span>)[<span class="number">1</span>] + <span class="string">&quot;/&quot;</span> + fileName;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 关闭ossClient</span></span><br><span class="line">        ossClient.shutdown();</span><br><span class="line">        <span class="keyword">return</span> url;<span class="comment">// 把上传到oss的路径返回</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span> <span class="comment">//当前类对象由Spring创建和管理</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AliOSSUtils</span> &#123;</span><br><span class="line">    <span class="comment">//注入配置参数实体类对象</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> AliOSSProperties aliOSSProperties;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">upload</span><span class="params">(MultipartFile multipartFile)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="comment">// 获取上传的文件的输入流</span></span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> multipartFile.getInputStream();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 避免文件覆盖</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">originalFilename</span> <span class="operator">=</span> multipartFile.getOriginalFilename();</span><br><span class="line">        <span class="type">String</span> <span class="variable">fileName</span> <span class="operator">=</span> UUID.randomUUID().toString() + originalFilename.substring(originalFilename.lastIndexOf(<span class="string">&quot;.&quot;</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">//上传文件到 OSS</span></span><br><span class="line">        <span class="type">OSS</span> <span class="variable">ossClient</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OSSClientBuilder</span>().build(aliOSSProperties.getEndpoint(),</span><br><span class="line">                aliOSSProperties.getAccessKeyId(), aliOSSProperties.getAccessKeySecret());</span><br><span class="line">        ossClient.putObject(aliOSSProperties.getBucketName(), fileName, inputStream);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//文件访问路径</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span>aliOSSProperties.getEndpoint().split(<span class="string">&quot;//&quot;</span>)[<span class="number">0</span>] + <span class="string">&quot;//&quot;</span> + aliOSSProperties.getBucketName() + <span class="string">&quot;.&quot;</span> + aliOSSProperties.getEndpoint().split(<span class="string">&quot;//&quot;</span>)[<span class="number">1</span>] + <span class="string">&quot;/&quot;</span> + fileName;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 关闭ossClient</span></span><br><span class="line">        ossClient.shutdown();</span><br><span class="line">        <span class="keyword">return</span> url;<span class="comment">// 把上传到oss的路径返回</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
@@ -9644,7 +9644,101 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <p><strong>注册配置拦截器</strong></p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Configuration</span>  </span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">WebConfig</span> <span class="keyword">implements</span> <span class="title class_">WebMvcConfigurer</span> &#123;</span><br><span class="line">    <span class="comment">//拦截器对象</span></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> LoginCheckInterceptor loginCheckInterceptor;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addInterceptors</span><span class="params">(InterceptorRegistry registry)</span> &#123;</span><br><span class="line">       <span class="comment">//注册自定义拦截器对象</span></span><br><span class="line">        registry.addInterceptor(loginCheckInterceptor)</span><br><span class="line">                .addPathPatterns(<span class="string">&quot;/**&quot;</span>)</span><br><span class="line">                .excludePathPatterns(<span class="string">&quot;/login&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2>]]></content>
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p>当前案例中没有任何的异常处理，三层架构默认的处理异常的方案：</p>
+<ul>
+<li>Mapper接口在操作数据库的时候出错了，此时异常会往上抛(谁调用Mapper就抛给谁)，会抛给service。 </li>
+<li>service 中也存在异常了，会抛给controller。</li>
+<li>controller把异常会再往上抛。最终抛给框架之后，框架就会返回一个JSON格式的数据，里面封装的就是错误的信息，但是框架返回的JSON格式的数据并不符合我们的开发规范。</li>
+</ul>
+<p>添加异常处理有<strong>两种方案</strong></p>
+<ul>
+<li>方案一：在所有Controller的所有方法中进行try…catch处理<ul>
+<li>缺点：代码臃肿（不推荐）</li>
+</ul>
+</li>
+<li>方案二：全局异常处理器<ul>
+<li>好处：简单、优雅（推荐）</li>
+</ul>
+</li>
+</ul>
+<h3 id="全局异常处理器"><a href="#全局异常处理器" class="headerlink" title="全局异常处理器"></a>全局异常处理器</h3><p>定义一个类，在类上加上一个注解@RestControllerAdvice，代表这是一个全局异常处理器。</p>
+<p>在全局异常处理器当中，需要定义一个方法来捕获异常，在这个方法上需要加上注解@ExceptionHandler。通过@ExceptionHandler注解当中的value属性来指定我们要捕获的是哪一类型的异常。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@RestControllerAdvice</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GlobalExceptionHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//处理异常</span></span><br><span class="line">    <span class="meta">@ExceptionHandler(Exception.class)</span> <span class="comment">//指定能够处理的异常类型</span></span><br><span class="line">    <span class="keyword">public</span> Result <span class="title function_">ex</span><span class="params">(Exception e)</span>&#123;</span><br><span class="line">        e.printStackTrace();<span class="comment">//打印堆栈中的异常信息</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">//捕获到异常之后，响应一个标准的Result</span></span><br><span class="line">        <span class="keyword">return</span> Result.error(<span class="string">&quot;对不起,操作失败,请联系管理员&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>@RestControllerAdvice &#x3D; @ControllerAdvice + @ResponseBody</p>
+<p>处理异常的方法返回值会转换为json后再响应给前端</p>
+</blockquote>
+<h2 id="事务管理"><a href="#事务管理" class="headerlink" title="事务管理"></a>事务管理</h2><p>在数据库中已经接触过事务，<strong>事务</strong>是一组操作的集合，它是一个不可分割的工作单位。事务会把所有的操作作为一个整体，一起向数据库提交或者是撤销操作请求。所以这组操作要么同时成功，要么同时失败。</p>
+<p>怎么样来控制这组操作，让这组操作同时成功或同时失败呢？此时就要涉及到事务的具体操作了。</p>
+<p>事务的操作主要有三步：</p>
+<ol>
+<li>开启事务（一组操作开始前，开启事务）：start transaction &#x2F; begin ;</li>
+<li>提交事务（这组操作全部成功后，提交事务）：commit ;</li>
+<li>回滚事务（中间任何一个操作出现异常，回滚事务）：rollback ;</li>
+</ol>
+<h3 id="spring事务管理"><a href="#spring事务管理" class="headerlink" title="spring事务管理"></a>spring事务管理</h3><blockquote>
+<p>注解：@Transactional</p>
+<p>位置：业务（service）层的方法上(或类上、接口上)</p>
+<p>作用：将当前方法交给spring进行事务管理，方法执行前，开启事务；成功执行完毕，提交事务；出现异常时，回滚事务</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DeptServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">DeptService</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> DeptMapper deptMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> EmpMapper empMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="meta">@Transactional</span>  <span class="comment">//当前方法添加了事务管理</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete</span><span class="params">(Integer id)</span>&#123;</span><br><span class="line">        <span class="comment">//根据部门id删除部门信息</span></span><br><span class="line">        deptMapper.deleteById(id);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//删除部门下的所有员工信息</span></span><br><span class="line">        empMapper.deleteByDeptId(id);   </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在application.yml配置文件中开启事务管理日志，这样就可以在控制看到和事务相关的日志信息了</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment">#spring事务管理日志</span></span><br><span class="line"><span class="attr">logging:</span></span><br><span class="line">  <span class="attr">level:</span></span><br><span class="line">    <span class="attr">org.springframework.jdbc.support.JdbcTransactionManager:</span> <span class="string">debug</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="rollbackfor属性"><a href="#rollbackfor属性" class="headerlink" title="rollbackfor属性"></a>rollbackfor属性</h3><p>l默认情况下，只有<strong>出现 RuntimeException 才回滚异常</strong>。rollbackFor属性用于控制出现何种异常类型时回滚事务。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DeptServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">DeptService</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> DeptMapper deptMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> EmpMapper empMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="meta">@Transactional(rollbackFor = Exception.class)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete</span><span class="params">(Integer id)</span>&#123;</span><br><span class="line">        <span class="comment">//根据部门id删除部门信息</span></span><br><span class="line">        deptMapper.deleteById(id);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//删除部门下的所有员工信息</span></span><br><span class="line">        empMapper.deleteByDeptId(id);   </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="propagation属性"><a href="#propagation属性" class="headerlink" title="propagation属性"></a>propagation属性</h3><p>这个属性用来配置事务的传播行为。事务的传播行为是当一个事务方法被另一个事务方法调用时，这个事务方法应该如何进行事务控制。</p>
+<p>例如在A方法运行的时候，首先会开启一个事务，在A方法当中又调用了B方法， B方法自身也具有事务，那么B方法在运行的时候，到底是加入到A方法的事务当中来，还是B方法在运行的时候新建一个事务？这个就涉及到了事务的传播行为。</p>
+<table>
+<thead>
+<tr>
+<th><strong>属性值</strong></th>
+<th><strong>含义</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>REQUIRED</strong></td>
+<td>【默认值】需要事务，有则加入，无则创建新事务</td>
+</tr>
+<tr>
+<td><strong>REQUIRES_NEW</strong></td>
+<td>需要新事务，无论有无，总是创建新事务</td>
+</tr>
+<tr>
+<td>SUPPORTS</td>
+<td>支持事务，有则加入，无则在无事务状态中运行</td>
+</tr>
+<tr>
+<td>NOT_SUPPORTED</td>
+<td>不支持事务，在无事务状态下运行,如果当前存在已有事务,则挂起当前事务</td>
+</tr>
+<tr>
+<td>MANDATORY</td>
+<td>必须有事务，否则抛异常</td>
+</tr>
+<tr>
+<td>NEVER</td>
+<td>必须没事务，否则抛异常</td>
+</tr>
+</tbody></table>
+<h4 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h4><p>解散部门时，无论是成功还是失败，都要记录操作日志。</p>
+<blockquote>
+<ol>
+<li>执行解散部门的业务：先删除部门，再删除部门下的员工</li>
+<li>记录解散部门的日志，到数据库日志表</li>
+</ol>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="comment">//@Transactional //当前业务实现类中的所有的方法，都添加了spring事务管理机制</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DeptServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">DeptService</span> &#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> DeptMapper deptMapper;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> EmpMapper empMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> DeptLogService deptLogService;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//根据部门id，删除部门信息及部门下的所有员工</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="meta">@Log</span></span><br><span class="line">    <span class="meta">@Transactional(rollbackFor = Exception.class)</span> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete</span><span class="params">(Integer id)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//根据部门id删除部门信息</span></span><br><span class="line">            deptMapper.deleteById(id);</span><br><span class="line">            <span class="comment">//模拟：异常</span></span><br><span class="line">            <span class="keyword">if</span>(<span class="literal">true</span>)&#123;</span><br><span class="line">                <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">Exception</span>(<span class="string">&quot;出现异常了~~~&quot;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//删除部门下的所有员工信息</span></span><br><span class="line">            empMapper.deleteByDeptId(id);</span><br><span class="line">        &#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="comment">//不论是否有异常，最终都要执行的代码：记录日志</span></span><br><span class="line">            <span class="type">DeptLog</span> <span class="variable">deptLog</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">DeptLog</span>();</span><br><span class="line">            deptLog.setCreateTime(LocalDateTime.now());</span><br><span class="line">            deptLog.setDescription(<span class="string">&quot;执行了解散部门的操作，此时解散的是&quot;</span>+id+<span class="string">&quot;号部门&quot;</span>);</span><br><span class="line">            <span class="comment">//调用其他业务类中的方法</span></span><br><span class="line">            deptLogService.insert(deptLog);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//省略其他代码...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DeptLogServiceImpl</span> <span class="keyword">implements</span> <span class="title class_">DeptLogService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> DeptLogMapper deptLogMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Transactional(propagation = Propagation.REQUIRES_NEW)</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insert</span><span class="params">(DeptLog deptLog)</span> &#123;</span><br><span class="line">        deptLogMapper.insert(deptLog);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>插入日志和删除部门都是事务，如果按默认的事务传播行为，这两个操作在一个事务范围内。在删除失败报出异常后，这个事务就会被回滚，两个操作都被撤销，不满足需求。</p>
+<p>正确的做法是指定传播行为是<code>Propagation.REQUIRES_NEW</code>，保证两个操作属于不同的事务。</p>
+<p>sping三大核心：控制反转、依赖注入、AOP</p>
+]]></content>
       <categories>
         <category>Java</category>
       </categories>
