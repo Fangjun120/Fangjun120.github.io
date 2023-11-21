@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"fangjun120.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="入门 只做增强不做改变，引入它不会对现有工程产生影响。 只需简单配置，即可快速进行单表 CRUD 操作，从而节省大量时间。 代码生成、自动分页、逻辑删除、自动填充等功能一应俱全。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java-MybatisPlus">
+<meta property="og:url" content="https://fangjun120.github.io/2023/11/17/11-00-37/index.html">
+<meta property="og:site_name" content="eidolon的小窝">
+<meta property="og:description" content="入门 只做增强不做改变，引入它不会对现有工程产生影响。 只需简单配置，即可快速进行单表 CRUD 操作，从而节省大量时间。 代码生成、自动分页、逻辑删除、自动填充等功能一应俱全。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fangjun120.github.io/pic/basemapper.png">
+<meta property="og:image" content="https://fangjun120.github.io/pic/mp%E6%B3%A8%E8%A7%A3.png">
+<meta property="og:image" content="https://fangjun120.github.io/pic/mp-wrapper.png">
+<meta property="og:image" content="https://fangjun120.github.io/pic/abstractWrapper.png">
+<meta property="og:image" content="https://fangjun120.github.io/pic/QueryWrapper.png">
+<meta property="og:image" content="https://fangjun120.github.io/pic/UpdateWrapper.png">
+<meta property="article:published_time" content="2023-11-17T03:00:37.000Z">
+<meta property="article:modified_time" content="2023-11-18T02:49:04.832Z">
+<meta property="article:author" content="Fang Jun">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fangjun120.github.io/pic/basemapper.png">
+
+<link rel="canonical" href="https://fangjun120.github.io/2023/11/17/11-00-37/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java-MybatisPlus | eidolon的小窝</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">eidolon的小窝</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">做有趣的人</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2023/11/17/11-00-37/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fang Jun">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="eidolon的小窝">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java-MybatisPlus
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-11-17 11:00:37" itemprop="dateCreated datePublished" datetime="2023-11-17T11:00:37+08:00">2023-11-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-11-18 10:49:04" itemprop="dateModified" datetime="2023-11-18T10:49:04+08:00">2023-11-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="入门"><a href="#入门" class="headerlink" title="入门"></a>入门</h2><blockquote>
+<p>只做增强不做改变，引入它不会对现有工程产生影响。</p>
+<p>只需简单配置，即可快速进行<strong>单表 CRUD</strong> 操作，从而节省大量时间。</p>
+<p>代码生成、自动分页、逻辑删除、自动填充等功能一应俱全。</p>
+</blockquote>
+<span id="more"></span>
+
+<h3 id="入门案例"><a href="#入门案例" class="headerlink" title="入门案例"></a>入门案例</h3><h4 id="引入依赖"><a href="#引入依赖" class="headerlink" title="引入依赖"></a>引入依赖</h4><p>由于MybatisPlus的依赖包含了mybatis的自动装配，因此mybatis的依赖可以去掉。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.baomidou<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis-plus-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.5.3.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="定义Mapper"><a href="#定义Mapper" class="headerlink" title="定义Mapper"></a>定义Mapper</h4><p>MybatisPlus提供了一个基础的<code>BaseMapper</code>接口，其中已经实现了单表的CRUD</p>
+<img src="/pic/basemapper.png" style="zoom: 80%;" />
+
+<p>因此我们自定义的Mapper只要继承了这个<code>BaseMapper</code>，就无需自己实现单表CRUD了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itheima.mp.mapper;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.core.mapper.BaseMapper;</span><br><span class="line"><span class="keyword">import</span> com.itheima.mp.domain.po.User;</span><br><span class="line"><span class="comment">// 这里泛型会指定一个实体类，MP会反射字节码获取实体类信息作为数据库表信息</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserMapper</span> <span class="keyword">extends</span> <span class="title class_">BaseMapper</span>&lt;User&gt; &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>只需要以上步骤，对于user表的CURD操作就已经实现了。</p>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootTest</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">UserMapperTest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserMapper userMapper;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testInsert</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">        user.setId(<span class="number">5L</span>);</span><br><span class="line">        user.setUsername(<span class="string">&quot;Lucy&quot;</span>);</span><br><span class="line">        user.setPassword(<span class="string">&quot;123&quot;</span>);</span><br><span class="line">        user.setPhone(<span class="string">&quot;18688990011&quot;</span>);</span><br><span class="line">        user.setBalance(<span class="number">200</span>);</span><br><span class="line">        user.setInfo(<span class="string">&quot;&#123;\&quot;age\&quot;: 24, \&quot;intro\&quot;: \&quot;英文老师\&quot;, \&quot;gender\&quot;: \&quot;female\&quot;&#125;&quot;</span>);</span><br><span class="line">        user.setCreateTime(LocalDateTime.now());</span><br><span class="line">        user.setUpdateTime(LocalDateTime.now());</span><br><span class="line">        userMapper.insert(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testSelectById</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> userMapper.selectById(<span class="number">5L</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;user = &quot;</span> + user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testSelectByIds</span><span class="params">()</span> &#123;</span><br><span class="line">        List&lt;User&gt; users = userMapper.selectBatchIds(List.of(<span class="number">1L</span>, <span class="number">2L</span>, <span class="number">3L</span>, <span class="number">4L</span>, <span class="number">5L</span>));</span><br><span class="line">        users.forEach(System.out::println);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testUpdateById</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">        user.setId(<span class="number">5L</span>);</span><br><span class="line">        user.setBalance(<span class="number">20000</span>);</span><br><span class="line">        userMapper.updateById(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">testDelete</span><span class="params">()</span> &#123;</span><br><span class="line">        userMapper.deleteById(<span class="number">5L</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那Mybatis怎么知道要对那张表进行操作，以及表中有哪些字段呢？</p>
+<p><strong>MP通过扫描实体类，并反射获取实体类信息作为数据库表信息。</strong></p>
+<p>泛型中的User就是与数据库对应的实体类</p>
+<p>MybatisPlus就是根据实体类的信息来推断出表的信息，从而生成SQL的。默认情况下：</p>
+<ul>
+<li>MybatisPlus会把实体类的类名驼峰转下划线作为表名</li>
+<li>MybatisPlus会把实体类的所有变量名驼峰转下划线作为表的字段名，并根据变量类型推断字段类型</li>
+<li>MybatisPlus会把名为id的字段作为主键</li>
+</ul>
+<p>但很多情况下，默认的实现与实际场景不符，因此MybatisPlus提供了一些注解便于我们声明表信息。</p>
+<h3 id="常用注解"><a href="#常用注解" class="headerlink" title="常用注解"></a>常用注解</h3><p>主键不给类型，默认是ASSIGN_ID。</p>
+<img src="/pic/mp注解.png" style="zoom: 80%;" />
+
+<h3 id="常用配置"><a href="#常用配置" class="headerlink" title="常用配置"></a>常用配置</h3><p>MybatisPlus也支持基于yaml文件的自定义配置，可以在application配置文件中配置。</p>
+<p>大多数的配置都有默认值，因此我们都无需配置。但还有一些是没有默认值的，例如:</p>
+<ul>
+<li>实体类的别名扫描包</li>
+<li>全局id类型</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mybatis-plus:</span></span><br><span class="line">  <span class="attr">type-aliases-package:</span> <span class="string">com.itheima.mp.domain.po</span></span><br><span class="line">  <span class="attr">global-config:</span></span><br><span class="line">    <span class="attr">db-config:</span></span><br><span class="line">      <span class="attr">id-type:</span> <span class="string">auto</span> <span class="comment"># 全局id类型为自增长</span></span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，MyBatisPlus也支持手写SQL的，而mapper文件的读取地址可以自己配置：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mybatis-plus:</span></span><br><span class="line">  <span class="attr">mapper-locations:</span> <span class="string">&quot;classpath*:/mapper/**/*.xml&quot;</span> <span class="comment"># Mapper.xml文件地址，当前这个是默认值。</span></span><br></pre></td></tr></table></figure>
+
+<p>还有一些默认配置好的配置，比如</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">mybatis-plus:</span></span><br><span class="line">  <span class="attr">configuration:</span></span><br><span class="line">  	<span class="attr">map-underscore-to-camel-case:</span> <span class="literal">true</span> <span class="comment"># 是否开启下划线和驼峰的映射</span></span><br><span class="line">  	<span class="attr">cache-enabled:</span> <span class="literal">false</span> <span class="comment"># 是否开启二级缓存</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="核心功能"><a href="#核心功能" class="headerlink" title="核心功能"></a>核心功能</h2><h3 id="条件构造器"><a href="#条件构造器" class="headerlink" title="条件构造器"></a>条件构造器</h3><p>MP支持各种复杂的where条件，在BaseMapper中有的方法需要传递Wrapper类型的参数，wrapper就是条件构造器。</p>
+<p>它是一个抽象类，其下有很多实现类</p>
+<img src="/pic/mp-wrapper.png" style="zoom: 67%;" />
+
+<p><code>Wrapper</code>的子类<code>AbstractWrapper</code>提供了where中包含的所有条件构造方法：</p>
+<img src="/pic/abstractWrapper.png" style="zoom:67%;" />
+
+<p>QueryWrapper在AbstractWrapper的基础上拓展了一个select方法，允许指定查询字段：</p>
+<img src="/pic/QueryWrapper.png" style="zoom:80%;" />
+
+<p>而UpdateWrapper在AbstractWrapper的基础上拓展了一个set方法，允许指定SQL中的SET部分：</p>
+<img src="/pic/UpdateWrapper.png" style="zoom:80%;" />
+
+<h4 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h4><p><strong>QueryWrapper</strong>，针对where语句</p>
+<p>无论是修改、删除、查询，都可以使用QueryWrapper来构建查询条件。</p>
+<p><strong>查询</strong>：查询出名字中带<code>o</code>的，存款大于等于1000元的人。代码如下：</p>
+<blockquote>
+<p>SELECT id,username,info,balance</p>
+<p>FROM user</p>
+<p>WHERE username LIKE ? AND balance &gt;&#x3D; ?</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testQueryWrapper</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 1.构建查询条件 where name like &quot;%o%&quot; AND balance &gt;= 1000</span></span><br><span class="line">    QueryWrapper&lt;User&gt; wrapper = <span class="keyword">new</span> <span class="title class_">QueryWrapper</span>&lt;User&gt;()</span><br><span class="line">            .select(<span class="string">&quot;id&quot;</span>, <span class="string">&quot;username&quot;</span>, <span class="string">&quot;info&quot;</span>, <span class="string">&quot;balance&quot;</span>)</span><br><span class="line">            .like(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;o&quot;</span>)</span><br><span class="line">            .ge(<span class="string">&quot;balance&quot;</span>, <span class="number">1000</span>);</span><br><span class="line">    <span class="comment">// 2.查询数据</span></span><br><span class="line">    List&lt;User&gt; users = userMapper.selectList(wrapper);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>更新</strong>：更新用户名为jack的用户的余额为2000，代码如下：</p>
+<blockquote>
+<p>UPDATE user</p>
+<p>SET balance &#x3D; 2000</p>
+<p>WHERE (username &#x3D; “jack”)</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testUpdateByQueryWrapper</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 1.构建查询条件 where name = &quot;Jack&quot;</span></span><br><span class="line">    QueryWrapper&lt;User&gt; wrapper = <span class="keyword">new</span> <span class="title class_">QueryWrapper</span>&lt;User&gt;().eq(<span class="string">&quot;username&quot;</span>, <span class="string">&quot;Jack&quot;</span>);</span><br><span class="line">    <span class="comment">// 2.要更新的数据，user中非null字段都会作为set语句</span></span><br><span class="line">    <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line">    user.setBalance(<span class="number">2000</span>);</span><br><span class="line">    userMapper.update(user, wrapper);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>UpdateWrapper</strong></p>
+<p>基于BaseMapper中的update方法更新时只能直接赋值，对于一些复杂的需求就难以实现。 例如：更新id为<code>1,2,4</code>的用户的余额，扣200，对应的SQL应该是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">UPDATE user </span><br><span class="line">SET balance = balance - 200 </span><br><span class="line">WHERE id in (1, 2, 4)</span><br></pre></td></tr></table></figure>
+
+<p>SET的赋值结果是基于字段现有值的，这个时候就要利用UpdateWrapper中的setSql功能了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testUpdateWrapper</span><span class="params">()</span> &#123;</span><br><span class="line">    List&lt;Long&gt; ids = List.of(<span class="number">1L</span>, <span class="number">2L</span>, <span class="number">4L</span>);</span><br><span class="line">    <span class="comment">// 1.生成SQL</span></span><br><span class="line">    UpdateWrapper&lt;User&gt; wrapper = <span class="keyword">new</span> <span class="title class_">UpdateWrapper</span>&lt;User&gt;()</span><br><span class="line">            .setSql(<span class="string">&quot;balance = balance - 200&quot;</span>) <span class="comment">// SET balance = balance - 200</span></span><br><span class="line">            .in(<span class="string">&quot;id&quot;</span>, ids); <span class="comment">// WHERE id in (1, 2, 4)</span></span><br><span class="line">    <span class="comment">// 2.更新，注意第一个参数可以给null，也就是不填更新字段和数据，而是基于UpdateWrapper中的setSQL来更新</span></span><br><span class="line">    userMapper.update(<span class="literal">null</span>, wrapper);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>LambdaQueryWrapper</strong></p>
+<p>相比QueryWrapper就是使用了lambda语法。</p>
+<p>无论是QueryWrapper还是UpdateWrapper在构造条件的时候都需要写死字段名称，会出现字符串<code>魔法值</code>。这在编程规范中显然是不推荐的。 那怎么样才能不写字段名，又能知道字段名呢？</p>
+<p>其中一种办法是基于变量的<code>gettter</code>方法结合反射技术。因此我们只要将条件对应的字段的<code>getter</code>方法传递给MybatisPlus，它就能计算出对应的变量名了。而传递方法可以使用JDK8中的<code>方法引用</code>和<code>Lambda</code>表达式。 因此MybatisPlus又提供了一套基于Lambda的Wrapper，包含两个：</p>
+<ul>
+<li>LambdaQueryWrapper</li>
+<li>LambdaUpdateWrapper</li>
+</ul>
+<p>分别对应QueryWrapper和UpdateWrapper</p>
+<p>其使用方式如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">testLambdaQueryWrapper</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 1.构建条件 WHERE username LIKE &quot;%o%&quot; AND balance &gt;= 1000</span></span><br><span class="line">    QueryWrapper&lt;User&gt; wrapper = <span class="keyword">new</span> <span class="title class_">QueryWrapper</span>&lt;&gt;();</span><br><span class="line">    wrapper.lambda()</span><br><span class="line">            .select(User::getId, User::getUsername, User::getInfo, User::getBalance)</span><br><span class="line">            .like(User::getUsername, <span class="string">&quot;o&quot;</span>)</span><br><span class="line">            .ge(User::getBalance, <span class="number">1000</span>);</span><br><span class="line">    <span class="comment">// 2.查询</span></span><br><span class="line">    List&lt;User&gt; users = userMapper.selectList(wrapper);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="自定义SQL"><a href="#自定义SQL" class="headerlink" title="自定义SQL"></a>自定义SQL</h3><p>SQL语句最好都写在持久层，上面的写法则是写在业务层。这是不允许的。</p>
+<p>一般来说，可以利用MyBatisPlus的<strong>Wrapper来构建复杂的Where条件</strong>，其余部分用自定义SQL语句。之后把wrapper下放到持久层，然后在持久层与自定义的SQL语句结合。</p>
+<ul>
+<li>基于Wrapper构建where条件</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Long&gt; ids = List.of(<span class="number">1L</span>, <span class="number">2L</span>, <span class="number">4L</span>);</span><br><span class="line"><span class="type">int</span> <span class="variable">amount</span> <span class="operator">=</span> <span class="number">200</span>;</span><br><span class="line"><span class="comment">// 1.构建条件</span></span><br><span class="line">LambdaQueryWrapper&lt;User&gt; wrapper = <span class="keyword">new</span> <span class="title class_">LambdaQueryWrapper</span>&lt;User&gt;().in(User::getId, ids);</span><br><span class="line"><span class="comment">// 2.自定义SQL方法调用</span></span><br><span class="line">userMapper.updateBalanceByIds(wrapper, amount);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在mapper方法参数中用Param注解声明wrapper变量名称，必须是ew</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> <span class="title function_">updateBalanceByIds</span><span class="params">(<span class="meta">@Param(&quot;ew&quot;)</span> LambdaQueryWrapper&lt;User&gt; wrapper, <span class="meta">@Param(&quot;amount&quot;)</span> <span class="type">int</span> amount)</span>;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>自定义SQL，并使用Wrapper条件，注解或xml都可</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">update</span> <span class="attr">id</span>=<span class="string">&quot;updateBalanceByIds&quot;</span>&gt;</span></span><br><span class="line">    UPDATE tb_user SET balance = balance - #&#123;amount&#125; $&#123;ew.customSqlSegment&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">update</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Service接口"><a href="#Service接口" class="headerlink" title="Service接口"></a>Service接口</h3><p>MybatisPlus不仅提供了BaseMapper，还提供了通用的Service接口及默认实现(BaseMapper不需要提供实现类，因为mybatis会自动实现。但是service的接口不实现就会报错)，封装了一些常用的service模板方法。 通用接口为<code>IService</code>，**默认的实现类为<code>ServiceImpl</code>**，其中封装的方法可以分为以下几类：</p>
+<ul>
+<li><code>save</code>：新增</li>
+<li><code>remove</code>：删除</li>
+<li><code>update</code>：更新</li>
+<li><code>get</code>：查询单个结果</li>
+<li><code>list</code>：查询集合结果</li>
+<li><code>count</code>：计数</li>
+<li><code>page</code>：分页查询</li>
+</ul>
+<p>由于<code>Service</code>中经常需要定义与业务有关的自定义方法，因此我们不能直接使用<code>IService</code>，而是自定义<code>Service</code>接口，然后继承<code>IService</code>以拓展方法。同时，让自定义的<code>Service实现类</code>继承<code>ServiceImpl</code>，这样就不用自己实现<code>IService</code>中的接口了。</p>
+<p>首先，定义<code>IUserService</code>，继承<code>IService</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">IUserService</span> <span class="keyword">extends</span> <span class="title class_">IService</span>&lt;User&gt; &#123;</span><br><span class="line">    <span class="comment">// 拓展自定义方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后，编写<code>UserServiceImpl</code>类，继承<code>ServiceImpl</code>，实现<code>UserService</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="comment">//泛型需要填baseMapper和与表对应的实体类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceImpl</span> <span class="keyword">extends</span> <span class="title class_">ServiceImpl</span>&lt;UserMapper, User&gt;<span class="keyword">implements</span> <span class="title class_">UserService</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="案例-1"><a href="#案例-1" class="headerlink" title="案例"></a>案例</h4><p>实现下面4个接口：</p>
+<table>
+<thead>
+<tr>
+<th align="left"><strong>编号</strong></th>
+<th align="left"><strong>接口</strong></th>
+<th align="left"><strong>请求方式</strong></th>
+<th align="left"><strong>请求路径</strong></th>
+<th align="left"><strong>请求参数</strong></th>
+<th align="left"><strong>返回值</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="left">新增用户</td>
+<td align="left">POST</td>
+<td align="left">&#x2F;users</td>
+<td align="left">用户表单实体</td>
+<td align="left">无</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="left">删除用户</td>
+<td align="left">DELETE</td>
+<td align="left">&#x2F;users&#x2F;{id}</td>
+<td align="left">用户id</td>
+<td align="left">无</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="left">根据id查询用户</td>
+<td align="left">GET</td>
+<td align="left">&#x2F;users&#x2F;{id}</td>
+<td align="left">用户id</td>
+<td align="left">用户VO</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="left">根据id批量查询</td>
+<td align="left">GET</td>
+<td align="left">&#x2F;users</td>
+<td align="left">用户id集合</td>
+<td align="left">用户VO集合</td>
+</tr>
+</tbody></table>
+<p>首先，我们在项目中引入几个依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--swagger--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.github.xiaoymin<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>knife4j-openapi2-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>4.1.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--web--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后需要配置swagger信息：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">knife4j:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">openapi:</span></span><br><span class="line">    <span class="attr">title:</span> <span class="string">用户管理接口文档</span></span><br><span class="line">    <span class="attr">description:</span> <span class="string">&quot;用户管理接口文档&quot;</span></span><br><span class="line">    <span class="attr">email:</span> <span class="string">zhanghuyi@itcast.cn</span></span><br><span class="line">    <span class="attr">concat:</span> <span class="string">虎哥</span></span><br><span class="line">    <span class="attr">url:</span> <span class="string">https://www.itcast.cn</span></span><br><span class="line">    <span class="attr">version:</span> <span class="string">v1.0.0</span></span><br><span class="line">    <span class="attr">group:</span></span><br><span class="line">      <span class="attr">default:</span></span><br><span class="line">        <span class="attr">group-name:</span> <span class="string">default</span></span><br><span class="line">        <span class="attr">api-rule:</span> <span class="string">package</span></span><br><span class="line">        <span class="attr">api-rule-resources:</span></span><br><span class="line">          <span class="bullet">-</span> <span class="string">com.itheima.mp.controller</span></span><br></pre></td></tr></table></figure>
+
+<p>然后，接口需要两个实体：</p>
+<ul>
+<li>UserFormDTO：代表新增时的用户表单</li>
+<li>UserVO：代表查询的返回结果</li>
+</ul>
+<p>首先是UserFormDTO：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itheima.mp.domain.dto;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@ApiModel(description = &quot;用户表单实体&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserFormDTO</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ApiModelProperty(&quot;id&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ApiModelProperty(&quot;用户名&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ApiModelProperty(&quot;密码&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ApiModelProperty(&quot;注册手机号&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String phone;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ApiModelProperty(&quot;详细信息，JSON风格&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String info;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ApiModelProperty(&quot;账户余额&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> Integer balance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后是UserVO：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itheima.mp.domain.vo;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@ApiModel(description = &quot;用户VO实体&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserVO</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@ApiModelProperty(&quot;用户id&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@ApiModelProperty(&quot;用户名&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@ApiModelProperty(&quot;详细信息&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String info;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ApiModelProperty(&quot;使用状态（1正常 2冻结）&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> Integer status;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@ApiModelProperty(&quot;账户余额&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> Integer balance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后，按照Restful风格编写Controller接口方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itheima.mp.controller;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Api(tags = &quot;用户管理接口&quot;)</span></span><br><span class="line"><span class="meta">@RequiredArgsConstructor</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;users&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserController</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> IUserService userService;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@PostMapping</span></span><br><span class="line">    <span class="meta">@ApiOperation(&quot;新增用户&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">saveUser</span><span class="params">(<span class="meta">@RequestBody</span> UserFormDTO userFormDTO)</span>&#123;</span><br><span class="line">        <span class="comment">// 1.转换DTO为PO</span></span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> BeanUtil.copyProperties(userFormDTO, User.class);</span><br><span class="line">        <span class="comment">// 2.新增</span></span><br><span class="line">        userService.save(user);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@DeleteMapping(&quot;/&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="meta">@ApiOperation(&quot;删除用户&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">removeUserById</span><span class="params">(<span class="meta">@PathVariable(&quot;id&quot;)</span> Long userId)</span>&#123;</span><br><span class="line">        userService.removeById(userId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="meta">@ApiOperation(&quot;根据id查询用户&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> UserVO <span class="title function_">queryUserById</span><span class="params">(<span class="meta">@PathVariable(&quot;id&quot;)</span> Long userId)</span>&#123;</span><br><span class="line">        <span class="comment">// 1.查询用户</span></span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> userService.getById(userId);</span><br><span class="line">        <span class="comment">// 2.处理vo</span></span><br><span class="line">        <span class="keyword">return</span> BeanUtil.copyProperties(user, UserVO.class);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span></span><br><span class="line">    <span class="meta">@ApiOperation(&quot;根据id集合查询用户&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> List&lt;UserVO&gt; <span class="title function_">queryUserByIds</span><span class="params">(<span class="meta">@RequestParam(&quot;ids&quot;)</span> List&lt;Long&gt; ids)</span>&#123;</span><br><span class="line">        <span class="comment">// 1.查询用户</span></span><br><span class="line">        List&lt;User&gt; users = userService.listByIds(ids);</span><br><span class="line">        <span class="comment">// 2.处理vo</span></span><br><span class="line">        <span class="keyword">return</span> BeanUtil.copyToList(users, UserVO.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到上述接口都直接在controller即可实现，无需编写任何service代码，非常方便。</p>
+<p>不过，一些带有业务逻辑的接口则需要在service中自定义实现了。例如下面的需求：</p>
+<ul>
+<li>根据id扣减用户余额</li>
+</ul>
+<p>这看起来是个简单修改功能，只要修改用户余额即可。但这个业务包含一些业务逻辑处理：</p>
+<ul>
+<li>判断用户状态是否正常</li>
+<li>判断用户余额是否充足</li>
+</ul>
+<p>这些业务逻辑都要在service层来做，另外更新余额需要自定义SQL，要在mapper中来实现。因此，我们除了要编写controller以外，具体的业务还要在service和mapper中编写。</p>
+<p>首先在UserController中定义一个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@PutMapping(&quot;&#123;id&#125;/deduction/&#123;money&#125;&quot;)</span></span><br><span class="line"><span class="meta">@ApiOperation(&quot;扣减用户余额&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">deductBalance</span><span class="params">(<span class="meta">@PathVariable(&quot;id&quot;)</span> Long id, <span class="meta">@PathVariable(&quot;money&quot;)</span>Integer money)</span>&#123;</span><br><span class="line">    userService.deductBalance(id, money);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后是UserService接口：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itheima.mp.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.extension.service.IService;</span><br><span class="line"><span class="keyword">import</span> com.itheima.mp.domain.po.User;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">IUserService</span> <span class="keyword">extends</span> <span class="title class_">IService</span>&lt;User&gt; &#123;</span><br><span class="line">    <span class="keyword">void</span> <span class="title function_">deductBalance</span><span class="params">(Long id, Integer money)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后是UserServiceImpl实现类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.itheima.mp.service.impl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;</span><br><span class="line"><span class="keyword">import</span> com.itheima.mp.domain.po.User;</span><br><span class="line"><span class="keyword">import</span> com.itheima.mp.mapper.UserMapper;</span><br><span class="line"><span class="keyword">import</span> com.itheima.mp.service.IUserService;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserServiceImpl</span> <span class="keyword">extends</span> <span class="title class_">ServiceImpl</span>&lt;UserMapper, User&gt; <span class="keyword">implements</span> <span class="title class_">IUserService</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">deductBalance</span><span class="params">(Long id, Integer money)</span> &#123;</span><br><span class="line">        <span class="comment">// 1.查询用户</span></span><br><span class="line">        <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> getById(id);</span><br><span class="line">        <span class="comment">// 2.判断用户状态</span></span><br><span class="line">        <span class="keyword">if</span> (user == <span class="literal">null</span> || user.getStatus() == <span class="number">2</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;用户状态异常&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 3.判断用户余额</span></span><br><span class="line">        <span class="keyword">if</span> (user.getBalance() &lt; money) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">RuntimeException</span>(<span class="string">&quot;用户余额不足&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 4.扣减余额</span></span><br><span class="line">        baseMapper.deductMoneyById(id, money);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后是mapper：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Update(&quot;UPDATE user SET balance = balance - #&#123;money&#125; WHERE id = #&#123;id&#125;&quot;)</span></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">deductMoneyById</span><span class="params">(<span class="meta">@Param(&quot;id&quot;)</span> Long id, <span class="meta">@Param(&quot;money&quot;)</span> Integer money)</span>;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Lambda"><a href="#Lambda" class="headerlink" title="Lambda"></a>Lambda</h4><h4 id="批量新增"><a href="#批量新增" class="headerlink" title="批量新增"></a>批量新增</h4>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Java/" rel="tag"># Java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/11/12/11-00-37/" rel="prev" title="java-Web案例">
+      <i class="fa fa-chevron-left"></i> java-Web案例
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A5%E9%97%A8"><span class="nav-number">1.</span> <span class="nav-text">入门</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A5%E9%97%A8%E6%A1%88%E4%BE%8B"><span class="nav-number">1.1.</span> <span class="nav-text">入门案例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%85%A5%E4%BE%9D%E8%B5%96"><span class="nav-number">1.1.1.</span> <span class="nav-text">引入依赖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89Mapper"><span class="nav-number">1.1.2.</span> <span class="nav-text">定义Mapper</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-number">1.1.3.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E6%B3%A8%E8%A7%A3"><span class="nav-number">1.2.</span> <span class="nav-text">常用注解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.</span> <span class="nav-text">常用配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD"><span class="nav-number">2.</span> <span class="nav-text">核心功能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E6%9E%84%E9%80%A0%E5%99%A8"><span class="nav-number">2.1.</span> <span class="nav-text">条件构造器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B"><span class="nav-number">2.1.1.</span> <span class="nav-text">案例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89SQL"><span class="nav-number">2.2.</span> <span class="nav-text">自定义SQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service%E6%8E%A5%E5%8F%A3"><span class="nav-number">2.3.</span> <span class="nav-text">Service接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A1%88%E4%BE%8B-1"><span class="nav-number">2.3.1.</span> <span class="nav-text">案例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Lambda"><span class="nav-number">2.3.2.</span> <span class="nav-text">Lambda</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%B9%E9%87%8F%E6%96%B0%E5%A2%9E"><span class="nav-number">2.3.3.</span> <span class="nav-text">批量新增</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Fang Jun</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fang Jun</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":200,"height":300},"mobile":{"show":false},"rect":"opacity:0.7","log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
