@@ -184,6 +184,172 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2022/02/05/00-00-00/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fang Jun">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="eidolon的小窝">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/02/05/00-00-00/" class="post-title-link" itemprop="url">express框架</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-02-05 00:00:00" itemprop="dateCreated datePublished" datetime="2022-02-05T00:00:00+08:00">2022-02-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-04-09 10:21:30" itemprop="dateModified" datetime="2023-04-09T10:21:30+08:00">2023-04-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/node/" itemprop="url" rel="index"><span itemprop="name">node</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="框架简介"><a href="#框架简介" class="headerlink" title="框架简介"></a>框架简介</h2><p>Express是一个基于Node平台的web应用开发框架，提供了一系列的强大特性，帮助创建各种Web应用。可以使用<code>npm install express</code>命令下载。</p>
+<h4 id="框架特性"><a href="#框架特性" class="headerlink" title="框架特性"></a>框架特性</h4><ul>
+<li><p>提供了方便简洁的路由定义方式</p>
+</li>
+<li><p>对获取HTTP请求参数进行了简化处理</p>
+</li>
+<li><p>对模板引擎支持程度高，方便渲染动态HTML页面</p>
+</li>
+<li><p>提供了中间件机制有效控制HTTP请求</p>
+</li>
+<li><p>拥有大量第三方中间件对功能进行扩展</p>
+</li>
+</ul>
+<h4 id="初体验"><a href="#初体验" class="headerlink" title="初体验"></a>初体验</h4><p>使用Express框架创建web服务器很简单，调用express模块返回的函数即可。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 引入Express框架</span></span><br><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>);</span><br><span class="line"><span class="comment">// 使用框架创建web服务器</span></span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">express</span>();</span><br><span class="line"><span class="comment">// 当客户端以get方式访问/路由时</span></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">   <span class="comment">// 对客户端做出响应 </span></span><br><span class="line">   <span class="comment">// send方法会根据内容的类型自动设置请求头</span></span><br><span class="line">   <span class="comment">// send方法会检测响应内容的类型</span></span><br><span class="line">    <span class="comment">// send方法会自动设置http状态码</span></span><br><span class="line">   res.<span class="title function_">send</span>(<span class="string">&#x27;Hello Express&#x27;</span>); <span class="comment">// &lt;h2&gt;Hello Express&lt;/h2&gt; &#123;say: &#x27;hello&#x27;&#125;</span></span><br><span class="line">&#125;);</span><br><span class="line"><span class="comment">// 程序监听3000端口</span></span><br><span class="line">app.<span class="title function_">listen</span>(<span class="number">3000</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="中间件"><a href="#中间件" class="headerlink" title="中间件"></a>中间件</h2><p>中间件就是一堆方法，可以接收客户端发来的请求、可以对请求做出响应，也可以将请求继续交给下一个中间件继续处理。</p>
+<p>![](E:\Tb前端资源笔记\11-16 前后端交互\11-13node+express\笔记\images\图片11.png)</p>
+<p>中间件主要由两部分构成，中间件方法以及请求处理函数。</p>
+<p>中间件方法由Express提供，负责拦截请求，请求处理函数由开发人员提供，负责处理请求。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;请求路径&#x27;</span>, <span class="string">&#x27;处理函数&#x27;</span>)   <span class="comment">// 接收并处理get请求</span></span><br><span class="line">app.<span class="title function_">post</span>(<span class="string">&#x27;请求路径&#x27;</span>, <span class="string">&#x27;处理函数&#x27;</span>)  <span class="comment">// 接收并处理post请求</span></span><br></pre></td></tr></table></figure>
+
+<p>可以针对同一个请求设置多个中间件，对同一个请求进行多次处理。</p>
+<p>默认情况下，请求<strong>从上到下依次匹配</strong>中间件，一旦匹配成功，终止匹配。</p>
+<p>可以调用next方法将请求的控制权交给下一个中间件，直到遇到结束请求的中间件。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/request&#x27;</span>, <span class="function">(<span class="params">req, res, next</span>) =&gt;</span> &#123;</span><br><span class="line">    req.<span class="property">name</span> = <span class="string">&quot;张三&quot;</span>;</span><br><span class="line">    <span class="title function_">next</span>();</span><br><span class="line">&#125;);</span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/request&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">    res.<span class="title function_">send</span>(req.<span class="property">name</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="app-use中间件"><a href="#app-use中间件" class="headerlink" title="app.use中间件"></a>app.use中间件</h3><p>app.use 匹配所有的请求方式，可以直接传入请求处理函数，代表接收所有的请求。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">use</span>(<span class="function">(<span class="params">req, res, next</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(req.<span class="property">url</span>);</span><br><span class="line">    <span class="title function_">next</span>();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>app.use 第一个参数也可以传入请求地址，代表不论什么请求方式，只要是这个请求地址就接收这个请求。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">use</span>(<span class="string">&#x27;/admin&#x27;</span>, <span class="function">(<span class="params">req, res, next</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(req.<span class="property">url</span>);</span><br><span class="line">    <span class="title function_">next</span>();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="中间件应用"><a href="#中间件应用" class="headerlink" title="中间件应用"></a>中间件应用</h3><ol>
+<li><p>路由保护，客户端在访问需要登录的页面时，可以先使用中间件判断用户登录状态，用户如果未登录，则拦截请求，直接响应，禁止用户进入需要登录的页面。</p>
+</li>
+<li><p>网站维护公告，在所有路由的最上面定义接收所有请求的中间件，直接为客户端做出响应，网站正在维护中。</p>
+</li>
+<li><p>自定义404页面</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 网站公告</span></span><br><span class="line"><span class="comment">// app.use((req, res, next) =&gt; &#123;</span></span><br><span class="line"><span class="comment">// 	res.send(&#x27;当前网站正在维护...&#x27;)</span></span><br><span class="line"><span class="comment">// &#125;)</span></span><br><span class="line"></span><br><span class="line">app.<span class="title function_">use</span>(<span class="string">&#x27;/admin&#x27;</span>, <span class="function">(<span class="params">req, res, next</span>) =&gt;</span> &#123;</span><br><span class="line">	<span class="comment">// 用户没有登录</span></span><br><span class="line">	<span class="keyword">let</span> isLogin = <span class="literal">true</span>;</span><br><span class="line">	<span class="comment">// 如果用户登录</span></span><br><span class="line">	<span class="keyword">if</span> (isLogin) &#123;</span><br><span class="line">		<span class="comment">// 让请求继续向下执行</span></span><br><span class="line">		<span class="title function_">next</span>()</span><br><span class="line">	&#125;<span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="comment">// 如果用户没有登录 直接对客户端做出响应</span></span><br><span class="line">		res.<span class="title function_">send</span>(<span class="string">&#x27;您还没有登录 不能访问/admin这个页面&#x27;</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/admin&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">	res.<span class="title function_">send</span>(<span class="string">&#x27;您已经登录 可以访问当前页面&#x27;</span>)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">use</span>(<span class="function">(<span class="params">req, res, next</span>) =&gt;</span> &#123;</span><br><span class="line">	<span class="comment">// 为客户端响应404状态码以及提示信息</span></span><br><span class="line">	res.<span class="title function_">status</span>(<span class="number">404</span>).<span class="title function_">send</span>(<span class="string">&#x27;当前访问的页面是不存在的&#x27;</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="错误处理中间件"><a href="#错误处理中间件" class="headerlink" title="错误处理中间件"></a>错误处理中间件</h3><p>在程序执行的过程中，不可避免的会出现一些无法预料的错误，比如文件读取失败，数据库连接失败。程序一旦出错就无法继续运行，如果想要继续运行，必须捕获错误，加入错误处理</p>
+<p>错误处理中间件是一个集中处理错误的地方。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> app.<span class="title function_">use</span>(<span class="function">(<span class="params">err, req, res, next</span>) =&gt;</span> &#123;</span><br><span class="line">     res.<span class="title function_">status</span>(<span class="number">500</span>).<span class="title function_">send</span>(<span class="string">&#x27;服务器发生未知错误&#x27;</span>);</span><br><span class="line"> &#125;)</span><br><span class="line"><span class="comment">// 同步程序出错后，会自动捕获</span></span><br></pre></td></tr></table></figure>
+
+<p>当异步程序出现错误时，需调用next()方法，并且将错误信息通过参数的形式传递给next()方法，即可触发错误处理中间件。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> app.<span class="title function_">get</span>(<span class="string">&quot;/&quot;</span>, <span class="function">(<span class="params">req, res, next</span>) =&gt;</span> &#123;</span><br><span class="line">     fs.<span class="title function_">readFile</span>(<span class="string">&quot;/file-does-not-exist&quot;</span>, <span class="function">(<span class="params">err, data</span>) =&gt;</span> &#123;</span><br><span class="line">         <span class="keyword">if</span> (err != <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="title function_">next</span>(err);</span><br><span class="line">            <span class="comment">// next不加参数代表传递给下一个中间件</span></span><br><span class="line">            <span class="comment">// 加了参数就代表传递给错误处理中间件</span></span><br><span class="line">         &#125;</span><br><span class="line">     &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="捕获错误"><a href="#捕获错误" class="headerlink" title="捕获错误"></a>捕获错误</h3><p>在node.js中，异步API的错误信息都是通过回调函数获取的，支持Promise对象的异步API发生错误可以通过catch方法捕获。异步函数执行如果发生错误要如何捕获错误呢？</p>
+<p>try catch 可以捕获异步函数以及其他同步代码在执行过程中发生的错误，但是不能捕获其他类型的API发生的错误。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">get</span>(<span class="string">&quot;/&quot;</span>, <span class="keyword">async</span> (req, res, next) =&gt; &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">await</span> <span class="title class_">User</span>.<span class="title function_">find</span>(&#123;<span class="attr">name</span>: <span class="string">&#x27;张三&#x27;</span>&#125;)</span><br><span class="line">    &#125;<span class="keyword">catch</span>(ex) &#123;</span><br><span class="line">        <span class="title function_">next</span>(ex);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="框架请求处理"><a href="#框架请求处理" class="headerlink" title="框架请求处理"></a>框架请求处理</h2><h3 id="模块化路由"><a href="#模块化路由" class="headerlink" title="模块化路由"></a>模块化路由</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 基础代码</span></span><br><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>) </span><br><span class="line"><span class="comment">// 创建路由对象</span></span><br><span class="line"><span class="keyword">const</span> home = express.<span class="title class_">Router</span>();</span><br><span class="line"><span class="comment">// 将路由和请求路径进行匹配</span></span><br><span class="line">app.<span class="title function_">use</span>(<span class="string">&#x27;/home&#x27;</span>, home); <span class="comment">// 一级路由</span></span><br><span class="line"> <span class="comment">// 在home路由下继续创建路由</span></span><br><span class="line">home.<span class="title function_">get</span>(<span class="string">&#x27;/index&#x27;</span>, <span class="function">() =&gt;</span> &#123; <span class="comment">// 二级路由</span></span><br><span class="line">         <span class="comment">//  /home/index</span></span><br><span class="line">        res.<span class="title function_">send</span>(<span class="string">&#x27;欢迎来到博客展示页面&#x27;</span>);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 构建模块化路由</span></span><br><span class="line"><span class="comment">// home.js</span></span><br><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>) </span><br><span class="line"><span class="keyword">const</span> home = express.<span class="title class_">Router</span>(); </span><br><span class="line">home.<span class="title function_">get</span>(<span class="string">&#x27;/index&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    res.<span class="title function_">send</span>(<span class="string">&#x27;欢迎来到博客展示页面&#x27;</span>);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = home; <span class="comment">// 路由成员作为模块成员导出</span></span><br><span class="line"><span class="comment">// admin.js</span></span><br><span class="line"><span class="keyword">const</span> express = <span class="built_in">require</span>(<span class="string">&#x27;express&#x27;</span>) </span><br><span class="line"><span class="keyword">const</span> admin = express.<span class="title class_">Router</span>();</span><br><span class="line">admin.<span class="title function_">get</span>(<span class="string">&#x27;/index&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    res.<span class="title function_">send</span>(<span class="string">&#x27;欢迎来到博客管理页面&#x27;</span>);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = admin;</span><br><span class="line"><span class="comment">// app.js</span></span><br><span class="line"><span class="keyword">const</span> home = <span class="built_in">require</span>(<span class="string">&#x27;./route/home.js&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> admin = <span class="built_in">require</span>(<span class="string">&#x27;./route/admin.js&#x27;</span>);</span><br><span class="line">app.<span class="title function_">use</span>(<span class="string">&#x27;/home&#x27;</span>, home);</span><br><span class="line">app.<span class="title function_">use</span>(<span class="string">&#x27;/admin&#x27;</span>, admin);</span><br></pre></td></tr></table></figure>
+
+<h3 id="GET参数获取"><a href="#GET参数获取" class="headerlink" title="GET参数获取"></a>GET参数获取</h3><p>Express框架中使用<code>req.query</code>即可获取GET参数，框架内部会将GET参数转换为对象并返回。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 接收地址栏中问号后面的参数</span></span><br><span class="line"><span class="comment">// 例如: http://localhost:3000/?name=zhangsan&amp;age=30</span></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">   <span class="variable language_">console</span>.<span class="title function_">log</span>(req.<span class="property">query</span>); <span class="comment">// &#123;&quot;name&quot;: &quot;zhangsan&quot;, &quot;age&quot;: &quot;30&quot;&#125;</span></span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="POST参数获取"><a href="#POST参数获取" class="headerlink" title="POST参数获取"></a>POST参数获取</h3><p>Express中接收post请求参数需要借助第三方包 body-parser。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 引入body-parser模块</span></span><br><span class="line"><span class="keyword">const</span> bodyParser = <span class="built_in">require</span>(<span class="string">&#x27;body-parser&#x27;</span>);</span><br><span class="line"><span class="comment">// 配置body-parser模块</span></span><br><span class="line">app.<span class="title function_">use</span>(bodyParser.<span class="title function_">urlencoded</span>(&#123; <span class="attr">extended</span>: <span class="literal">false</span> &#125;));</span><br><span class="line"><span class="comment">// 接收请求</span></span><br><span class="line">app.<span class="title function_">post</span>(<span class="string">&#x27;/add&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">   <span class="comment">// 接收请求参数</span></span><br><span class="line">   <span class="variable language_">console</span>.<span class="title function_">log</span>(req.<span class="property">body</span>);</span><br><span class="line">&#125;) </span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="路由参数"><a href="#路由参数" class="headerlink" title="路由参数"></a>路由参数</h3><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 指定请求路由需要的参数，写在冒号后面</span></span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/find/:id&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123; </span><br><span class="line">     <span class="variable language_">console</span>.<span class="title function_">log</span>(req.<span class="property">params</span>); <span class="comment">// &#123;id: 123&#125; </span></span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 客户端请求链接</span></span><br><span class="line"><span class="attr">localhost</span>:<span class="number">3000</span>/find/<span class="number">123</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="静态资源的处理"><a href="#静态资源的处理" class="headerlink" title="静态资源的处理"></a>静态资源的处理</h3><p>通过Express内置的<strong>express.static</strong>可以方便地托管静态文件，例如img、CSS、JavaScript 文件等。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.<span class="title function_">use</span>(express.<span class="title function_">static</span>(<span class="string">&#x27;public&#x27;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>现在，public 目录下面的静态资源文件就可以访问了。</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="http://localhost:3000/images/kitten.jpg">http://localhost:3000/images/kitten.jpg</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://localhost:3000/css/style.css">http://localhost:3000/css/style.css</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://localhost:3000/js/app.js">http://localhost:3000/js/app.js</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://localhost:3000/images/bg.png">http://localhost:3000/images/bg.png</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://localhost:3000/hello.html">http://localhost:3000/hello.html</a></p>
+</li>
+</ul>
+<h2 id="模板引擎"><a href="#模板引擎" class="headerlink" title="模板引擎"></a>模板引擎</h2><p>为了使art-template模板引擎能够更好的和Express框架配合，模板引擎官方在原art-template模板引擎的基础上封装了express-art-template。</p>
+<p>使用<code>npm install art-template express-art-template</code>命令进行安装。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">// 当渲染后缀为art的模板时 使用express-art-template模板引擎</span></span><br><span class="line">app.<span class="title function_">engine</span>(<span class="string">&#x27;art&#x27;</span>, <span class="built_in">require</span>(<span class="string">&#x27;express-art-template&#x27;</span>));</span><br><span class="line"> <span class="comment">// 设置模板存放目录</span></span><br><span class="line">app.<span class="title function_">set</span>(<span class="string">&#x27;views&#x27;</span>, path.<span class="title function_">join</span>(__dirname, <span class="string">&#x27;views&#x27;</span>));</span><br><span class="line"> <span class="comment">// 渲染模板时不写后缀 默认拼接art后缀</span></span><br><span class="line">app.<span class="title function_">set</span>(<span class="string">&#x27;view engine&#x27;</span>, <span class="string">&#x27;art&#x27;</span>);</span><br><span class="line">app.<span class="title function_">get</span>(<span class="string">&#x27;/&#x27;</span>, <span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 渲染模板</span></span><br><span class="line">    res.<span class="title function_">render</span>(<span class="string">&#x27;index&#x27;</span>);</span><br><span class="line">&#125;); </span><br></pre></td></tr></table></figure>
+
+<h3 id="app-locals-对象"><a href="#app-locals-对象" class="headerlink" title="app.locals 对象"></a>app.locals 对象</h3><p>将变量设置到app.locals对象下面，这个数据在所有的模板中都可以获取到。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> app.<span class="property">locals</span>.<span class="property">users</span> = [&#123;</span><br><span class="line">     <span class="attr">name</span>: <span class="string">&#x27;张三&#x27;</span>,</span><br><span class="line">     <span class="attr">age</span>: <span class="number">20</span></span><br><span class="line"> &#125;,&#123;</span><br><span class="line">     <span class="attr">name</span>: <span class="string">&#x27;李四&#x27;</span>,</span><br><span class="line">     <span class="attr">age</span>: <span class="number">20</span></span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2022/02/04/00-00-00/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1432,95 +1598,6 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2020/11/23/15-41-01/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Fang Jun">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="eidolon的小窝">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/11/23/15-41-01/" class="post-title-link" itemprop="url">CSS经典布局-登录注册</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-11-23 15:41:01" itemprop="dateCreated datePublished" datetime="2020-11-23T15:41:01+08:00">2020-11-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-04-09 10:21:15" itemprop="dateModified" datetime="2023-04-09T10:21:15+08:00">2023-04-09</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CSS/" itemprop="url" rel="index"><span itemprop="name">CSS</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="注册页面"><a href="#注册页面" class="headerlink" title="注册页面"></a>注册页面</h2><h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><ul>
-<li>由一个居中的大盒子包裹</li>
-<li>里面的每一行是一个<code>li</code>,由<code>ul</code>包裹</li>
-<li>标题是<code>label</code>标签</li>
-<li>输入文本框是<code>input</code>标签</li>
-<li>提示信息是<code>span</code>标签</li>
-<li>提示信息前的×和√是图片,作为<code>i</code>标签的背景图片</li>
-<li><strong><font weight=bold> <code>ul</code>外面包裹表单域<code>form</code></font></strong></li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/11/23/15-41-01/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1590,7 +1667,7 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-count">88</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
