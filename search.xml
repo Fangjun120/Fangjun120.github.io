@@ -12703,6 +12703,222 @@ q退出
 <p>通过httpclient发送POST方式的请求</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testPOST</span><span class="params">()</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">    <span class="comment">// 创建httpclient对象</span></span><br><span class="line">    <span class="type">CloseableHttpClient</span> <span class="variable">httpClient</span> <span class="operator">=</span> HttpClients.createDefault();</span><br><span class="line"></span><br><span class="line">    <span class="comment">//创建请求对象</span></span><br><span class="line">    <span class="type">HttpPost</span> <span class="variable">httpPost</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HttpPost</span>(<span class="string">&quot;http://localhost:8080/admin/employee/login&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//封装请求参数</span></span><br><span class="line">    <span class="type">JSONObject</span> <span class="variable">jsonObject</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JSONObject</span>();</span><br><span class="line">    jsonObject.put(<span class="string">&quot;username&quot;</span>,<span class="string">&quot;admin&quot;</span>);</span><br><span class="line">    jsonObject.put(<span class="string">&quot;password&quot;</span>,<span class="string">&quot;123456&quot;</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">StringEntity</span> <span class="variable">entity</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">StringEntity</span>(jsonObject.toString());</span><br><span class="line">    <span class="comment">//指定请求编码方式</span></span><br><span class="line">    entity.setContentEncoding(<span class="string">&quot;utf-8&quot;</span>);</span><br><span class="line">    <span class="comment">//数据格式</span></span><br><span class="line">    entity.setContentType(<span class="string">&quot;application/json&quot;</span>);</span><br><span class="line">    httpPost.setEntity(entity);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//发送请求</span></span><br><span class="line">    <span class="type">CloseableHttpResponse</span> <span class="variable">response</span> <span class="operator">=</span> httpClient.execute(httpPost);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//解析返回结果</span></span><br><span class="line">    <span class="type">int</span> <span class="variable">statusCode</span> <span class="operator">=</span> response.getStatusLine().getStatusCode();</span><br><span class="line">    System.out.println(<span class="string">&quot;响应码为：&quot;</span> + statusCode);</span><br><span class="line"></span><br><span class="line">    <span class="type">HttpEntity</span> <span class="variable">entity1</span> <span class="operator">=</span> response.getEntity();</span><br><span class="line">    <span class="type">String</span> <span class="variable">body</span> <span class="operator">=</span> EntityUtils.toString(entity1);</span><br><span class="line">    System.out.println(<span class="string">&quot;响应数据为：&quot;</span> + body);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//关闭资源</span></span><br><span class="line">    response.close();</span><br><span class="line">    httpClient.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<h2 id="微信登陆"><a href="#微信登陆" class="headerlink" title="微信登陆"></a>微信登陆</h2><img src="pic\微信登陆.png" style="zoom: 80%;" />
+
+<p>对于后端程序而言，调用 <a href="https://developers.weixin.qq.com/miniprogram/dev/api-backend/open-api/login/auth.code2Session.html">auth.code2Session</a> 接口，换取 <strong>用户唯一标识 OpenID</strong>和 <strong>会话密钥 session_key</strong>。</p>
+<h3 id="接口地址"><a href="#接口地址" class="headerlink" title="接口地址"></a>接口地址</h3><figure class="highlight text"><table><tr><td class="code"><pre><span class="line">GET https://api.weixin.qq.com/sns/jscode2session </span><br></pre></td></tr></table></figure>
+
+<h3 id="请求参数"><a href="#请求参数" class="headerlink" title="请求参数"></a>请求参数</h3><table>
+<thead>
+<tr>
+<th align="left">属性</th>
+<th align="left">类型</th>
+<th align="left">必填</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">appid</td>
+<td align="left">string</td>
+<td align="left">是</td>
+<td align="left">小程序 appId</td>
+</tr>
+<tr>
+<td align="left">secret</td>
+<td align="left">string</td>
+<td align="left">是</td>
+<td align="left">小程序 appSecret</td>
+</tr>
+<tr>
+<td align="left">js_code</td>
+<td align="left">string</td>
+<td align="left">是</td>
+<td align="left">登录时获取的 code，可通过<a href="https://developers.weixin.qq.com/miniprogram/dev/api/open-api/login/wx.login.html">wx.login</a>获取</td>
+</tr>
+<tr>
+<td align="left">grant_type</td>
+<td align="left">string</td>
+<td align="left">是</td>
+<td align="left">授权类型，此处只需填写 authorization_code</td>
+</tr>
+</tbody></table>
+<h3 id="返回参数"><a href="#返回参数" class="headerlink" title="返回参数"></a>返回参数</h3><table>
+<thead>
+<tr>
+<th align="left">属性</th>
+<th align="left">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">session_key</td>
+<td align="left">string</td>
+<td align="left">会话密钥</td>
+</tr>
+<tr>
+<td align="left">unionid</td>
+<td align="left">string</td>
+<td align="left">用户在开放平台的唯一标识符，若当前小程序已绑定到微信开放平台账号下会返回，详见 <a href="https://developers.weixin.qq.com/miniprogram/dev/framework/open-ability/union-id.html">UnionID 机制说明</a>。</td>
+</tr>
+<tr>
+<td align="left">errmsg</td>
+<td align="left">string</td>
+<td align="left">错误信息</td>
+</tr>
+<tr>
+<td align="left">openid</td>
+<td align="left">string</td>
+<td align="left">用户唯一标识</td>
+</tr>
+<tr>
+<td align="left">errcode</td>
+<td align="left">int32</td>
+<td align="left">错误码</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 调用微信接口服务，获取微信用户的openid</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> code</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="keyword">private</span> String <span class="title function_">getOpenid</span><span class="params">(String code)</span>&#123;</span><br><span class="line">    <span class="comment">//调用微信接口服务，获得当前微信用户的openid</span></span><br><span class="line">    Map&lt;String, String&gt; map = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">    map.put(<span class="string">&quot;appid&quot;</span>,weChatProperties.getAppid());</span><br><span class="line">    map.put(<span class="string">&quot;secret&quot;</span>,weChatProperties.getSecret());</span><br><span class="line">    map.put(<span class="string">&quot;js_code&quot;</span>,code);</span><br><span class="line">    map.put(<span class="string">&quot;grant_type&quot;</span>,<span class="string">&quot;authorization_code&quot;</span>);</span><br><span class="line">    <span class="type">String</span> <span class="variable">json</span> <span class="operator">=</span> HttpClientUtil.doGet(WX_LOGIN, map);</span><br><span class="line"></span><br><span class="line">    <span class="type">JSONObject</span> <span class="variable">jsonObject</span> <span class="operator">=</span> JSON.parseObject(json);</span><br><span class="line">    <span class="type">String</span> <span class="variable">openid</span> <span class="operator">=</span> jsonObject.getString(<span class="string">&quot;openid&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> openid;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="缓存设计和使用"><a href="#缓存设计和使用" class="headerlink" title="缓存设计和使用"></a>缓存设计和使用</h2><p>用户量多，查询压力大时，会导致页面卡顿。可以通过Redis缓存数据来减少数据库查询操作。</p>
+<p>以分类下的菜品为例，可以给每个分类下的菜品保存一份缓存数据。将分类id作为key，菜品集合转为Redis字符串保存。</p>
+<p>java保存到redis时会将对象序列化，以Redis的String类型存储，取出时再反序列化得到保存对象。</p>
+<p>当数据库中<strong>菜品数据变更时要同步更新缓存数据</strong>。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据分类id查询菜品</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> categoryId</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line"><span class="meta">@GetMapping(&quot;/list&quot;)</span></span><br><span class="line"><span class="meta">@ApiOperation(&quot;根据分类id查询菜品&quot;)</span></span><br><span class="line"><span class="keyword">public</span> Result&lt;List&lt;DishVO&gt;&gt; <span class="title function_">list</span><span class="params">(Long categoryId)</span> &#123;</span><br><span class="line">    <span class="comment">//查询redis中是否存在该分类的菜品数据</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">key</span> <span class="operator">=</span> <span class="string">&quot;dish_&quot;</span>+categoryId;</span><br><span class="line">    <span class="comment">//放入redis时是什么，取出来就是什么</span></span><br><span class="line">    List&lt;DishVO&gt; list = (List&lt;DishVO&gt;) redisTemplate.opsForValue().get(key);</span><br><span class="line">    <span class="keyword">if</span>(list!=<span class="literal">null</span>&amp;&amp;list.size()&gt;<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="comment">//存在直接返回</span></span><br><span class="line">        <span class="keyword">return</span> Result.success(list);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">Dish</span> <span class="variable">dish</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Dish</span>();</span><br><span class="line">    dish.setCategoryId(categoryId);</span><br><span class="line">    dish.setStatus(StatusConstant.ENABLE);<span class="comment">//查询起售中的菜品</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//不存在时查询数据库并放入redis</span></span><br><span class="line">    list = dishService.listWithFlavor(dish);</span><br><span class="line">    redisTemplate.opsForValue().set(key,list);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Result.success(list);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Spring-Cache"><a href="#Spring-Cache" class="headerlink" title="Spring Cache"></a>Spring Cache</h3><p>Spring Cache是一个框架，实现了基于注解的缓存功能，只需要简单地加一个注解，就能实现缓存功能。基于代理技术。</p>
+<p>Spring Cache 提供了一层抽象，底层可以切换不同的缓存实现，例如：</p>
+<ul>
+<li>EHCache</li>
+<li>Caffeine</li>
+<li>Redis(常用)</li>
+</ul>
+<p><strong>起步依赖：</strong></p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-cache<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span>  		             <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.7.3<span class="tag">&lt;/<span class="name">version</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="常用注解-1"><a href="#常用注解-1" class="headerlink" title="常用注解"></a>常用注解</h4><p>在SpringCache中提供了很多缓存操作的注解，常见的是以下的几个：</p>
+<table>
+<thead>
+<tr>
+<th><strong>注解</strong></th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>@EnableCaching</td>
+<td>开启缓存注解功能，通常加在启动类上</td>
+</tr>
+<tr>
+<td>@Cacheable</td>
+<td>在方法执行前先查询缓存中是否有数据，如果有数据，则直接返回缓存数据；如果没有缓存数据，调用方法并将方法返回值放到缓存中</td>
+</tr>
+<tr>
+<td>@CachePut</td>
+<td>将方法的返回值放到缓存中</td>
+</tr>
+<tr>
+<td>@CacheEvict</td>
+<td>将一条或多条数据从缓存中删除</td>
+</tr>
+</tbody></table>
+<p>在spring boot项目中，使用缓存技术只需在项目中导入相关缓存技术的依赖包，并在启动类上使用@EnableCaching开启缓存支持即可。</p>
+<h2 id="微信支付"><a href="#微信支付" class="headerlink" title="微信支付"></a>微信支付</h2><p>微信支付包含很多产品：</p>
+<img src="/pic/微信支付.png" style="zoom:67%;" />
+
+<p>本项目选择小程序支付。</p>
+<h3 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h3><img src="/pic/微信支付流程.png" style="zoom:67%;" />
+
+<p><strong>JSAPI下单：</strong>商户系统调用该接口在微信支付服务后台生成预支付交易单(对应时序图的第5步)</p>
+<img src="/pic/申请支付接口.png" style="zoom: 50%;" />
+
+<p><strong>微信小程序调起支付：</strong>通过JSAPI下单接口获取到发起支付的必要参数prepay_id，然后使用微信支付提供的小程序方法调起小程序支付(对应时序图的第10步)</p>
+<img src="/pic/调起支付.png" style="zoom:50%;" />
+
+<h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><h4 id="保证数据安全"><a href="#保证数据安全" class="headerlink" title="保证数据安全"></a>保证数据安全</h4><p>完成微信支付有两个关键的步骤：</p>
+<p><strong>第一个</strong>就是需要在商户系统当中调用微信后台的一个下单接口，就是生成预支付交易单。</p>
+<p><strong>第二个</strong>就是支付成功之后微信后台会给推送消息。</p>
+<p>这两个接口数据的安全性，要求其实是非常高的。</p>
+<p><strong>解决：</strong>微信提供的方式就是对数据进行加密、解密、签名多种方式。要完成数据加密解密，需要提前准备相应的一些文件，其实就是一些证书。</p>
+<p><strong>获取微信支付平台证书、商户私钥文件：</strong></p>
+<img src="/pic/微信支付证书和文件.png" style="zoom: 67%;" />
+
+<h4 id="微信后台调用到商户系统"><a href="#微信后台调用到商户系统" class="headerlink" title="微信后台调用到商户系统"></a>微信后台调用到商户系统</h4><p>微信后台会调用到商户系统给推送支付的结果，这个调用过程，本质上也是一个HTTP请求。但是在开发阶段，商户系统的ip地址是当前电脑的ip地址，只是一个局域网内的ip，微信后台无法调用到。</p>
+<p><strong>解决：</strong>内网穿透。通过<strong>cpolar软件</strong>可以获得一个临时域名，而这个临时域名是一个公网ip，这样，微信后台就可以请求到商户系统了。</p>
+<h2 id="DAY-9-校验收货地址是否超出配送范围-百度地图API"><a href="#DAY-9-校验收货地址是否超出配送范围-百度地图API" class="headerlink" title="DAY 9 校验收货地址是否超出配送范围  百度地图API"></a>DAY 9 校验收货地址是否超出配送范围  百度地图API</h2><h2 id="Spring-Task"><a href="#Spring-Task" class="headerlink" title="Spring Task"></a>Spring Task</h2><p><strong>Spring Task</strong> 是Spring框架提供的任务调度工具，可以按照约定的时间自动执行某个代码逻辑。比如每月还款提醒、订单状态定时处理等。</p>
+<h3 id="cron表达式"><a href="#cron表达式" class="headerlink" title="cron表达式"></a>cron表达式</h3><p><strong>cron表达式</strong>就是一个字符串，通过cron表达式可以<strong>定义任务触发的时间</strong>。</p>
+<p><strong>构成规则：</strong>分为6或7个域，由空格分隔开，每个域代表一个含义</p>
+<p>每个域的含义分别为：秒、分钟、小时、日、月、周、年(可选)</p>
+<p>比如2022年10月12日上午9点整 对应的cron表达式为：<strong>0 0 9 12 10 ? 2022</strong></p>
+<p><strong>说明：</strong>一般<strong>日</strong>和<strong>周</strong>的值不同时设置，其中一个设置，另一个用？表示。</p>
+<p>cron表达式有在线生成器：<a href="https://cron.qqe2.com/">https://cron.qqe2.com/</a></p>
+<h3 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h3><ul>
+<li>导入maven坐标 spring-context</li>
+<li>启动类添加注解 @EnableScheduling 开启任务调度</li>
+<li>自定义定时任务类</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 实例化，生成bean交给容器管理</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">MyTask</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 定时任务 每隔5秒触发一次</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Scheduled(cron = &quot;0/5 * * * * ?&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">executeTask</span><span class="params">()</span>&#123;</span><br><span class="line">        log.info(<span class="string">&quot;定时任务开始执行：&#123;&#125;&quot;</span>,<span class="keyword">new</span> <span class="title class_">Date</span>());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="支付超时处理"><a href="#支付超时处理" class="headerlink" title="支付超时处理"></a>支付超时处理</h3><p>对于已下单未支付的订单，其状态一直是”未支付“，该状态如果保持了15分钟，需要将订单取消。可以通过定时任务来处理。每分钟检查一次是否存在超时订单。</p>
+<h2 id="WebSocket"><a href="#WebSocket" class="headerlink" title="WebSocket"></a>WebSocket</h2><p>WebSocket 是基于 TCP 的一种新的<strong>网络协议</strong>。它实现了浏览器与服务器全双工通信——浏览器和服务器只需要完成一次握手，两者之间就可以创建<strong>持久性</strong>的连接， 并进行<strong>双向</strong>数据传输。</p>
+<p><img src="/pic/http.png" style="zoom:67%;" /><img src="/pic/websocket.png" style="zoom:67%;" /></p>
+<h3 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h3><ul>
+<li>服务器长期维护长连接需要一定的成本</li>
+<li>各个浏览器支持程度不一</li>
+<li>WebSocket 是长连接，受网络限制比较大，需要处理好重连</li>
+</ul>
+<p>因此WebSocket并<strong>不能完全取代HTTP</strong>，它<strong>只适合在特定的场景下使用</strong></p>
+<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><ul>
+<li>视频弹幕<ul>
+<li>页面没刷新，没有任何http请求，弹幕实时产生</li>
+</ul>
+</li>
+<li>网页聊天</li>
+<li>股票基金实时更新</li>
+</ul>
+<h3 id="案例-1"><a href="#案例-1" class="headerlink" title="案例"></a>案例</h3><ol>
+<li>直接使用websocket.html页面作为WebSocket客户端</li>
+<li>导入WebSocket的maven坐标</li>
+<li>开发服务端WebSocketServer，用于和客户端通信(作用与controller类似，响应请求)</li>
+<li>配置类WebSocketConfiguration，注册WebSocket的服务端组件</li>
+<li>定时任务类WebSocketTask，定时向客户端推送数据</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-websocket<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="来单提醒"><a href="#来单提醒" class="headerlink" title="来单提醒"></a>来单提醒</h3><p>用户下单成功后，系统需要通知商家，语音播放并且弹出提示框。</p>
+<p><strong>设计思路：</strong></p>
+<ul>
+<li>通过WebSocket实现管理端页面和服务端保持长连接状态</li>
+<li>当客户支付后，调用WebSocket的相关API实现服务端向客户端推送消息</li>
+<li>客户端浏览器解析服务端推送的消息，判断是来单提醒还是客户催单，进行相应的消息提示和语音播报</li>
+<li>约定服务端发送给客户端浏览器的数据格式为JSON，字段包括：type，orderId，content<ul>
+<li>type 为消息类型，1为来单提醒 2为客户催单</li>
+<li>orderId 为订单id</li>
+<li>content 为消息内容</li>
+</ul>
+</li>
+</ul>
+<h2 id="Apache-POI"><a href="#Apache-POI" class="headerlink" title="Apache POI"></a>Apache POI</h2><p>Apache POI 是一个处理Miscrosoft Office各种文件格式的开源项目。简单来说就是，我们可以使用 POI 在 Java 程序中对Miscrosoft Office各种文件进行读写操作。<br>一般情况下，POI 都是用于操作 Excel 文件。</p>
+<h3 id="案例-2"><a href="#案例-2" class="headerlink" title="案例"></a>案例</h3><h4 id="Apache-POI的maven坐标"><a href="#Apache-POI的maven坐标" class="headerlink" title="Apache POI的maven坐标"></a>Apache POI的maven坐标</h4><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.poi<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>poi<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.16<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.poi<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>poi-ooxml<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.16<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="将数据写入Excel文件"><a href="#将数据写入Excel文件" class="headerlink" title="将数据写入Excel文件"></a>将数据写入Excel文件</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">POITest</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 基于POI向Excel文件写入数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">write</span><span class="params">()</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="comment">//在内存中创建一个Excel文件对象</span></span><br><span class="line">        <span class="type">XSSFWorkbook</span> <span class="variable">excel</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">XSSFWorkbook</span>();</span><br><span class="line">        <span class="comment">//创建Sheet页</span></span><br><span class="line">        <span class="type">XSSFSheet</span> <span class="variable">sheet</span> <span class="operator">=</span> excel.createSheet(<span class="string">&quot;itcast&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//在Sheet页中创建行，0表示第1行</span></span><br><span class="line">        <span class="type">XSSFRow</span> <span class="variable">row1</span> <span class="operator">=</span> sheet.createRow(<span class="number">0</span>);</span><br><span class="line">        <span class="comment">//创建单元格并在单元格中设置值，单元格编号也是从0开始，1表示第2个单元格</span></span><br><span class="line">        row1.createCell(<span class="number">1</span>).setCellValue(<span class="string">&quot;姓名&quot;</span>);</span><br><span class="line">        row1.createCell(<span class="number">2</span>).setCellValue(<span class="string">&quot;城市&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">XSSFRow</span> <span class="variable">row2</span> <span class="operator">=</span> sheet.createRow(<span class="number">1</span>);</span><br><span class="line">        row2.createCell(<span class="number">1</span>).setCellValue(<span class="string">&quot;张三&quot;</span>);</span><br><span class="line">        row2.createCell(<span class="number">2</span>).setCellValue(<span class="string">&quot;北京&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">XSSFRow</span> <span class="variable">row3</span> <span class="operator">=</span> sheet.createRow(<span class="number">2</span>);</span><br><span class="line">        row3.createCell(<span class="number">1</span>).setCellValue(<span class="string">&quot;李四&quot;</span>);</span><br><span class="line">        row3.createCell(<span class="number">2</span>).setCellValue(<span class="string">&quot;上海&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">FileOutputStream</span> <span class="variable">out</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;D:\\itcast.xlsx&quot;</span>));</span><br><span class="line">        <span class="comment">//通过输出流将内存中的Excel文件写入到磁盘上</span></span><br><span class="line">        excel.write(out);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//关闭资源</span></span><br><span class="line">        out.flush();</span><br><span class="line">        out.close();</span><br><span class="line">        excel.close();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        write();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>实现效果</strong></p>
+<p>在D盘中生成itcast.xlsx文件，创建名称为itcast的Sheet页，同时将内容成功写入。</p>
+<h4 id="读取Excel文件中的数据"><a href="#读取Excel文件中的数据" class="headerlink" title="读取Excel文件中的数据"></a>读取Excel文件中的数据</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">POITest</span> &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 基于POI读取Excel文件</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> Exception</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">read</span><span class="params">()</span> <span class="keyword">throws</span> Exception&#123;</span><br><span class="line">        <span class="type">FileInputStream</span> <span class="variable">in</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">FileInputStream</span>(<span class="keyword">new</span> <span class="title class_">File</span>(<span class="string">&quot;D:\\itcast.xlsx&quot;</span>));</span><br><span class="line">        <span class="comment">//通过输入流读取指定的Excel文件</span></span><br><span class="line">        <span class="type">XSSFWorkbook</span> <span class="variable">excel</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">XSSFWorkbook</span>(in);</span><br><span class="line">        <span class="comment">//获取Excel文件的第1个Sheet页</span></span><br><span class="line">        <span class="type">XSSFSheet</span> <span class="variable">sheet</span> <span class="operator">=</span> excel.getSheetAt(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//获取Sheet页中的最后一行的行号</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">lastRowNum</span> <span class="operator">=</span> sheet.getLastRowNum();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt;= lastRowNum; i++) &#123;</span><br><span class="line">            <span class="comment">//获取Sheet页中的行</span></span><br><span class="line">            <span class="type">XSSFRow</span> <span class="variable">titleRow</span> <span class="operator">=</span> sheet.getRow(i);</span><br><span class="line">            <span class="comment">//获取行的第2个单元格</span></span><br><span class="line">            <span class="type">XSSFCell</span> <span class="variable">cell1</span> <span class="operator">=</span> titleRow.getCell(<span class="number">1</span>);</span><br><span class="line">            <span class="comment">//获取单元格中的文本内容</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">cellValue1</span> <span class="operator">=</span> cell1.getStringCellValue();</span><br><span class="line">            <span class="comment">//获取行的第3个单元格</span></span><br><span class="line">            <span class="type">XSSFCell</span> <span class="variable">cell2</span> <span class="operator">=</span> titleRow.getCell(<span class="number">2</span>);</span><br><span class="line">            <span class="comment">//获取单元格中的文本内容</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">cellValue2</span> <span class="operator">=</span> cell2.getStringCellValue();</span><br><span class="line"></span><br><span class="line">            System.out.println(cellValue1 + <span class="string">&quot; &quot;</span> +cellValue2);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//关闭资源</span></span><br><span class="line">        in.close();</span><br><span class="line">        excel.close();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        read();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="导出运营数据Excel报表"><a href="#导出运营数据Excel报表" class="headerlink" title="导出运营数据Excel报表"></a>导出运营数据Excel报表</h3><img src="/pic/报表样式.png" style="zoom:67%;" />
+
+<ul>
+<li>接口没有传递参数，因为导出的是最近30天的运营数据，后端计算即可，所以不需要任何参数</li>
+<li>接口没有返回数据，因为报表导出功能本质上是文件下载，服务端会通过输出流将Excel文件下载到客户端浏览器</li>
+</ul>
+<h4 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h4><p>1). 设计Excel模板文件</p>
+<ul>
+<li>在实际开发中，如果用代码创建excel文件会非常繁琐，因此需要提前<strong>准备好一个模板文件</strong>，把样式都设置好。只需要用代码带入数据即可。</li>
+</ul>
+<p>2). 查询近30天的运营数据</p>
+<p>3). 将查询到的运营数据写入模板文件</p>
+<p>4). 通过输出流将Excel文件下载到客户端浏览器</p>
 ]]></content>
       <categories>
         <category>Java</category>
