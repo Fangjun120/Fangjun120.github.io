@@ -27,11 +27,22 @@
 <meta property="og:site_name" content="eidolon的小窝">
 <meta property="og:description" content="Object类Object是java中所有类的祖先类，所以Java中所有类的对象都可以直接使用Object类中提供的一些方法。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fangjun120.github.io/2023/10/18/10-30-37/pic/Objects%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95.png">
+<meta property="og:image" content="https://fangjun120.github.io/pic/%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B%E5%8C%85%E8%A3%85%E7%B1%BB.png">
+<meta property="og:image" content="https://fangjun120.github.io/pic/StringBuilder.png">
+<meta property="og:image" content="https://fangjun120.github.io/pic/Arrays.png">
+<meta property="og:image" content="https://fangjun120.github.io/pic/collection.png">
+<meta property="og:image" content="https://fangjun120.github.io/pic/collection%E6%96%B9%E6%B3%95.png">
+<meta property="og:image" content="https://fangjun120.github.io/pic/list%E7%89%B9%E6%9C%89%E6%96%B9%E6%B3%95.png">
+<meta property="og:image" content="https://fangjun120.github.io/pic/Collections%E5%B7%A5%E5%85%B7%E7%B1%BB.png">
+<meta property="og:image" content="https://fangjun120.github.io/pic/Map%E4%BD%93%E7%B3%BB.png">
+<meta property="og:image" content="https://fangjun120.github.io/pic/map%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95.png">
 <meta property="article:published_time" content="2023-10-18T02:30:37.000Z">
-<meta property="article:modified_time" content="2023-11-02T02:16:27.245Z">
+<meta property="article:modified_time" content="2024-01-16T11:41:20.193Z">
 <meta property="article:author" content="Fang Jun">
 <meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fangjun120.github.io/2023/10/18/10-30-37/pic/Objects%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95.png">
 
 <link rel="canonical" href="https://fangjun120.github.io/2023/10/18/10-30-37/">
 
@@ -220,7 +231,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-11-02 10:16:27" itemprop="dateModified" datetime="2023-11-02T10:16:27+08:00">2023-11-02</time>
+                <time title="修改时间：2024-01-16 19:41:20" itemprop="dateModified" datetime="2024-01-16T19:41:20+08:00">2024-01-16</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -246,12 +257,24 @@
         <h2 id="Object类"><a href="#Object类" class="headerlink" title="Object类"></a>Object类</h2><p>Object是java中所有类的祖先类，所以Java中所有类的对象都可以直接使用Object类中提供的一些方法。</p>
 <span id="more"></span>
 
-<h3 id="toString-NaN"><a href="#toString-NaN" class="headerlink" title="toString()"></a>toString()</h3><h3 id="equals-Object-o"><a href="#equals-Object-o" class="headerlink" title="equals(Object o)"></a>equals(Object o)</h3><h3 id="clone"><a href="#clone" class="headerlink" title="clone()"></a>clone()</h3><h2 id="Objects类"><a href="#Objects类" class="headerlink" title="Objects类"></a>Objects类</h2><p>Objects是一个工具类，提供了一些方法可以对任意对象进行操作。</p>
+<h3 id="toString-NaN"><a href="#toString-NaN" class="headerlink" title="toString()"></a>toString()</h3><h3 id="equals-Object-o"><a href="#equals-Object-o" class="headerlink" title="equals(Object o)"></a>equals(Object o)</h3><h3 id="clone"><a href="#clone" class="headerlink" title="clone()"></a>clone()</h3><p>浅克隆</p>
+<ul>
+<li>基本类型直接拷贝，字符串数据拷贝地址，<strong>引用类型拷贝地址</strong></li>
+</ul>
+<p>深克隆</p>
+<ul>
+<li>基本类型直接拷贝，字符串数据拷贝地址，<strong>引用类型创建新对象</strong></li>
+</ul>
+<h2 id="Objects类"><a href="#Objects类" class="headerlink" title="Objects类"></a>Objects类</h2><p>Objects是一个<strong>工具类</strong>，提供了一些方法可以对任意<strong>对象</strong>进行操作。</p>
+<img src="pic\Objects常用方法.png" style="zoom: 50%;" />
+
 <h2 id="基本类型包装类"><a href="#基本类型包装类" class="headerlink" title="基本类型包装类"></a>基本类型包装类</h2><p>Java中<strong>万物皆对象</strong>，但8种基本数据类型还不是对象，所以要把它们变成对象，变成对象之后，可以提供一些方法对数据进行操作。</p>
+<img src="/pic/基本类型包装类.png" style="zoom: 67%;" />
+
 <p>学习包装类，主要学习两点：</p>
 <ul>
 <li><ol>
-<li>创建包装类的对象方式、自动装箱和拆箱的特性；</li>
+<li>创建包装类的对象方式、<strong>自动装箱和拆箱</strong>的特性；</li>
 </ol>
 </li>
 <li><ol start="2">
@@ -259,6 +282,88 @@
 </ol>
 </li>
 </ul>
+<p>把字符串转换为数值型数据：包装类.parseXxx(字符串)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">parseInt</span><span class="params">(String s)</span></span><br></pre></td></tr></table></figure>
+
+<p>将数值型数据转换为字符串：包装类.valueOf(数据);</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title function_">valueOf</span><span class="params">(<span class="type">int</span> a)</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//1.字符串转换为数值型数据</span></span><br><span class="line"><span class="type">String</span> <span class="variable">ageStr</span> <span class="operator">=</span> <span class="string">&quot;29&quot;</span>;</span><br><span class="line"><span class="type">int</span> <span class="variable">age1</span> <span class="operator">=</span> Integer.parseInt(ageStr);</span><br><span class="line"></span><br><span class="line"><span class="type">String</span> <span class="variable">scoreStr</span> <span class="operator">=</span> <span class="number">3.14</span>;</span><br><span class="line"><span class="type">double</span> <span class="variable">score</span> <span class="operator">=</span> Double.prarseDouble(scoreStr);</span><br><span class="line"></span><br><span class="line"><span class="comment">//2.整数转换为字符串</span></span><br><span class="line"><span class="type">Integer</span> <span class="variable">a</span> <span class="operator">=</span> <span class="number">23</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> Integer.toString(a);</span><br><span class="line"><span class="type">String</span> <span class="variable">s2</span> <span class="operator">=</span> a.toString();</span><br><span class="line"><span class="type">String</span> <span class="variable">s3</span> <span class="operator">=</span> a+<span class="string">&quot;&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">s4</span> <span class="operator">=</span> String.valueOf(a);</span><br></pre></td></tr></table></figure>
+
+<h2 id="String"><a href="#String" class="headerlink" title="String"></a>String</h2><ol>
+<li>String是不可变字符串对象，每次变化都会指向一个新的对象，原本的对象永远不会变。</li>
+<li>以字面量方式创建的字符串对象存储在<strong>字符串常量池</strong>，且<strong>相同内容的字符串只存储一份</strong>。而new出来的对象放在<strong>堆内存</strong></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="string">&quot;abc&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">s2</span> <span class="operator">=</span> <span class="string">&quot;abc&quot;</span>;</span><br><span class="line">System.out.println(s1 == s2); <span class="comment">// true,都指向常量池中的唯一对象</span></span><br><span class="line"></span><br><span class="line"><span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(<span class="string">&quot;abc&quot;</span>);</span><br><span class="line"><span class="type">String</span> <span class="variable">s2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(<span class="string">&quot;abc&quot;</span>);</span><br><span class="line">System.out.println(s1 == s2); <span class="comment">// false,每次new出来的都是新对象</span></span><br><span class="line"></span><br><span class="line"><span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="string">&quot;abc&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">s2</span> <span class="operator">=</span> <span class="string">&quot;ab&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">s3</span> <span class="operator">=</span> s2 + <span class="string">&quot;c&quot;</span>;</span><br><span class="line">System.out.println(s1 == s3); <span class="comment">// false,s3是运算出来的，在堆内存，s1在常量池</span></span><br><span class="line"></span><br><span class="line"><span class="type">String</span> <span class="variable">s1</span> <span class="operator">=</span> <span class="string">&quot;abc&quot;</span>;</span><br><span class="line"><span class="type">String</span> <span class="variable">s2</span> <span class="operator">=</span> <span class="string">&quot;ab&quot;</span>+<span class="string">&quot;c&quot;</span>;</span><br><span class="line">System.out.println(s1 == s2); <span class="comment">// true,编译优化，&quot;ab&quot;+&quot;c&quot;直接转成&quot;abc&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="StringBuilder和StringBuffer"><a href="#StringBuilder和StringBuffer" class="headerlink" title="StringBuilder和StringBuffer"></a>StringBuilder和StringBuffer</h2><p>StringBuilder代表可变字符串对象，相当于是一个容器，它里面装的字符串是可以改变的，就是用来操作字符串的。</p>
+<img src="/pic/StringBuilder.png" style="zoom: 67%;" />
+
+<ul>
+<li>StringBuffer的用法与StringBuilder是一模一样的</li>
+<li>但 StringBuilder是线程不安全的，效率高。StringBuffer是线程安全的，效率低。</li>
+</ul>
+<h2 id="Arrays"><a href="#Arrays" class="headerlink" title="Arrays"></a>Arrays</h2><p>Arrays是用来操作数组的一个<strong>工具类</strong>。</p>
+<img src="/pic/Arrays.png" style="zoom:80%;" />
+
+<ul>
+<li><code>Arrays.asList(elem1,elem2);</code></li>
+</ul>
+<h2 id="Collection"><a href="#Collection" class="headerlink" title="Collection"></a>Collection</h2><p>Collection 代表单列集合</p>
+<img src="/pic/collection.png" style="zoom:60%;" />
+
+<p>collection常用方法，子类都会继承</p>
+<img src="/pic/collection方法.png" style="zoom:80%;" />
+
+<p>迭代器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Iterator&lt;String&gt; it = lists.iterator();</span><br><span class="line"><span class="keyword">while</span>(it.hasNext())&#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">ele</span> <span class="operator">=</span> it.next();</span><br><span class="line">    System.out.println(ele);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="List集合"><a href="#List集合" class="headerlink" title="List集合"></a>List集合</h3><p>List 系列集合特点 : <strong>有序，可重复，有索引</strong></p>
+<h4 id="List特有方法"><a href="#List特有方法" class="headerlink" title="List特有方法"></a>List特有方法</h4><img src="/pic/list特有方法.png" alt="list特有方法"  />
+
+<h4 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h4><ul>
+<li>ArrayList是<strong>基于数组</strong>实现的，查询快，增删慢</li>
+<li>利用无参构造器创建时，会在底层<strong>创建一个默认长度为 0 的数组</strong></li>
+<li>添加第一个元素时，底层<strong>创建一个新的长度为10的数组</strong></li>
+<li>存满时扩容1.5倍</li>
+<li>若一次添加多个元素，1.5倍放不下。则创建新数组，长度以实际为准</li>
+</ul>
+<h4 id="LinkedList"><a href="#LinkedList" class="headerlink" title="LinkedList"></a>LinkedList</h4><ul>
+<li><strong>基于双链表</strong>实现</li>
+</ul>
+<h3 id="Set集合"><a href="#Set集合" class="headerlink" title="Set集合"></a>Set集合</h3><p>Set 系列集合特点 : <strong>不重复，无索引</strong>。Set的常用方法几乎都是父类提供的。</p>
+<h4 id="HashSet"><a href="#HashSet" class="headerlink" title="HashSet"></a>HashSet</h4><ul>
+<li>无序，基于**数组+链表+红黑树(自平衡二叉树)**，即主干基于数组，哈希碰撞后叠加链表，链表长度超过8且数组长度超过64后，将链表转成红黑树。</li>
+</ul>
+<h4 id="LinkedHashSet"><a href="#LinkedHashSet" class="headerlink" title="LinkedHashSet"></a>LinkedHashSet</h4><ul>
+<li><strong>有序</strong>，在HashSet的基础上多了<strong>双链表</strong>的机制用于记录前后元素的位置。</li>
+</ul>
+<h4 id="TreeSet"><a href="#TreeSet" class="headerlink" title="TreeSet"></a>TreeSet</h4><ul>
+<li>可排序，基于红黑树实现的排序，默认升序。</li>
+</ul>
+<h3 id="集合并发修改异常"><a href="#集合并发修改异常" class="headerlink" title="集合并发修改异常"></a>集合并发修改异常</h3><p>使用迭代器<strong>遍历</strong>集合时，又<strong>同时删除</strong>集合中的数据，程序就会出现并发修改异常的错误。</p>
+<p>由于增强 for 循环遍历集合就是迭代器遍历集合的简化写法，因此也会出现并发修改异常的错误。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Iterator&lt;String&gt; it = lists.iterator();</span><br><span class="line"><span class="keyword">while</span>(it.hasNext())&#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">ele</span> <span class="operator">=</span> it.next();</span><br><span class="line">    <span class="keyword">if</span>(...)&#123;</span><br><span class="line">        lists.remove(ele);</span><br><span class="line">        <span class="comment">// 这里会有问题，因为删掉ele之后，后面的元素整体前移，it就指向删除元素的后一位</span></span><br><span class="line">        <span class="comment">// 但紧接着迭代器又把it后移一位，就跳过了删除元素的后一个元素</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>使用迭代器遍历集合，但用迭代器自己的删除方法删除数据即可。</li>
+<li>如果用 for 循环遍历时：可以倒着遍历并删除；或者从前往后遍历，但删除元素后做 i – 操作。</li>
+</ul>
+<h3 id="工具类Collections"><a href="#工具类Collections" class="headerlink" title="工具类Collections"></a>工具类Collections</h3><img src="/pic/Collections工具类.png" style="zoom:90%;" />
+
+<h2 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h2><p>双列集合，键不允许重复，但值可以重复（<strong>Map只对键有约束</strong>，值任意）。 特点也是不重复、无索引。</p>
+<p><strong>Set底层是基于Map实现的</strong>，只是Set只要键，不要值。因此Map底层数据结构和Set是一样的。</p>
+<p><img src="/pic/Map%E4%BD%93%E7%B3%BB.png"></p>
+<p>Map常用方法</p>
+<p><img src="/pic/map%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95.png"></p>
+<p>使用forEach遍历map最简单</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">map.forEach((k , v) -&gt; &#123;</span><br><span class="line">	System.out.println(k +<span class="string">&quot;-----&gt;&quot;</span> + v);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h3 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h3><p>同HashSet</p>
+<h3 id="LinkedHashMap"><a href="#LinkedHashMap" class="headerlink" title="LinkedHashMap"></a>LinkedHashMap</h3><p>同LinkedHashSet</p>
+<h3 id="TreeMap"><a href="#TreeMap" class="headerlink" title="TreeMap"></a>TreeMap</h3><p>同TreeMap</p>
 
     </div>
 
@@ -342,7 +447,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Object%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">Object类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#toString-NaN"><span class="nav-number">1.1.</span> <span class="nav-text">toString()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#equals-Object-o"><span class="nav-number">1.2.</span> <span class="nav-text">equals(Object o)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#clone"><span class="nav-number">1.3.</span> <span class="nav-text">clone()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Objects%E7%B1%BB"><span class="nav-number">2.</span> <span class="nav-text">Objects类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B%E5%8C%85%E8%A3%85%E7%B1%BB"><span class="nav-number">3.</span> <span class="nav-text">基本类型包装类</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Object%E7%B1%BB"><span class="nav-number">1.</span> <span class="nav-text">Object类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#toString-NaN"><span class="nav-number">1.1.</span> <span class="nav-text">toString()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#equals-Object-o"><span class="nav-number">1.2.</span> <span class="nav-text">equals(Object o)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#clone"><span class="nav-number">1.3.</span> <span class="nav-text">clone()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Objects%E7%B1%BB"><span class="nav-number">2.</span> <span class="nav-text">Objects类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%B1%BB%E5%9E%8B%E5%8C%85%E8%A3%85%E7%B1%BB"><span class="nav-number">3.</span> <span class="nav-text">基本类型包装类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#String"><span class="nav-number">4.</span> <span class="nav-text">String</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#StringBuilder%E5%92%8CStringBuffer"><span class="nav-number">5.</span> <span class="nav-text">StringBuilder和StringBuffer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Arrays"><span class="nav-number">6.</span> <span class="nav-text">Arrays</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Collection"><span class="nav-number">7.</span> <span class="nav-text">Collection</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#List%E9%9B%86%E5%90%88"><span class="nav-number">7.1.</span> <span class="nav-text">List集合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#List%E7%89%B9%E6%9C%89%E6%96%B9%E6%B3%95"><span class="nav-number">7.1.1.</span> <span class="nav-text">List特有方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ArrayList"><span class="nav-number">7.1.2.</span> <span class="nav-text">ArrayList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LinkedList"><span class="nav-number">7.1.3.</span> <span class="nav-text">LinkedList</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Set%E9%9B%86%E5%90%88"><span class="nav-number">7.2.</span> <span class="nav-text">Set集合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HashSet"><span class="nav-number">7.2.1.</span> <span class="nav-text">HashSet</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LinkedHashSet"><span class="nav-number">7.2.2.</span> <span class="nav-text">LinkedHashSet</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TreeSet"><span class="nav-number">7.2.3.</span> <span class="nav-text">TreeSet</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E5%B9%B6%E5%8F%91%E4%BF%AE%E6%94%B9%E5%BC%82%E5%B8%B8"><span class="nav-number">7.3.</span> <span class="nav-text">集合并发修改异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E7%B1%BBCollections"><span class="nav-number">7.4.</span> <span class="nav-text">工具类Collections</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Map"><span class="nav-number">8.</span> <span class="nav-text">Map</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HashMap"><span class="nav-number">8.1.</span> <span class="nav-text">HashMap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LinkedHashMap"><span class="nav-number">8.2.</span> <span class="nav-text">LinkedHashMap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TreeMap"><span class="nav-number">8.3.</span> <span class="nav-text">TreeMap</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
