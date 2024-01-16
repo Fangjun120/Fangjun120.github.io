@@ -7341,7 +7341,7 @@ function animate(obj, target) &#123;
 <li>基本类型直接拷贝，字符串数据拷贝地址，<strong>引用类型创建新对象</strong></li>
 </ul>
 <h2 id="Objects类"><a href="#Objects类" class="headerlink" title="Objects类"></a>Objects类</h2><p>Objects是一个<strong>工具类</strong>，提供了一些方法可以对任意<strong>对象</strong>进行操作。</p>
-<img src="pic\Objects常用方法.png" style="zoom: 50%;" />
+<img src="/pic/Objects常用方法.png" style="zoom: 50%;" />
 
 <h2 id="基本类型包装类"><a href="#基本类型包装类" class="headerlink" title="基本类型包装类"></a>基本类型包装类</h2><p>Java中<strong>万物皆对象</strong>，但8种基本数据类型还不是对象，所以要把它们变成对象，变成对象之后，可以提供一些方法对数据进行操作。</p>
 <img src="/pic/基本类型包装类.png" style="zoom: 67%;" />
