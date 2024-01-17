@@ -4883,7 +4883,8 @@ function animate(obj, target) &#123;
 </ul>
 <h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Insert(&quot;insert into emp(username, name, gender, image, job, entrydate, dept_id, create_time, update_time) values(#&#123;username&#125;, #&#123;name&#125;, #&#123;gender&#125;, #&#123;image&#125;, #&#123;job&#125;, #&#123;entrydate&#125;, #&#123;deptId&#125;, #&#123;createTime&#125;, #&#123;updateTime&#125;)&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insert</span><span class="params">(Emp emp)</span>; <span class="comment">//将多个参数封装到对象中</span></span><br></pre></td></tr></table></figure>
 
-<h4 id="主键返回"><a href="#主键返回" class="headerlink" title="主键返回"></a>主键返回</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Options(keyProperty = &quot;id&quot;, useGeneratedKeys = true)</span></span><br><span class="line"><span class="comment">//获取主键值并且将其赋值给emp的id属性</span></span><br><span class="line"><span class="meta">@Insert(&quot;insert into emp(username, name, gender, image, job, entrydate, dept_id, create_time, update_time) values(#&#123;username&#125;, #&#123;name&#125;, #&#123;gender&#125;, #&#123;image&#125;, #&#123;job&#125;, #&#123;entrydate&#125;, #&#123;deptId&#125;, #&#123;createTime&#125;, #&#123;updateTime&#125;)&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insert</span><span class="params">(Emp emp)</span>;</span><br></pre></td></tr></table></figure>
+<h4 id="主键返回"><a href="#主键返回" class="headerlink" title="主键返回"></a>主键返回</h4><p>向数据库插入数据时，主键往往是自增的，但有时需要获得主键的值。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Options(keyProperty = &quot;id&quot;, useGeneratedKeys = true)</span></span><br><span class="line"><span class="comment">//获取主键值并且将其赋值给emp的id属性</span></span><br><span class="line"><span class="meta">@Insert(&quot;insert into emp(username, name, gender, image, job, entrydate, dept_id, create_time, update_time) values(#&#123;username&#125;, #&#123;name&#125;, #&#123;gender&#125;, #&#123;image&#125;, #&#123;job&#125;, #&#123;entrydate&#125;, #&#123;deptId&#125;, #&#123;createTime&#125;, #&#123;updateTime&#125;)&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insert</span><span class="params">(Emp emp)</span>;</span><br></pre></td></tr></table></figure>
 
 <h3 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Update(&quot;update emp set username=#&#123;username&#125;, name=#&#123;name&#125;, gender=#&#123;gender&#125;, image=#&#123;image&#125;, job=#&#123;job&#125;, entrydate=#&#123;entrydate&#125;, dept_id=#&#123;deptId&#125;, update_time=#&#123;updateTime&#125; where id=#&#123;id&#125;&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">update</span><span class="params">(Emp emp)</span>;</span><br></pre></td></tr></table></figure>
 
@@ -5937,7 +5938,7 @@ function animate(obj, target) &#123;
 <p>比如用于解析xml文件的依赖Dom4J</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Dom4JTest1</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">// 1、需要自己创建一个Dom4J框架提供的解析器对象</span></span><br><span class="line">        <span class="type">SAXReader</span> <span class="variable">saxReader</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SAXReader</span>();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2、使用saxReader对象把需要解析的XML文件读成一个Document对象。</span></span><br><span class="line">        <span class="type">Document</span> <span class="variable">document</span> <span class="operator">=</span></span><br><span class="line">                saxReader.read(<span class="string">&quot;helloworld.xml&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>此时可以使用**@Bean注解**来声明第三方bean</p>
+<p>此时可以使用 <strong>@Bean注解</strong> 来声明第三方bean</p>
 <ul>
 <li>方案一：在<strong>启动类</strong>中添加@Bean注解，不推荐，会污染启动类</li>
 </ul>
@@ -5946,7 +5947,7 @@ function animate(obj, target) &#123;
 <ul>
 <li>方案2：在配置类中定义@Bean标识的方法<ul>
 <li>如果需要定义第三方Bean时， 通常会单独定义一个配置类，对第三方bean进行集中的配置管理</li>
-<li>在方法上加上一个**@Bean注解，Spring 容器在启动的时候，它会自动的调用这个方法**，并将方法的返回值声明为Spring容器当中的Bean对象。</li>
+<li>在方法上加上一个 <strong>@Bean注解，Spring 容器在启动的时候，它会自动的调用这个方法</strong> ，并将方法的返回值声明为Spring容器当中的Bean对象。</li>
 </ul>
 </li>
 </ul>
