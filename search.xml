@@ -13097,10 +13097,11 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
   <entry>
     <title>java常见集合</title>
     <url>/2024/01/22/11-00-37/</url>
-    <content><![CDATA[<p><img src="/"></p>
-<img src="/pic/java常见集合.png" alt="java常见集合" style="zoom:80%;" />
+    <content><![CDATA[<img src="/pic/java常见集合.png" alt="java常见集合" style="zoom:80%;" />
 
 <p>相对的，线程安全则效率低；非线程安全则效率高。</p>
+<span id="more"></span>
+
 <h2 id="ArrayList"><a href="#ArrayList" class="headerlink" title="ArrayList"></a>ArrayList</h2><p>ArrayList基于数组实现。</p>
 <h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><p>数组<strong>变量在栈中</strong>，存储的是<strong>数组对象在堆内存中</strong>的地址值。数组的寻址公式为<code>arr[i] = baseAddress + i * dataTypeSize</code>。</p>
 <blockquote>
@@ -13146,6 +13147,87 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
       </categories>
       <tags>
         <tag>八股</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java微服务</title>
+    <url>/2024/01/22/21-57-37/</url>
+    <content><![CDATA[<h2 id="认识微服务"><a href="#认识微服务" class="headerlink" title="认识微服务"></a>认识微服务</h2><h3 id="单体架构"><a href="#单体架构" class="headerlink" title="单体架构"></a>单体架构</h3><p>将业务的所有功能集中在一个项目中开发，打成一个包部署。适合开发功能相对简单，规模较小的项目。</p>
+<p>优点是架构简单，部署成本低。但是耦合度高，不利于维护。</p>
+<h3 id="分布式架构"><a href="#分布式架构" class="headerlink" title="分布式架构"></a>分布式架构</h3><p>根据业务功能将系统拆分，每个业务模块作为独立项目开发，称为一个<strong>服务</strong>。可以降低耦合，有利于服务升级扩展。</p>
+<span id="more"></span>
+
+<h3 id="服务治理"><a href="#服务治理" class="headerlink" title="服务治理"></a>服务治理</h3><p>分布式架构要考虑很多问题</p>
+<ul>
+<li>服务拆分粒度</li>
+<li>服务集群地址如何维护</li>
+<li>服务之间如何远程调用</li>
+<li>服务健康状态如何感知</li>
+</ul>
+<p><strong>微服务是一种经过良好架构设计的分布式架构方案</strong></p>
+<ul>
+<li><p>单一职责，粒度小，每个服务对应唯一的业务能力。</p>
+</li>
+<li><p>面向服务：微服务对外暴露业务接口</p>
+</li>
+<li><p>自治：团队独立、技术独立、数据独立、部署独立</p>
+</li>
+<li><p>隔离性好：避免出现级联问题</p>
+</li>
+</ul>
+<h3 id="微服务技术对比"><a href="#微服务技术对比" class="headerlink" title="微服务技术对比"></a>微服务技术对比</h3><p>国内最知名的微服务框架是SpringCloud和阿里的Dubbo。通常微服务需要有注册中心、配置中心、服务网关等。</p>
+<img src="/pic/微服务技术对比.png" style="zoom: 80%;" />
+
+<p>企业中大致可以分为两类：基于Dubbo方式的和基于Feign方式的</p>
+<h3 id="SpringCloud"><a href="#SpringCloud" class="headerlink" title="SpringCloud"></a>SpringCloud</h3><p>SpringCloud是目前国内使用最广泛的微服务框架。官网地址：<a href="https://spring.io/projects/spring-cloud%E3%80%82">https://spring.io/projects/spring-cloud。</a></p>
+<p>SpringCloud<strong>集成</strong>了各种微服务功能组件，包括SpringCloud Alibaba，并<strong>基于SpringBoot</strong>实现了这些组件的自动装配，从而提供了良好的开箱即用体验。</p>
+<p>对于SpringBoot的版本也有兼容性要求：</p>
+<table>
+<thead>
+<tr>
+<th>SpringCloud版本</th>
+<th>SpringBoot版本</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2022.0.x aka Kilburn</td>
+<td>3.0.x</td>
+</tr>
+<tr>
+<td>2021.0.x aka Jubilee</td>
+<td>2.6.x, 2.7.x (Starting with 2021.0.3)</td>
+</tr>
+<tr>
+<td>2020.0.x aka Ilford</td>
+<td>2.4.x, 2.5.x (Starting with 2020.0.3)</td>
+</tr>
+<tr>
+<td>Hoxton</td>
+<td>2.2.x, 2.3.x (Starting with SR5)</td>
+</tr>
+<tr>
+<td>Greenwich</td>
+<td>2.1.x</td>
+</tr>
+<tr>
+<td>Finchley</td>
+<td>2.0.x</td>
+</tr>
+<tr>
+<td>Edgware</td>
+<td>1.5.x</td>
+</tr>
+<tr>
+<td>Dalston</td>
+<td>1.5.x</td>
+</tr>
+</tbody></table>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
       </tags>
   </entry>
 </search>
