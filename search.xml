@@ -13152,7 +13152,47 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 </ul>
  <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;Object&gt; syncArrayList = Collections.synchronizedList(<span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;());</span><br><span class="line">List&lt;Object&gt; syncLinkedList = Collections.synchronizedList(<span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;());</span><br></pre></td></tr></table></figure></li>
 </ul>
-<h2 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h2>]]></content>
+<h2 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h2><h3 id="二叉搜索树"><a href="#二叉搜索树" class="headerlink" title="二叉搜索树"></a>二叉搜索树</h3><p>又名二叉查找树，有序二叉树或者排序二叉树。</p>
+<p>树中的任意一个节点，其左子树中的每个节点的值，都要小于这个节点的值，而右子树节点的值都大于这个节点的值。</p>
+<p>平均情况下插入，查找，删除的时间复杂度为 <strong>O(logn)</strong> ，但极端情况下会退化成链表，时间复杂度是O(n)</p>
+<h3 id="红黑树"><a href="#红黑树" class="headerlink" title="红黑树"></a>红黑树</h3><p>自平衡的二叉搜索树，红黑树有很多特性和规则，这样设计就是<strong>为了保持树的平衡</strong> ，维护O(logn)的复杂度</p>
+<ul>
+<li><p>节点要么是红色,要么是黑色</p>
+</li>
+<li><p>根节点是黑色</p>
+</li>
+<li><p>叶子节点都是黑色的空节点</p>
+</li>
+<li><p>红黑树中红色节点的子节点都是黑色</p>
+</li>
+<li><p>从任一节点到叶子节点的所有路径都包含相同数目的黑色节点</p>
+</li>
+</ul>
+<h3 id="散列表"><a href="#散列表" class="headerlink" title="散列表"></a>散列表</h3><p>又叫哈希表，是根据键值直接访问内存值，由数组演化而来。</p>
+<ul>
+<li><p>散列函数：将键映射为数组下标的函数。</p>
+<ul>
+<li>散列函数计算得到的散列值必须是大于等于0的正整数，因为hashValue需要作为数组的下标。</li>
+<li>如果key1&#x3D;&#x3D;key2，那么经过hash后得到的哈希值也必相同。</li>
+<li>如果key1!&#x3D;key2，那么经过hash后得到的哈希值也必不相同。</li>
+</ul>
+</li>
+<li><p>散列冲突</p>
+<ul>
+<li>链表法<ul>
+<li>插入O(1)、查找删除平均下O(1)、链表过长时查询O(n)</li>
+</ul>
+</li>
+<li>线性探测法</li>
+</ul>
+</li>
+</ul>
+<p><strong>HashMap会在链表过长时替换为红黑树，除了优化时间复杂度外，还能防止DDos攻击。</strong>(伪造多个key，恶意构造长链表，降低查找性能)</p>
+<p>⭐⭐ HashMap实现原理？</p>
+<p>底层使用hash表，即数组+链表+红黑树，哈希冲突时先用拉链法，当链表长度大于8且数组长度大于64时，把链表变成红黑树。 获取时，直接找到hash值对应的下标，在进一步判断key是否相同，从而找到对应值。</p>
+<p>⭐HashMap的jdk1.7和jdk1.8有什么区别？</p>
+<p>1.7没有红黑树；1.8增加了红黑树。</p>
+]]></content>
       <categories>
         <category>八股</category>
       </categories>
@@ -13233,6 +13273,73 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <td>1.5.x</td>
 </tr>
 </tbody></table>
+<h3 id="服务拆分"><a href="#服务拆分" class="headerlink" title="服务拆分"></a>服务拆分</h3><ol>
+<li>不同的微服务，不要重复开发相同业务</li>
+<li>微服务数据独立，不要访问其他微服务的数据库</li>
+<li>微服务可以将自己的业务暴露为接口，供其他微服务调用</li>
+</ol>
+<h3 id="服务远程调用"><a href="#服务远程调用" class="headerlink" title="服务远程调用"></a>服务远程调用</h3><p>现在有两个服务，订单模块和用户模块，有个需求：查询订单信息并把订单所属用户的信息一起返回。</p>
+<p>显然不能让订单模块去查用户表，因为数据是独立的。可以让订单模块<strong>发起请求</strong>，获取到用户数据。Spring提供了 <code>RestTemplate</code> 来发起各种请求。</p>
+<h4 id="注册RestTemplate"><a href="#注册RestTemplate" class="headerlink" title="注册RestTemplate"></a>注册<code>RestTemplate</code></h4><p>在order-service服务中的OrderApplication启动类中，注册RestTemplate实例 (其他配置类也可，注入bean而已)</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Mapper类前没加@Mapper注解，被这个注解代替了，可以把bean交给容器管理</span></span><br><span class="line"><span class="meta">@MapperScan(&quot;cn.itcast.order.mapper&quot;)</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderApplication</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(OrderApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> RestTemplate <span class="title function_">restTemplate</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">RestTemplate</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="远程调用"><a href="#远程调用" class="headerlink" title="远程调用"></a>远程调用</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> Order <span class="title function_">queryOrderById</span><span class="params">(Long orderId)</span> &#123;</span><br><span class="line">    <span class="comment">// 1.查询订单</span></span><br><span class="line">    <span class="type">Order</span> <span class="variable">order</span> <span class="operator">=</span> orderMapper.findById(orderId);</span><br><span class="line">    <span class="comment">// 2.查询用户</span></span><br><span class="line">    <span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> <span class="string">&quot;http://localhost:8081/user/&quot;</span> +  order.getUserId();</span><br><span class="line">    <span class="comment">// 自动把json序列化成对象 ，get请求</span></span><br><span class="line">    <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> restTemplate.getForObject(url, User.class);</span><br><span class="line">    <span class="comment">// 3.封装user信息</span></span><br><span class="line">    order.setUser(user);</span><br><span class="line">    <span class="comment">// 4.返回</span></span><br><span class="line">    <span class="keyword">return</span> order;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="提供者和消费者"><a href="#提供者和消费者" class="headerlink" title="提供者和消费者"></a>提供者和消费者</h3><p>在服务调用关系中，会有两个不同的角色：</p>
+<p><strong>服务提供者</strong>：<strong>一次业务中</strong>，被其它微服务调用的服务。（提供接口给其它微服务）</p>
+<p><strong>服务消费者</strong>：<strong>一次业务中</strong>，调用其它微服务的服务。（调用其它微服务提供的接口）</p>
+<p>一个服务在不同的业务中可能是不同角色，即任何一个微服务都可以是提供者，也可以是消费者。</p>
+<h2 id="Eureka注册中心"><a href="#Eureka注册中心" class="headerlink" title="Eureka注册中心"></a>Eureka注册中心</h2><h3 id="引子"><a href="#引子" class="headerlink" title="引子"></a>引子</h3><p>如果服务提供者user-service部署了多个实例，那么会存在几个问题</p>
+<ul>
+<li>order-service在提供服务时，消费者该如何得知各实例的ip地址和端口？</li>
+<li>有多个user-service实例地址，消费者该如何选择？</li>
+<li>各user-service实例是否依然健康，是不是已经宕机？</li>
+</ul>
+<h3 id="Eureka"><a href="#Eureka" class="headerlink" title="Eureka"></a>Eureka</h3><p>这些问题都需要利用SpringCloud中的注册中心来解决，其中最广为人知的注册中心就是Eureka。</p>
+<img src="/pic/Eureka注册中心.png" style="zoom:67%;" />
+
+<p>Eureka分为两部分，一是server，是一个注册中心；二是client，服务提供者和消费者都属于client。</p>
+<p>服务启动时，每个服务会把自己的信息注册给Eureka记录下来。消费者向Eureka进行<strong>服务拉取</strong>，获取提供者的信息，利用<strong>负载均衡</strong>选中其中一个实例，从而发起请求。</p>
+<p>微服务会向Euraka发<strong>心跳</strong>，当超过一定时间没有发送心跳时，eureka会认为微服务实例故障，将该实例从服务列表中剔除。</p>
+<h3 id="搭建Eureka-server"><a href="#搭建Eureka-server" class="headerlink" title="搭建Eureka-server"></a>搭建Eureka-server</h3><p>需要创建一个独立的微服务。</p>
+<h4 id="引入eureka依赖"><a href="#引入eureka依赖" class="headerlink" title="引入eureka依赖"></a>引入eureka依赖</h4><p>引入SpringCloud为eureka提供的starter依赖：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="编写启动类"><a href="#编写启动类" class="headerlink" title="编写启动类"></a>编写启动类</h4><p>给eureka-server服务编写一个启动类，一定要添加一个@EnableEurekaServer注解，开启eureka的注册中心功能：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableEurekaServer</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">EurekaApplication</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(EurekaApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="编写配置文件"><a href="#编写配置文件" class="headerlink" title="编写配置文件"></a>编写配置文件</h4><p>编写一个application.yml文件，内容如下：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">10086</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">eureka-server</span></span><br><span class="line"><span class="attr">eureka:</span></span><br><span class="line">  <span class="attr">client:</span></span><br><span class="line">    <span class="attr">service-url:</span> </span><br><span class="line">      <span class="attr">defaultZone:</span> <span class="string">http://127.0.0.1:10086/eureka</span></span><br></pre></td></tr></table></figure>
+
+<p>启动Eureka后，在idea的底部service标签栏可以看到正在运行的服务，点击端口后可以直接进入Eureka 的管理页面。</p>
+<h3 id="服务注册"><a href="#服务注册" class="headerlink" title="服务注册"></a>服务注册</h3><p>把其他微服务注册到eureka-server中去，以user-service为例。</p>
+<h4 id="引入依赖"><a href="#引入依赖" class="headerlink" title="引入依赖"></a>引入依赖</h4><p>在user-service的pom文件中，引入下面的eureka-client依赖：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h4><p>在user-service中，修改application.yml文件，添加服务名称、eureka地址：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">userservice</span></span><br><span class="line"><span class="attr">eureka:</span></span><br><span class="line">  <span class="attr">client:</span></span><br><span class="line">    <span class="attr">service-url:</span></span><br><span class="line">      <span class="attr">defaultZone:</span> <span class="string">http://127.0.0.1:10086/eureka</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="启动多个实例"><a href="#启动多个实例" class="headerlink" title="启动多个实例"></a>启动多个实例</h4><p>为了<strong>演示</strong>一个服务有多个实例的场景，添加一个SpringBoot的启动配置，再启动一个user-service。</p>
+<p>首先，复制原来的user-service启动配置：</p>
+<p><img src="/pic/%E5%A4%8D%E5%88%B6%E9%85%8D%E7%BD%AE.png"></p>
+<p>然后，在弹出的窗口中，填写信息，启动多个实例时需要更改端口，否则会端口冲突。</p>
+<img src="/pic/config.png" style="zoom:80%;" />
+
+<p>启动后发现eureka-server管理页面的变化，<strong>USERSERVICE</strong>实例数量变成2个</p>
+<h3 id="服务拉取"><a href="#服务拉取" class="headerlink" title="服务拉取"></a>服务拉取</h3><p>服务拉取是<strong>基于服务名称获取服务列表</strong>，然后对服务列表做负载均衡。</p>
+<ul>
+<li>修改order-service代码，修改请求路径，用服务名代替ip和端口</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> <span class="string">&quot;http://localhost:8081/user/&quot;</span> +  order.getUserId();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 修改为</span></span><br><span class="line"><span class="type">String</span> <span class="variable">url</span> <span class="operator">=</span> <span class="string">&quot;http://userservice/user/&quot;</span> + order.getUserId();</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li>在order-service的启动类中的RestTemplate添加负载均衡注解</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderApplication</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(OrderApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@LoadBalanced</span></span><br><span class="line">    <span class="keyword">public</span> RestTemplate <span class="title function_">restTemplate</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">RestTemplate</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这时，消费者能正常请求提供者的服务，并且提供者完成了负载均衡。</p>
 ]]></content>
       <categories>
         <category>Java</category>
