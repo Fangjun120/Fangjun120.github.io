@@ -13141,7 +13141,31 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 </ol>
 <p>List受影响，因为asList只有对象引用，没有创建新对象，最终都指向同一个内存地址。数组不受影响，因为会把list数据先拷贝到新的数组中。</p>
 </blockquote>
-]]></content>
+<blockquote>
+<p>ArrayList和LinkedList的区别是什么？</p>
+<ul>
+<li><p>底层：ArrayList用动态数组实现，LinkedList用双向链表实现</p>
+</li>
+<li><p>效率：</p>
+</li>
+<li><p>ArrayList按照下标查询的时间复杂度O(1)， LinkedList不支持下标查询</p>
+</li>
+<li><p>查找（未知索引）： ArrayList需要遍历，链表也需要链表，时间复杂度都是O(n)</p>
+</li>
+<li><p>新增和删除：ArrayList尾部插入和删除，时间复杂度是O(1)；其他部分增删需要挪动数组，时间复杂度是O(n)；LinkedList头尾节点增删时间复杂度是O(1)，其他都需要遍历链表，时间复杂度是O(n)</p>
+</li>
+<li><p>内存空间占用：ArrayList底层是数组，内存连续，节省内存；LinkedList 是双向链表需要存储数据，和两个指针，更占用内存</p>
+</li>
+<li><p>线程安全：ArrayList和LinkedList都不是线程安全的，如果需要保证线程安全，有两种方案：</p>
+</li>
+<li><p>在方法内使用，局部变量则是线程安全的</p>
+</li>
+<li><p>使用线程安全的ArrayList和LinkedList</p>
+</li>
+</ul>
+ <figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;Object&gt; syncArrayList = Collections.synchronizedList(<span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;());</span><br><span class="line">List&lt;Object&gt; syncLinkedList = Collections.synchronizedList(<span class="keyword">new</span> <span class="title class_">LinkedList</span>&lt;&gt;());</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h2 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h2>]]></content>
       <categories>
         <category>八股</category>
       </categories>
