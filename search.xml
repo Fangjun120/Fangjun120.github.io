@@ -13192,6 +13192,95 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <p>底层使用hash表，即数组+链表+红黑树，哈希冲突时先用拉链法，当链表长度大于8且数组长度大于64时，把链表变成红黑树。 获取时，直接找到hash值对应的下标，在进一步判断key是否相同，从而找到对应值。</p>
 <p>⭐HashMap的jdk1.7和jdk1.8有什么区别？</p>
 <p>1.7没有红黑树；1.8增加了红黑树。</p>
+<h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><p>常见属性 </p>
+<img src="/pic/hashmap常见属性.png" style="zoom: 80%;" />
+
+<p>HashMap默认构造函数</p>
+<img src="/pic/hashmap默认构造函数.png" style="zoom:80%;" />
+
+<ul>
+<li><p>HashMap是<strong>懒加载</strong>，在<strong>创建对象时并没有初始化数组</strong></p>
+</li>
+<li><p>在无参的构造函数中，设置了默认的加载因子是0.75</p>
+</li>
+</ul>
+<p>添加数据流程</p>
+<img src="/pic/hashmap添加数据流程.png" style="zoom: 67%;" />
+
+<p>⭐⭐HashMap中put方法的具体流程？</p>
+<ol>
+<li><p>判断数组table是否为空或为null，否则执行resize()进行扩容（初始化）</p>
+</li>
+<li><p>根据键值key计算hash值得到数组索引</p>
+</li>
+<li><p>判断table[i] &#x3D;&#x3D; null，条件成立，直接新建节点添加</p>
+</li>
+<li><p>如果table[i] !&#x3D; null </p>
+<p>4.1 判断table[i] 是否存在相同的key，存在则直接覆盖value (这里put不是添加，是修改)</p>
+<p>4.2 判断table[i] 是否为treeNode，即table[i] 是否是红黑树，如果是红黑树，则直接在树中插入键值对</p>
+<p>4.3 遍历table[i]，链表的尾部插入数据，然后判断链表长度是否大于8，大于8的话把链表转换为红黑树，在红黑树中执行插入操 作，遍历过程中若发现key已经存在直接覆盖value</p>
+</li>
+<li><p>插入成功后，判断实际存在的键值对数量size是否超多了最大容量threshold（数组长度*0.75），如果超过，进行扩容。</p>
+</li>
+</ol>
+<p>resize扩容流程</p>
+<img src="/pic/hashmap扩容流程.png" style="zoom:80%;" />
+
+<p>⭐HashMap的扩容机制？</p>
+<ul>
+<li><p>在添加元素或初始化的时候需要调用resize方法进行扩容，第一次添加数据初始化数组长度为16，以后每次每次扩容都是长度达到了扩容阈值（数组长度 * 0.75）</p>
+</li>
+<li><p>每次扩容的时候，都是扩容之前容量的2倍； </p>
+</li>
+<li><p>扩容之后，会新创建一个数组，需要把老数组中的数据挪动到新的数组中</p>
+<ul>
+<li>没有hash冲突的节点，则直接使用 e.hash &amp; (newCap - 1) 计算新数组的索引位置</li>
+<li>如果是红黑树，走红黑树的添加</li>
+<li>如果是链表，则需要遍历链表，可能需要拆分链表，判断(e.hash &amp; oldCap)是否为0，该元素的位置要么停留在原始位置，要么移动到原始位置+增加的数组大小这个位置上</li>
+</ul>
+</li>
+</ul>
+<p>⭐介绍hashmap的寻址算法</p>
+<ul>
+<li>计算对象的<code>hashCode()</code></li>
+<li>再调用hash方法进行二次哈希，<code>hashcode</code>值右移16位再异或运算，让哈希值分布更均匀，减少哈希碰撞。</li>
+<li>最后<code>(capacity - 1) &amp; hash</code> 得到索引 （按位与 代替取模，效率更高）</li>
+</ul>
+<p>⭐为什么HashMap数组长度设计成2的次幂</p>
+<ul>
+<li>计算索引时效率更高：如果是2的n次幂可以用位与运算代替取模运算。</li>
+<li>扩容时重新计算索引效率更高：<code>hash &amp; oldCap == 0</code> 的元素留在原本位置，否则新位置 &#x3D; 旧位置 + oldCap。</li>
+</ul>
+<p>HashMap数组扩容</p>
+<img src="/pic/HashMap数组扩容.png" style="zoom:67%;" />
+
+<p>⭐ hashmap在jdk1.7情况下的多线程死循环问题</p>
+<p>1.7没有红黑树，在数组进行扩容的时候，因为链表是头插法，在进行数据迁移的过程中，有可能导致死循环。</p>
+<p>首先，jdk1.7在数组扩容时有以下几个特性：</p>
+<ul>
+<li><p>变量e指向的是需要迁移的对象</p>
+</li>
+<li><p>变量next指向的是下一个需要迁移的对象</p>
+</li>
+<li><p>Jdk1.7中的链表采用的<strong>头插法</strong>，所以迁移完后链表元素顺序翻转了</p>
+</li>
+<li><p>在数据迁移的过程中并没有新的对象产生，只是改变了对象的引用</p>
+</li>
+</ul>
+<p>现在有两个线程，线程1和2的变量e和next都引用了这两个节点</p>
+<img src="/pic/过程1.png" style="zoom:67%;" />
+
+<p>假设线程2先扩容，完成后，由于是头插法，链表顺序翻转，但是线程1的e和next的引用没变，还指向原来的节点</p>
+<img src="/pic/过程2.png" style="zoom:67%;" />
+
+<p>此时，线程1迁移A节点，同时e &#x3D; next ,即B，next &#x3D; next.next，即A</p>
+<img src="/pic/过程3.png" style="zoom:67%;" />
+
+<p>现在迁移当前的e，即B，头插法插入。同时e &#x3D; next ,即A，next &#x3D; next.next，即null</p>
+<img src="/pic/过程4.png" style="zoom:67%;" />
+
+<p>e!&#x3D;null，再迁移当前的e，即A。由于都是引用，没有新的对象产生。迁移前<code>B.next = A</code>，迁移后由于头插法，<code>A.next = B</code>，由此数据迁移结束。但是<strong>A和B形成了循环</strong>。那么之后如果要遍历这个链表，就会产生死循环问题。</p>
+<p>所以在1.8中，改头插法为尾插法，保持元素的顺序不变，避免死循环问题的产生。</p>
 ]]></content>
       <categories>
         <category>八股</category>
@@ -13337,9 +13426,113 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <ul>
 <li>在order-service的启动类中的RestTemplate添加负载均衡注解</li>
 </ul>
-<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderApplication</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(OrderApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@LoadBalanced</span></span><br><span class="line">    <span class="keyword">public</span> RestTemplate <span class="title function_">restTemplate</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">RestTemplate</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderApplication</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(OrderApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@LoadBalanced</span></span><br><span class="line">    <span class="comment">// 这个注释标记 restTemplate的请求会被Ribbon拦截和处理</span></span><br><span class="line">    <span class="keyword">public</span> RestTemplate <span class="title function_">restTemplate</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">RestTemplate</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>这时，消费者能正常请求提供者的服务，并且提供者完成了负载均衡。</p>
+<p>这时，消费者能正常请求提供者的服务，并且在<strong>消费者端完成了负载均衡</strong>。</p>
+<h2 id="Ribbon负载均衡"><a href="#Ribbon负载均衡" class="headerlink" title="Ribbon负载均衡"></a>Ribbon负载均衡</h2><p>上面负载均衡的功能是由Ribbon组件实现的，由<code>@LoadBalanced</code>调用。</p>
+<img src="/pic/ribbon负载均衡.png" style="zoom: 67%;" />
+
+<p>SpringCloud Ribbon的底层采用了一个拦截器，拦截了RestTemplate发出的请求，对地址做了修改。</p>
+<img src="/pic/ribbon负载均衡原理.png" style="zoom: 67%;" />
+
+<ul>
+<li>拦截我们的RestTemplate请求<a href="http://userservice/user/1">http://userservice/user/1</a></li>
+<li>RibbonLoadBalancerClient会从请求url中获取服务名称，也就是user-service</li>
+<li>DynamicServerListLoadBalancer根据user-service到eureka拉取服务列表</li>
+<li>eureka返回列表，localhost:8081、localhost:8082</li>
+<li><strong>IRule</strong>利用内置<strong>负载均衡规则</strong>，从列表中选择一个，例如localhost:8081</li>
+<li>RibbonLoadBalancerClient修改请求地址，用localhost:8081替代userservice，得到<a href="http://localhost:8081/user/1%EF%BC%8C%E5%8F%91%E8%B5%B7%E7%9C%9F%E5%AE%9E%E8%AF%B7%E6%B1%82">http://localhost:8081/user/1，发起真实请求</a></li>
+</ul>
+<h3 id="IRule负载均衡策略"><a href="#IRule负载均衡策略" class="headerlink" title="IRule负载均衡策略"></a>IRule负载均衡策略</h3><p>负载均衡的规则都定义在IRule接口中，而IRule有很多不同的实现类：</p>
+<img src="/pic/IRule实现类.png" style="zoom: 67%;" />
+
+<p>常用的负载均衡规则如下：</p>
+<table>
+<thead>
+<tr>
+<th><strong>内置负载均衡规则类</strong></th>
+<th><strong>规则描述</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RoundRobinRule</td>
+<td>简单轮询服务列表来选择服务器。它是Ribbon默认的负载均衡规则。</td>
+</tr>
+<tr>
+<td>AvailabilityFilteringRule</td>
+<td>对以下两种服务器进行忽略：   （1）在默认情况下，这台服务器如果3次连接失败，这台服务器就会被设置为“短路”状态。短路状态将持续30秒，如果再次连接失败，短路的持续时间就会几何级地增加。  （2）并发数过高的服务器。如果一个服务器的并发连接数过高，配置了AvailabilityFilteringRule规则的客户端也会将其忽略。并发连接数的上限，可以由客户端的<clientName>.<clientConfigNameSpace>.ActiveConnectionsLimit属性进行配置。</td>
+</tr>
+<tr>
+<td>WeightedResponseTimeRule</td>
+<td>为每一个服务器赋予一个权重值。服务器响应时间越长，这个服务器的权重就越小。这个规则会随机选择服务器，这个权重值会影响服务器的选择。</td>
+</tr>
+<tr>
+<td><strong>ZoneAvoidanceRule</strong></td>
+<td>以区域可用的服务器为基础进行服务器的选择。使用Zone对服务器进行分类，这个Zone可以理解为一个机房、一个机架等。而后再对Zone内的多个服务做轮询。</td>
+</tr>
+<tr>
+<td>BestAvailableRule</td>
+<td>忽略那些短路的服务器，并选择并发数较低的服务器。</td>
+</tr>
+<tr>
+<td>RandomRule</td>
+<td>随机选择一个可用的服务器。</td>
+</tr>
+<tr>
+<td>RetryRule</td>
+<td>重试机制的选择逻辑</td>
+</tr>
+</tbody></table>
+<p>默认的实现就是ZoneAvoidanceRule，是一种轮询方案。</p>
+<h4 id="自定义负载均衡策略"><a href="#自定义负载均衡策略" class="headerlink" title="自定义负载均衡策略"></a>自定义负载均衡策略</h4><p>通过定义IRule实现可以<strong>修改负载均衡规则</strong>，有两种方式：</p>
+<ol>
+<li>代码方式：在<strong>消费者</strong>中的OrderApplication类中，定义一个新的IRule（全局）</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="keyword">public</span> IRule <span class="title function_">randomRule</span><span class="params">()</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">RandomRule</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>配置文件方式：在<strong>消费者</strong>的application.yml文件中，添加新的配置也可以修改规则（局部）</li>
+</ol>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">userservice:</span> <span class="comment"># 给某个微服务配置负载均衡规则，这里是userservice服务</span></span><br><span class="line">  <span class="attr">ribbon:</span></span><br><span class="line">    <span class="attr">NFLoadBalancerRuleClassName:</span> <span class="string">com.netflix.loadbalancer.RandomRule</span> <span class="comment"># 负载均衡规则 </span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>注意</strong>，一般用默认的负载均衡规则，不做修改。</p>
+</blockquote>
+<h3 id="饥饿加载"><a href="#饥饿加载" class="headerlink" title="饥饿加载"></a>饥饿加载</h3><p>Ribbon<strong>默认是采用懒加载</strong>，即第一次访问时才会去创建LoadBalanceClient，请求时间会很长。</p>
+<p>而饥饿加载则会在项目启动时创建，降低第一次访问的耗时，通过下面配置开启饥饿加载：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">ribbon:</span></span><br><span class="line">  <span class="attr">eager-load:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">clients:</span> <span class="string">userservice</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Nacos注册中心"><a href="#Nacos注册中心" class="headerlink" title="Nacos注册中心"></a>Nacos注册中心</h2><p>SpringCloud Alibaba推出的名为Nacos的注册中心。现在是<a href="https://spring.io/projects/spring-cloud">SpringCloud</a>中的一个组件。相比<a href="https://github.com/Netflix/eureka">Eureka</a>功能更加丰富，在国内受欢迎程度较高。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>解压安装包即可，需要配置JAVA_HOME环境变量，默认使用8848端口，可以在<code>conf/application.properties</code>文件中修改端口。</p>
+<p>启动命令为 <code>.\startup.cmd -m standalone</code> , standalone代表单机启动</p>
+<p>然后可以在 <a href="http://127.0.0.1:8848/nacos">http://127.0.0.1:8848/nacos</a> 登录控制台，默认的用户名和密码均为 <code>nacos</code></p>
+<h3 id="服务注册-1"><a href="#服务注册-1" class="headerlink" title="服务注册"></a>服务注册</h3><p>把Eureka改成Nacos非常方便，只有两步：改依赖、改地址。</p>
+<h4 id="引入依赖-1"><a href="#引入依赖-1" class="headerlink" title="引入依赖"></a>引入依赖</h4><p>在cloud-demo父工程的pom文件中的<code>&lt;dependencyManagement&gt;</code>中引入SpringCloudAlibaba的依赖：</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-alibaba-dependencies<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.2.5.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">type</span>&gt;</span>pom<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>import<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在user-service和order-service中的pom文件中引入nacos-discovery依赖，注释掉eureka的依赖。</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-alibaba-nacos-discovery<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="配置地址"><a href="#配置地址" class="headerlink" title="配置地址"></a>配置地址</h4><p>在user-service和order-service的application.yml中添加nacos地址，注释掉eureka的地址</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">nacos:</span></span><br><span class="line">      <span class="attr">server-addr:</span> <span class="string">localhost:8848</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="服务分级存储模型"><a href="#服务分级存储模型" class="headerlink" title="服务分级存储模型"></a>服务分级存储模型</h3><p>一个<strong>服务</strong>可以有多个实例，大公司通常会把不同实例分布到全国各地的不同机房。Nacos就将同一机房内的实例 划分为一个<strong>集群</strong>。如user-service是服务，一个服务可以包含多个集群，如杭州、上海，每个集群下可以有多个实例，形成分级模型，如图：</p>
+<img src="/pic/集群概念.png" style="zoom: 67%;" />
+
+<p>微服务互相访问时，应该尽可能访问<strong>同集群实例</strong>，因为本地访问速度更快。当本集群内不可用时，才访问其它集群。</p>
+<h4 id="配置集群"><a href="#配置集群" class="headerlink" title="配置集群"></a>配置集群</h4><p>修改user-service的application.yml文件，添加集群配置：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">nacos:</span></span><br><span class="line">      <span class="attr">server-addr:</span> <span class="string">localhost:8848</span></span><br><span class="line">      <span class="attr">discovery:</span>	</span><br><span class="line">        <span class="attr">cluster-name:</span> <span class="string">HZ</span> <span class="comment"># 集群名称</span></span><br></pre></td></tr></table></figure>
+
+<p>再复制一个user-service启动配置，添加属性：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">-Dserver.port=8083 -Dspring.cloud.nacos.discovery.cluster-name=SH</span><br></pre></td></tr></table></figure>
+
+<p>发现这些实例就属于不同集群了。</p>
+<h3 id="NacosRule负载均衡"><a href="#NacosRule负载均衡" class="headerlink" title="NacosRule负载均衡"></a>NacosRule负载均衡</h3><p>上面说到要实现同集群优先的负载均衡规则，那就要把默认的规则改掉。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">userservice:</span></span><br><span class="line">  <span class="attr">ribbon:</span></span><br><span class="line">    <span class="attr">NFLoadBalancerRuleClassName:</span> <span class="string">com.alibaba.cloud.nacos.ribbon.NacosRule</span> <span class="comment"># 负载均衡规则 </span></span><br></pre></td></tr></table></figure>
+
+<p><strong>同集群内的多个实例之间是随机</strong>负载均衡。如果同集群的实例挂掉，使得跨集群访问不得不发生，那么系统会弹出警告。</p>
 ]]></content>
       <categories>
         <category>Java</category>
