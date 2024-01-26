@@ -8645,7 +8645,7 @@ function animate(obj, target) &#123;
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderApplication</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(OrderApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="meta">@LoadBalanced</span></span><br><span class="line">    <span class="comment">// 这个注释标记 restTemplate的请求会被Ribbon拦截和处理</span></span><br><span class="line">    <span class="keyword">public</span> RestTemplate <span class="title function_">restTemplate</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">RestTemplate</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这时，消费者能正常请求提供者的服务，并且在<strong>消费者端完成了负载均衡</strong>。</p>
-<h2 id="Ribbon负载均衡"><a href="#Ribbon负载均衡" class="headerlink" title="Ribbon负载均衡"></a>Ribbon负载均衡</h2><p>上面负载均衡的功能是由Ribbon组件实现的，由<code>@LoadBalanced</code>调用。</p>
+<h3 id="Ribbon负载均衡"><a href="#Ribbon负载均衡" class="headerlink" title="Ribbon负载均衡"></a>Ribbon负载均衡</h3><p>上面负载均衡的功能是由Ribbon组件实现的，由<code>@LoadBalanced</code>调用。</p>
 <img src="/pic/ribbon负载均衡.png" style="zoom: 67%;" />
 
 <p>SpringCloud Ribbon的底层采用了一个拦截器，拦截了RestTemplate发出的请求，对地址做了修改。</p>
@@ -8659,7 +8659,7 @@ function animate(obj, target) &#123;
 <li><strong>IRule</strong>利用内置<strong>负载均衡规则</strong>，从列表中选择一个，例如localhost:8081</li>
 <li>RibbonLoadBalancerClient修改请求地址，用localhost:8081替代userservice，得到<a href="http://localhost:8081/user/1%EF%BC%8C%E5%8F%91%E8%B5%B7%E7%9C%9F%E5%AE%9E%E8%AF%B7%E6%B1%82">http://localhost:8081/user/1，发起真实请求</a></li>
 </ul>
-<h3 id="IRule负载均衡策略"><a href="#IRule负载均衡策略" class="headerlink" title="IRule负载均衡策略"></a>IRule负载均衡策略</h3><p>负载均衡的规则都定义在IRule接口中，而IRule有很多不同的实现类：</p>
+<h4 id="IRule负载均衡策略"><a href="#IRule负载均衡策略" class="headerlink" title="IRule负载均衡策略"></a>IRule负载均衡策略</h4><p>负载均衡的规则都定义在IRule接口中，而IRule有很多不同的实现类：</p>
 <img src="/pic/IRule实现类.png" style="zoom: 67%;" />
 
 <p>常用的负载均衡规则如下：</p>
@@ -8700,7 +8700,7 @@ function animate(obj, target) &#123;
 </tr>
 </tbody></table>
 <p>默认的实现就是ZoneAvoidanceRule，是一种轮询方案。</p>
-<h4 id="自定义负载均衡策略"><a href="#自定义负载均衡策略" class="headerlink" title="自定义负载均衡策略"></a>自定义负载均衡策略</h4><p>通过定义IRule实现可以<strong>修改负载均衡规则</strong>，有两种方式：</p>
+<h5 id="自定义负载均衡策略"><a href="#自定义负载均衡策略" class="headerlink" title="自定义负载均衡策略"></a>自定义负载均衡策略</h5><p>通过定义IRule实现可以<strong>修改负载均衡规则</strong>，有两种方式：</p>
 <ol>
 <li>代码方式：在<strong>消费者</strong>中的OrderApplication类中，定义一个新的IRule（全局）</li>
 </ol>
@@ -8714,7 +8714,7 @@ function animate(obj, target) &#123;
 <blockquote>
 <p><strong>注意</strong>，一般用默认的负载均衡规则，不做修改。</p>
 </blockquote>
-<h3 id="饥饿加载"><a href="#饥饿加载" class="headerlink" title="饥饿加载"></a>饥饿加载</h3><p>Ribbon<strong>默认是采用懒加载</strong>，即第一次访问时才会去创建LoadBalanceClient，请求时间会很长。</p>
+<h4 id="饥饿加载"><a href="#饥饿加载" class="headerlink" title="饥饿加载"></a>饥饿加载</h4><p>Ribbon<strong>默认是采用懒加载</strong>，即第一次访问时才会去创建LoadBalanceClient，请求时间会很长。</p>
 <p>而饥饿加载则会在项目启动时创建，降低第一次访问的耗时，通过下面配置开启饥饿加载：</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">ribbon:</span></span><br><span class="line">  <span class="attr">eager-load:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">clients:</span> <span class="string">userservice</span></span><br></pre></td></tr></table></figure>
 
@@ -8745,10 +8745,54 @@ function animate(obj, target) &#123;
 <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">-Dserver.port=8083 -Dspring.cloud.nacos.discovery.cluster-name=SH</span><br></pre></td></tr></table></figure>
 
 <p>发现这些实例就属于不同集群了。</p>
-<h3 id="NacosRule负载均衡"><a href="#NacosRule负载均衡" class="headerlink" title="NacosRule负载均衡"></a>NacosRule负载均衡</h3><p>上面说到要实现同集群优先的负载均衡规则，那就要把默认的规则改掉。</p>
+<h4 id="NacosRule负载均衡"><a href="#NacosRule负载均衡" class="headerlink" title="NacosRule负载均衡"></a>NacosRule负载均衡</h4><p>上面说到要实现同集群优先的负载均衡规则，那就要把默认的规则改掉。</p>
 <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">userservice:</span></span><br><span class="line">  <span class="attr">ribbon:</span></span><br><span class="line">    <span class="attr">NFLoadBalancerRuleClassName:</span> <span class="string">com.alibaba.cloud.nacos.ribbon.NacosRule</span> <span class="comment"># 负载均衡规则 </span></span><br></pre></td></tr></table></figure>
 
 <p><strong>同集群内的多个实例之间是随机</strong>负载均衡。如果同集群的实例挂掉，使得跨集群访问不得不发生，那么系统会弹出警告。</p>
+<h3 id="权重配置"><a href="#权重配置" class="headerlink" title="权重配置"></a>权重配置</h3><p>服务器设备性能有差异，部分实例所在机器性能较好，另一些较差，我们希望性能好的机器承担更多的用户请求。但默认情况下NacosRule是同集群内随机挑选，不会考虑机器的性能问题。</p>
+<p>因此，Nacos提供了权重配置来<strong>控制访问频率</strong>，权重越大则访问频率越高。</p>
+<p>在nacos控制台，找到user-service的实例列表，点击编辑，即可修改权重。</p>
+<p><strong>注意</strong>：如果权重修改为0，则该实例永远不会被访问。这一点也被用于更新实例，更新前把权重置为0，更新完毕后，将权重置为小值，让部分用户测试更新，保证大部分用户的体验。</p>
+<h3 id="环境隔离"><a href="#环境隔离" class="headerlink" title="环境隔离"></a>环境隔离</h3><p>Nacos提供了namespace来实现环境隔离功能。</p>
+<img src="/pic/环境隔离.png" style="zoom: 67%;" />
+
+<ul>
+<li>nacos中可以有多个namespace，每个namespace都有唯一的ID号。</li>
+<li>namespace下可以有group、service等</li>
+<li>不同namespace之间相互隔离，例如<strong>不同namespace的服务互相不可见</strong>，远程调用也会失效。</li>
+</ul>
+<p>默认情况下，Nacos只有一个namespace，叫public。可以在控制台添加新的namespace，把微服务配置到别的namespace需要<strong>修改配置文件</strong>。</p>
+<p>例如，修改order-service的application.yml文件，注意<strong>填的是命名空间的ID</strong>，不是名称。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">nacos:</span></span><br><span class="line">      <span class="attr">server-addr:</span> <span class="string">localhost:8848</span></span><br><span class="line">      <span class="attr">discovery:</span></span><br><span class="line">        <span class="attr">cluster-name:</span> <span class="string">HZ</span></span><br><span class="line">        <span class="attr">namespace:</span> <span class="string">492a7d5d-237b-46a1-a99a-fa8e98e4b0f9</span> <span class="comment"># 命名空间，填ID</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Nacos和Eureka的区别"><a href="#Nacos和Eureka的区别" class="headerlink" title="Nacos和Eureka的区别"></a>Nacos和Eureka的区别</h2><p>Nacos的服务实例分为两种l类型：</p>
+<ul>
+<li><p>临时实例：如果实例宕机超过一定时间，会从服务列表剔除，默认的类型。</p>
+</li>
+<li><p>非临时实例：如果实例宕机，不会从服务列表剔除，也可以叫永久实例。</p>
+</li>
+</ul>
+<p>配置一个服务实例为永久实例：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">nacos:</span></span><br><span class="line">      <span class="attr">discovery:</span></span><br><span class="line">        <span class="attr">ephemeral:</span> <span class="literal">false</span> <span class="comment"># 设置为非临时实例</span></span><br></pre></td></tr></table></figure>
+
+<p>Nacos和Eureka整体结构类似，服务注册、服务拉取、心跳等待，但是也存在一些差异：</p>
+<p><img src="/pic/Nacos%E6%B3%A8%E5%86%8C%E4%B8%AD%E5%BF%83.png" alt="image-20210714001728017"></p>
+<ul>
+<li><p>Nacos与eureka的共同点</p>
+<ul>
+<li>都支持服务注册和服务拉取</li>
+<li>都支持服务提供者心跳方式做健康检测</li>
+</ul>
+</li>
+<li><p>Nacos与Eureka的区别</p>
+<ul>
+<li>Nacos支持服务端主动检测提供者状态：临时实例采用心跳模式，非临时实例采用主动检测模式</li>
+<li>临时实例心跳不正常会被剔除，非临时实例则不会被剔除</li>
+<li>Nacos支持服务列表变更的消息推送模式，服务列表更新更及时</li>
+<li>Nacos集群默认采用AP方式，当集群中存在非临时实例时，采用CP模式；Eureka采用AP方式</li>
+</ul>
+</li>
+</ul>
 ]]></content>
       <categories>
         <category>Java</category>
@@ -11294,6 +11338,72 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <p>数据库索引中有聚簇索引和非聚簇索引。聚簇索引是将数据和索引放到一起，B+树的叶子节点保存了整行数据，有且只有一个；非聚簇索引是数据和索引分开存储，B+树的叶子节点保存对应的主键，可以有多个。</p>
 <p>回表查询是通过二级索引先找到对应的主键值，再到聚集索引中查找整行数据，这个过程就是回表。</p>
 <p>比如<code>select * from user where name = &#39;Arm&#39; </code></p>
+<h3 id="覆盖索引"><a href="#覆盖索引" class="headerlink" title="覆盖索引"></a>覆盖索引</h3><p>覆盖索引是指查询使用了索引，并且需要返回的列，在该索引中已经全部能够找到 ，不需要回表查询。</p>
+<p>比如上图的user表，id是主键索引，name是普通索引，那么</p>
+<p><code>select * from tb_user where id = 1</code> 是覆盖索引<br><code>select id，name from tb_user where name = ‘Arm’</code> 是覆盖索引<br><code>select id，name，gender from tb_user where name = ‘Arm’</code> 不是覆盖索引</p>
+<p>⭐什么是覆盖索引？</p>
+<ul>
+<li><p>覆盖索引是指查询使用了索引，并且需要返回的列，在该索引中已经全部能够找到</p>
+</li>
+<li><p>使用id查询，直接走聚集索引查询，一次索引扫描，直接返回数据，性能高。</p>
+</li>
+<li><p>如果返回的列中没有创建索引，有可能会触发回表查询，因此要尽量避免使用select *</p>
+</li>
+</ul>
+<p>⭐什么是超大分页问题？怎么处理？</p>
+<p>当一张表中数据量比较大时，使用limit分页查询，需要对数据进行排序，效率低。</p>
+<p>解决：覆盖索引+子查询。先分页查询数据的id字段，确定了id之后，再用子查询来过滤，只查询这个id列表中的数据就可以了。因为查询id的时候，走的覆盖索引，所以效率可以提升很多</p>
+<p>⭐索引创建原则有哪些？</p>
+<ul>
+<li><p>针对数据量较大（10万），且查询较频繁的表建立索引。√</p>
+</li>
+<li><p>针对常作为查询条件、排序、分组操作的字段建立索引 √</p>
+</li>
+<li><p>尽量选择区分度高(列中重复元素少)的列作为索引，尽量建立唯一索引，区分度越高，使用索引的效率越高。</p>
+</li>
+<li><p>如果是字符串类型的字段，其长度较长，可以针对字段特点，建立前缀索引。</p>
+</li>
+<li><p>尽量使用 <strong>联合索引</strong> ，减少单列索引，查询时，联合索引很多时候可以覆盖索引，节省存储空间，避免回表，提高查询效率。√</p>
+</li>
+<li><p>要控制索引的数量，索引并不是多多益善，索引越多，维护索引结构的代价也就越大，会影响增删改的效率 √</p>
+</li>
+<li><p>如果索引列不能存储NULL值，请在创建表时使用NOT NULL约束它。当优化器知道每列是否包含NULL值时，它可以更好地确定哪个索引最有效地用于查询。</p>
+</li>
+</ul>
+<p>⭐什么情况下索引会失效？</p>
+<ul>
+<li>联合索引，违反最左原则</li>
+<li>范围查询右边的列，不能使用索引</li>
+<li>不要在索引列上进行运算操作， 索引将失效</li>
+<li>字符串不加单引号，造成索引失效。(类型转换)</li>
+<li>以%开头的Like模糊查询，索引失效</li>
+</ul>
+<p>⭐对sql优化的经验</p>
+<ul>
+<li>表的设计优化<ul>
+<li>比如设置合适的数值（tinyint   int   bigint），要根据实际情况选择</li>
+<li>比如设置合适的字符串类型（char和varchar）char定长效率高，varchar可变长度，效率稍低</li>
+</ul>
+</li>
+<li>索引优化    参考优化创建原则和索引失效</li>
+<li>SQL语句优化<ul>
+<li>SELECT语句务必指明字段名称（避免直接使用select * ）</li>
+<li>SQL语句要避免造成索引失效的写法</li>
+<li>尽量用union all代替union，union会多一次过滤重复结果的操作，效率低</li>
+<li>避免在where子句中对字段进行表达式操作</li>
+<li>Join优化 能用innerjoin 就不用left join，right join，如必须使用 一定要以小表为驱动，<ul>
+<li>内连接会对两个表进行优化，优先把小表放到外边，把大表放到里边。left join 或 right join，不会重新调整顺序</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>主从复制、读写分离<ul>
+<li>如果数据库的使用场景读的操作比较多的时候，为了避免写的操作所造成的性能影响 可以采用读写分离的架构。读写分离解决的是，数据库的写入，影响了查询的效率。</li>
+<li><img src="/pic/数据库读写分离.png" style="zoom: 80%;" /></li>
+</ul>
+</li>
+<li>分库分表</li>
+</ul>
 ]]></content>
       <categories>
         <category>八股</category>
