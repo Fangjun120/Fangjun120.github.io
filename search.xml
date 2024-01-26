@@ -13541,4 +13541,176 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
         <tag>Java</tag>
       </tags>
   </entry>
+  <entry>
+    <title>数据库</title>
+    <url>/2024/01/25/11-00-37/</url>
+    <content><![CDATA[<h2 id="慢查询"><a href="#慢查询" class="headerlink" title="慢查询"></a>慢查询</h2><p>表象：页面加载过慢、接口响应时间过长(超过1s)。</p>
+<h3 id="定位慢查询"><a href="#定位慢查询" class="headerlink" title="定位慢查询"></a>定位慢查询</h3><p>主要有两种方案</p>
+<h4 id="开源工具"><a href="#开源工具" class="headerlink" title="开源工具"></a>开源工具</h4><ul>
+<li>调试工具：Arthas</li>
+<li>运维工具：Prometheus、Skywalking</li>
+</ul>
+<h4 id="MySQL自带的慢日志"><a href="#MySQL自带的慢日志" class="headerlink" title="MySQL自带的慢日志"></a>MySQL自带的慢日志</h4><p>这个方法一般只在调试阶段使用，生产阶段不用，会损耗性能。</p>
+<p>慢查询日志记录了所有执行时间超过指定参数(long_query_time，单位：秒，默认10)的所有SQL语句。但默认没有开启，需要在MySQL的配置文件 <code>/etc/my.cnf</code> 中配置如下信息：</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 开启慢日志</span></span><br><span class="line"><span class="attr">slow_query_log</span> = <span class="string">1</span></span><br><span class="line"><span class="comment"># 设置阈值</span></span><br><span class="line"><span class="attr">long_query_time</span> = <span class="string">2</span></span><br></pre></td></tr></table></figure>
+
+<p>日志会记录在 <code>var/lib/mysql/localhost-slow.log</code> 文件中。</p>
+<p>⭐如何定位慢查询？</p>
+<ul>
+<li><p>介绍问题产生场景（接口测试很慢，压测结果有5s）</p>
+</li>
+<li><p>当时采用了运维工具 Skywalking，测试出是sql的问题</p>
+</li>
+<li><p>或者 开启了慢日志（调试阶段）</p>
+</li>
+</ul>
+<h3 id="分析慢查询"><a href="#分析慢查询" class="headerlink" title="分析慢查询"></a>分析慢查询</h3><p>MySQL自带了分析工具EXPLAIN或DESC。使用方法是直接在SELECT语句前加上关键字 explain &#x2F; desc</p>
+<img src="/explain结果.png" style="zoom: 67%;" />
+
+<ul>
+<li><p>possible_keys：代表当前sql可能会使用到的索引</p>
+</li>
+<li><p>key：实际命中的索引</p>
+</li>
+<li><p>key_len：索引占用的大小</p>
+</li>
+<li><p>extra：额外的优化建议</p>
+<ul>
+<li><table>
+<thead>
+<tr>
+<th>Extra</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Using where; Using Index</td>
+<td>查找使用了索引，需要的数据都在索引列中找到，不需要回表查询数据</td>
+</tr>
+<tr>
+<td>Using index condition</td>
+<td>查找使用了索引，但是需要回表查询数据</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+</li>
+<li><p>type：sql连接的类型，性能由好到差为：NULL、system、const、eq_ref、ref、range、index、all</p>
+<ul>
+<li><table>
+<thead>
+<tr>
+<th>type</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>NULL</td>
+<td>查询过程中没有用到表(用的少)</td>
+</tr>
+<tr>
+<td>system</td>
+<td>查询的是mysql内置的表(用的少)</td>
+</tr>
+<tr>
+<td>const</td>
+<td>根据主键查询</td>
+</tr>
+<tr>
+<td>eq_ref</td>
+<td>根据主键或唯一索引查询</td>
+</tr>
+<tr>
+<td>ref</td>
+<td>索引查询</td>
+</tr>
+<tr>
+<td>range</td>
+<td>范围查询</td>
+</tr>
+<tr>
+<td>index</td>
+<td>全索引查询</td>
+</tr>
+<tr>
+<td>all</td>
+<td>全盘扫描</td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+</li>
+</ul>
+<p>⭐如何分析SQL语句？</p>
+<p>采用MySQL自带的分析工具EXPLAIN，比如<code>explain select * from user</code>。</p>
+<ul>
+<li>通过key和key_len检查是否命中索引(索引本身是否有失效的情况)</li>
+<li>通过type字段查看sql是否有进一步优化的空间，是否存在全索引扫描或全盘扫描</li>
+<li>通过extra建议判断，是否出现回表的情况，如果出现了，可以尝试添加索引或修改返回字段来修复。</li>
+</ul>
+<h2 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h2><p>索引是帮助MySQL高效获取数据的数据结构。在数据之外，数据库系统还维护着满足特定查找算法的数据结构(<strong>B+树</strong>)，这些数据结构以某种方式引用数据，这样就可以在这些数据结构上实现高级查找算法，这种数据结构就是索引。</p>
+<h3 id="B树"><a href="#B树" class="headerlink" title="B树"></a>B树</h3><p><strong>多叉平衡查找树</strong>，相比红黑树，B数每个节点有多个分支。当数据量很大时，红黑树会很深，查找也很耗时，B树缓解这种情况。</p>
+<img src="/B树.png" style="zoom: 67%;" />
+
+<h3 id="B-树"><a href="#B-树" class="headerlink" title="B+树"></a>B+树</h3><p><strong>数据全都存储在叶子节点上</strong>，并且叶子节点之间使用双向指针相连接。</p>
+<img src="/B+树.png" style="zoom:67%;" />
+
+<ul>
+<li>磁盘读写代价更低：B树要把查找路径上的所有数据全都读一遍，B+树查找路径上没有数据，都是指针。</li>
+<li>查询效率更稳定：数据都在叶子节点上，所有数据的查找路径长度都差不多。</li>
+<li>便于扫库和区间查询：对于区间查询，可以从根节点找到左区间的值，利用叶子节点之间的双向指针找到另一个区间的值，而不用再从根节点开始查询。</li>
+</ul>
+<p>⭐数据库中的索引是什么</p>
+<ul>
+<li>索引是帮助MySQL高效获取数据的数据结构（有序）</li>
+<li>提高数据检索的效率，降低数据库的IO成本（不需要全表扫描）</li>
+<li>通过索引列对数据进行排序，降低数据排序成本，降低CPU消耗</li>
+</ul>
+<p>⭐索引的底层数据结构？</p>
+<p>MySQL的InnoDB引擎采用的是B+树来存储索引</p>
+<ul>
+<li>阶数更多，路径更短</li>
+<li>磁盘读写代价更低，非叶子节点只存储指针，叶子节点存储数据</li>
+<li>B+树便于扫库和区间查询，叶子节点是一个双向链表</li>
+</ul>
+<h3 id="聚簇索引和非聚簇索引"><a href="#聚簇索引和非聚簇索引" class="headerlink" title="聚簇索引和非聚簇索引"></a>聚簇索引和非聚簇索引</h3><p>聚簇索引也叫聚集索引，非聚簇索引也叫二级索引。</p>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>含义</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>聚集索引</td>
+<td>将数据存储与索引放在一起，索引结构的叶子节点保存了数据表中一行数据</td>
+<td>有且只有一个</td>
+</tr>
+<tr>
+<td>二级索引</td>
+<td>数据和索引分开存储，索引结构的叶子节点关联的是对应的主键值</td>
+<td>可以存在多个</td>
+</tr>
+</tbody></table>
+<p>聚集索引选取规则</p>
+<ul>
+<li>存在主键，主键就是聚集索引</li>
+<li>不存在主键，第一个唯一(UNIQUE)索引作为聚集索引</li>
+<li>如果既没有主键，也没有合适的唯一索引，InnoDB自动生成一个rowid作为隐藏的聚集索引</li>
+</ul>
+<img src="/聚集索引和二级索引.png" style="zoom: 67%;" />
+
+<p>⭐什么是回表查询？</p>
+<p>数据库索引中有聚簇索引和非聚簇索引。聚簇索引是将数据和索引放到一起，B+树的叶子节点保存了整行数据，有且只有一个；非聚簇索引是数据和索引分开存储，B+树的叶子节点保存对应的主键，可以有多个。</p>
+<p>回表查询是通过二级索引先找到对应的主键值，再到聚集索引中查找整行数据，这个过程就是回表。</p>
+<p>比如<code>select * from user where name = &#39;Arm&#39; </code></p>
+]]></content>
+      <categories>
+        <category>八股</category>
+      </categories>
+      <tags>
+        <tag>八股</tag>
+      </tags>
+  </entry>
 </search>
