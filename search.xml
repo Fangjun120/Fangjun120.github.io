@@ -8793,6 +8793,444 @@ function animate(obj, target) &#123;
 </ul>
 </li>
 </ul>
+<h2 id="Nacos配置管理"><a href="#Nacos配置管理" class="headerlink" title="Nacos配置管理"></a>Nacos配置管理</h2><h3 id="统一配置管理"><a href="#统一配置管理" class="headerlink" title="统一配置管理"></a>统一配置管理</h3><p>当微服务部署的实例越来越多，达到数十、数百时，逐个修改微服务配置就会让人抓狂，而且很容易出错。我们需要一种统一配置管理方案，可以集中管理所有实例的配置。</p>
+<img src="/pic/Nacos配置中心.png" style="zoom:67%;" />
+
+<p>Nacos一方面可以将配置集中管理，另一方可以在配置变更时，及时通知微服务，实现配置的<strong>热更新</strong>。</p>
+<h4 id="添加配置文件"><a href="#添加配置文件" class="headerlink" title="添加配置文件"></a>添加配置文件</h4><p>Nacos控制台的配置管理，默认是空的，需要添加一个表单，填写配置文件信息。</p>
+<p>在配置内容中写入<strong>有热更新需求的配置项</strong>。</p>
+<img src="/pic/配置管理.png" style="zoom: 80%;" />
+
+<blockquote>
+<p> 注意：需要热更新的配置才有放到nacos管理的必要。项目的核心配置、基本不会变更的一些配置还是保存在微服务本地比较好。</p>
+</blockquote>
+<h4 id="拉取配置"><a href="#拉取配置" class="headerlink" title="拉取配置"></a>拉取配置</h4><p>微服务要拉取nacos中管理的配置，并且与本地的application.yml配置合并，才能完成项目启动。</p>
+<p>但如果尚未读取application.yml，又如何得知nacos地址呢？</p>
+<p>因此spring引入了一种新的配置文件：<strong>bootstrap.yaml文件，会在application.yml之前被读取</strong>，流程如下：</p>
+<img src="/pic/Nacos配置读取.png" style="zoom: 50%;" />
+
+<ul>
+<li><p>引入依赖</p>
+<ul>
+<li><p>在user-service服务中，引入nacos-config的客户端依赖：</p>
+</li>
+<li><pre><code class="xml">&lt;!--nacos配置管理依赖--&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;com.alibaba.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-alibaba-nacos-config&lt;/artifactId&gt;
+&lt;/dependency&gt;
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line">- 添加`bootstrap.yaml`</span><br><span class="line"></span><br><span class="line">  - 在user-service中添加一个bootstrap.yaml文件，内容如下：</span><br><span class="line"></span><br><span class="line">  - ```yaml</span><br><span class="line">    spring:</span><br><span class="line">      application:</span><br><span class="line">        name: userservice # 服务名称</span><br><span class="line">      profiles:</span><br><span class="line">        active: dev #开发环境，这里是dev </span><br><span class="line">      cloud:</span><br><span class="line">        nacos:</span><br><span class="line">          server-addr: localhost:8848 # Nacos地址</span><br><span class="line">          config:</span><br><span class="line">            file-extension: yaml # 文件后缀名</span><br></pre></td></tr></table></figure>
+</code></pre>
+</li>
+<li><p>这里会根据spring.cloud.nacos.server-addr获取nacos地址，再根据</p>
+<p><code>$&#123;spring.application.name&#125;-$&#123;spring.profiles.active&#125;.$&#123;spring.cloud.nacos.config.file-extension&#125;</code>作为文件id，来读取配置。</p>
+<img src="/pic/配置文件名拼接.png" style="zoom: 80%;" /></li>
+</ul>
+</li>
+<li><p>读取nacos配置</p>
+<ul>
+<li><p>使用读取配置文件的方法即可，如<code>@Value</code>注解</p>
+</li>
+<li><pre><code class="java">@Slf4j
+@RestController
+@RequestMapping(&quot;/user&quot;)
+public class UserController &#123;
+
+    @Autowired
+    private UserService userService;
+
+    // 读取在nacos控制台配置的日期格式字段
+    @Value(&quot;$&#123;pattern.dateformat&#125;&quot;)
+    private String dateformat;
+    
+    @GetMapping(&quot;now&quot;)
+    public String now()&#123;
+        return LocalDateTime.now().format(DateTimeFormatter.ofPattern(dateformat));
+    &#125;
+    // ...略
+&#125;
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### 配置热更新</span><br><span class="line"></span><br><span class="line">有两种方式，对应配置文件注入的两种方式。</span><br><span class="line"></span><br><span class="line">- 使用@Value注入时，在其所在类上添加注解@RefreshScope：</span><br><span class="line"></span><br><span class="line">&lt;img src=&quot;/pic/热更新1.png&quot; alt=&quot;image-20210714171036335&quot; style=&quot;zoom:80%;&quot; /&gt;</span><br><span class="line"></span><br><span class="line">- 使用`@ConfigurationProperties`注入时，不用加`@RefreshScope`注解也能实现热更新，因此**这种方式更推荐**。</span><br><span class="line"></span><br><span class="line">### 配置共享</span><br><span class="line"></span><br><span class="line">其实微服务启动时，会去nacos读取多个配置文件，包括环境配置文件和公共配置文件</span><br><span class="line"></span><br><span class="line">- `[spring.application.name]-[spring.profiles.active].yaml`，例如：userservice-dev.yaml</span><br><span class="line"></span><br><span class="line">- `[spring.application.name].yaml`，例如：userservice.yaml</span><br><span class="line"></span><br><span class="line">而`[spring.application.name].yaml`不包含环境，因此可以被**多个环境共享**。</span><br><span class="line"></span><br><span class="line">#### 添加环境共享配置</span><br><span class="line"></span><br><span class="line">在nacos中添加一个userservice.yaml文件：</span><br><span class="line"></span><br><span class="line">&lt;img src=&quot;/pic/环境共享配置文件.png&quot; style=&quot;zoom: 80%;&quot; /&gt;</span><br><span class="line"></span><br><span class="line">拉取配置同上。</span><br><span class="line"></span><br><span class="line">#### 共享的优先级</span><br><span class="line"></span><br><span class="line">![](/pic/环境共享优先级.png)</span><br><span class="line"></span><br><span class="line">### 搭建Nacos集群</span><br><span class="line"></span><br><span class="line">见Nacos集群搭建</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## Feign远程调用</span><br><span class="line"></span><br><span class="line">以前使用RestTemplate发起远程调用</span><br><span class="line"></span><br><span class="line">```java</span><br><span class="line">String url = &quot;http://userservice/user/&quot; + order.getUserId();</span><br><span class="line">User user = restTemplate.getForObject(url, User.class);</span><br></pre></td></tr></table></figure>
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+<p>存在下面的问题：</p>
+<ul>
+<li>代码可读性差，编程体验不统一</li>
+<li>参数复杂的URL难以维护</li>
+</ul>
+<p>Feign是一个<strong>声明式</strong>的http客户端，官方地址：<a href="https://github.com/OpenFeign/feign">https://github.com/OpenFeign/feign</a></p>
+<p>其作用就是帮助我们优雅的实现http请求的发送</p>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><ol>
+<li>引入依赖</li>
+</ol>
+<p>在order-service服务的pom文件中引入feign的依赖</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-openfeign<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>添加注释，开启功能</li>
+</ol>
+<p>在order-service的启动类添加<code>@EnableFeignClients</code>注解开启Feign的功能</p>
+<ol start="3">
+<li>编写Feign客户端</li>
+</ol>
+<p>在order-service中新建一个接口，无需实现，Feign会自动发起调用。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.itcast.order.clients;</span><br><span class="line"></span><br><span class="line"><span class="meta">@FeignClient(&quot;userservice&quot;)</span> <span class="comment">// 需要指定服务名称，在发http请求时需要</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserClient</span> &#123;</span><br><span class="line">    <span class="comment">// Feign为了降低学习成本，复用了GetMapping等注解</span></span><br><span class="line">    <span class="meta">@GetMapping(&quot;/user/&#123;id&#125;&quot;)</span></span><br><span class="line">    User <span class="title function_">findById</span><span class="params">(<span class="meta">@PathVariable(&quot;id&quot;)</span> Long id)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="4">
+<li>远程调用</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> UserClient userClient;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Order <span class="title function_">queryOrderById</span><span class="params">(Long orderId)</span>&#123;</span><br><span class="line">    <span class="comment">// 1.查询订单</span></span><br><span class="line">    <span class="type">Order</span> <span class="variable">order</span> <span class="operator">=</span> orderMapper.findById(orderId);</span><br><span class="line">    <span class="comment">// 2.Feign远程调用</span></span><br><span class="line">    <span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> userClient.findById(order.getUserId());</span><br><span class="line">    <span class="comment">// 3.封装user信息</span></span><br><span class="line">    order.setUser(user);</span><br><span class="line">    <span class="comment">// 4.返回</span></span><br><span class="line">    <span class="keyword">return</span> order;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>并且Feign已经<strong>集成了Ribbon，自动实现了负载均衡</strong>。</p>
+<h3 id="自定义配置"><a href="#自定义配置" class="headerlink" title="自定义配置"></a>自定义配置</h3><p>Feign可以支持很多的自定义配置，如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>作用</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>feign.Logger.Level</strong></td>
+<td>修改日志级别</td>
+<td>包含四种不同的级别：NONE、BASIC、HEADERS、FULL</td>
+</tr>
+<tr>
+<td>feign.codec.Decoder</td>
+<td>响应结果的解析器</td>
+<td>http远程调用的结果做解析，例如解析json字符串为java对象</td>
+</tr>
+<tr>
+<td>feign.codec.Encoder</td>
+<td>请求参数编码</td>
+<td>将请求参数编码，便于通过http请求发送</td>
+</tr>
+<tr>
+<td>feign. Contract</td>
+<td>支持的注解格式</td>
+<td>默认是SpringMVC的注解</td>
+</tr>
+<tr>
+<td>feign. Retryer</td>
+<td>失败重试机制</td>
+<td>请求失败的重试机制，默认是没有，不过会使用Ribbon的重试</td>
+</tr>
+</tbody></table>
+<p>一般情况下，默认值就能满足我们使用，如果要自定义时，只需要创建自定义的@Bean覆盖默认Bean即可。</p>
+<p>以日志为例来演示如何自定义配置。</p>
+<ul>
+<li><p>配置文件方式</p>
+<ul>
+<li>基于配置文件修改feign的日志级别可以针对单个服务：</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">feign:</span>  </span><br><span class="line">  <span class="attr">client:</span></span><br><span class="line">    <span class="attr">config:</span> </span><br><span class="line">      <span class="attr">userservice:</span> <span class="comment"># 针对某个微服务的配置</span></span><br><span class="line">        <span class="attr">loggerLevel:</span> <span class="string">FULL</span> <span class="comment">#  日志级别 </span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>也可以针对所有服务：</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">feign:</span>  </span><br><span class="line">  <span class="attr">client:</span></span><br><span class="line">    <span class="attr">config:</span> </span><br><span class="line">      <span class="attr">default:</span> <span class="comment"># 这里用default就是全局配置，如果是写服务名称，则是针对某个微服务的配置</span></span><br><span class="line">        <span class="attr">loggerLevel:</span> <span class="string">FULL</span> <span class="comment">#  日志级别 </span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>而日志的级别分为四种：</p>
+<ul>
+<li>NONE：不记录任何日志信息，这是默认值。</li>
+<li>BASIC：仅记录请求的方法，URL以及响应状态码和执行时间</li>
+<li>HEADERS：在BASIC的基础上，额外记录了请求和响应的头信息</li>
+<li>FULL：记录所有请求和响应的明细，包括头信息、请求体、元数据。</li>
+</ul>
+</li>
+<li><p>代码方式</p>
+<ul>
+<li><p>基于Java代码来修改日志级别，先声明一个类，然后声明一个Logger.Level的对象：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DefaultFeignConfiguration</span>  &#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> Logger.Level <span class="title function_">feignLogLevel</span><span class="params">()</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Logger.Level.BASIC; <span class="comment">// 日志级别为BASIC</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果要<strong>全局生效</strong>，将其放到启动类的@EnableFeignClients这个注解中：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@EnableFeignClients(defaultConfiguration = DefaultFeignConfiguration .class)</span> </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果是<strong>局部生效</strong>，则把它放到对应的@FeignClient这个注解中：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@FeignClient(value = &quot;userservice&quot;, configuration = DefaultFeignConfiguration .class)</span> </span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h3 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h3><p>Feign底层客户端实现包括：</p>
+<ul>
+<li><p>URLConnection：默认实现，不支持连接池</p>
+</li>
+<li><p>Apache HttpClient ：支持连接池</p>
+</li>
+<li><p>OKHttp：支持连接池</p>
+</li>
+</ul>
+<p>因此提高Feign的性能主要手段就是使用<strong>连接池</strong>代替默认的URLConnection，另外，日志的界别最好用basic或none。</p>
+<h4 id="用Apache-HttpClient代替URLConnection"><a href="#用Apache-HttpClient代替URLConnection" class="headerlink" title="用Apache HttpClient代替URLConnection"></a>用Apache HttpClient代替URLConnection</h4><ul>
+<li><p>引入依赖</p>
+<p>在order-service的pom文件中引入Apache的HttpClient依赖：</p>
+  <figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--httpClient的依赖 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.github.openfeign<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>feign-httpclient<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>配置连接池</p>
+<p>在order-service的application.yml中添加配置：</p>
+  <figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">feign:</span></span><br><span class="line">	<span class="attr">client:</span></span><br><span class="line">		<span class="attr">config:</span></span><br><span class="line">			<span class="attr">default:</span> <span class="comment"># default全局的配置</span></span><br><span class="line">				<span class="attr">loggerLevel:</span> <span class="string">BASIC</span> <span class="comment"># 日志级别，BASIC就是基本的请求和响应信息</span></span><br><span class="line">	<span class="attr">httpclient:</span></span><br><span class="line">        <span class="attr">enabled:</span> <span class="literal">true</span> <span class="comment"># 开启feign对HttpClient的支持</span></span><br><span class="line">        <span class="attr">max-connections:</span> <span class="number">200</span> <span class="comment"># 最大的连接数</span></span><br><span class="line">        <span class="attr">max-connections-per-route:</span> <span class="number">50</span> <span class="comment"># 每个路径的最大连接数</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h3><h4 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h4><p>消费者的服务调用和提供者的Controller接口，内容上比较一致，可以抽象成一个接口</p>
+<img src="/pic/Feign接口.png" style="zoom: 80%;" />
+
+<p>但官方并不推荐，因为这样紧耦合了，并且参数列表中的注解映射不会继承，Controller中必须再次声明方法、参数列表、注解。</p>
+<h4 id="抽取"><a href="#抽取" class="headerlink" title="抽取"></a>抽取</h4><p>将Feign的Client抽取为独立模块，并且把接口有关的POJO、默认的Feign配置都放到这个模块中，<strong>提供给所有消费者使用</strong>。</p>
+<p>比如现在有两个服务，order和pay，都需要调用user的接口，他们只能单独去调用，后面服务多了，相同的调用代码就写了很多遍，</p>
+<img src="/pic/Feign抽取.png" style="zoom: 67%;" />
+
+<p>这种方法的缺点是，如果有一个服务只需要少量的公共模块，也必须把完整的公共模块引入项目。</p>
+<ul>
+<li>新建一个module，名为feign-api</li>
+</ul>
+<p><img src="/pic/feign%E6%8A%BD%E5%8F%96%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84.png"></p>
+<ul>
+<li><p>在feign-api中引入feign 的依赖，将公共部分移入，如order-service中编写的UserClient、User、DefaultFeignConfiguration。</p>
+</li>
+<li><p>在order-service的pom文件中中引入feign-api的依赖：</p>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>cn.itcast.demo<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>feign-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>修改order-service中的所有与上述三个组件有关的导包部分，改成导入feign-api中的包</p>
+</li>
+<li><p>但是现在FeignClient不在application的扫描包范围内，无法注入bean。解决扫描包问题</p>
+<p>方式一：</p>
+<p>指定Feign应该扫描的包：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@EnableFeignClients(basePackages = &quot;cn.itcast.feign.clients&quot;)</span></span><br></pre></td></tr></table></figure>
+
+<p>方式二：</p>
+<p>指定需要加载的Client接口：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@EnableFeignClients(clients = &#123;UserClient.class&#125;)</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="网关"><a href="#网关" class="headerlink" title="网关"></a>网关</h2><p>网关是<strong>所有微服务的统一入口</strong>。</p>
+<p>网关的<strong>核心功能特性</strong>：</p>
+<ul>
+<li>请求路由和负载均衡<ul>
+<li>一切请求都必须先经过gateway，但网关不处理业务，而是根据某种规则，把请求转发到某个微服务，这个过程叫做路由。当然路由的目标服务有多个时，还需要做负载均衡。</li>
+</ul>
+</li>
+<li>权限控制<ul>
+<li>网关作为微服务入口，需要校验用户是是否有请求资格，如果没有则进行拦截。</li>
+</ul>
+</li>
+<li>限流<ul>
+<li>当请求流量过高时，在网关中按照下流的微服务能够接受的速度来放行请求，避免服务压力过大。</li>
+</ul>
+</li>
+</ul>
+<img src="/pic/网关.png" style="zoom: 50%;" />
+
+<p>在SpringCloud中网关的实现包括两种：</p>
+<ul>
+<li>gateway</li>
+<li>zuul</li>
+</ul>
+<p>Zuul是基于Servlet的实现，属于阻塞式编程。而SpringCloudGateway则是基于Spring5中提供的WebFlux，属于响应式编程的实现，具备更好的性能。</p>
+<h3 id="gateway搭建"><a href="#gateway搭建" class="headerlink" title="gateway搭建"></a>gateway搭建</h3><h4 id="创建服务，引入依赖"><a href="#创建服务，引入依赖" class="headerlink" title="创建服务，引入依赖"></a>创建服务，引入依赖</h4><p>网关和注册中心一样，也是一个微服务，因此要先创建一个服务。</p>
+<img src="/pic/搭建网关.png" style="zoom:67%;" />
+
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--网关--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-gateway<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--nacos服务发现依赖--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-alibaba-nacos-discovery<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="编写启动类-1"><a href="#编写启动类-1" class="headerlink" title="编写启动类"></a>编写启动类</h4><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.itcast.gateway;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GatewayApplication</span> &#123;</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">		SpringApplication.run(GatewayApplication.class, args);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="编写基础配置和路由规则"><a href="#编写基础配置和路由规则" class="headerlink" title="编写基础配置和路由规则"></a>编写基础配置和路由规则</h4><p>创建application.yml文件，内容如下：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">10010</span> <span class="comment"># 网关端口</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">gateway</span> <span class="comment"># 服务名称</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">nacos:</span></span><br><span class="line">      <span class="attr">server-addr:</span> <span class="string">localhost:8848</span> <span class="comment"># nacos地址</span></span><br><span class="line">    <span class="attr">gateway:</span></span><br><span class="line">      <span class="attr">routes:</span> <span class="comment"># 网关路由配置</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">user-service</span> <span class="comment"># 路由id，自定义，只要唯一即可</span></span><br><span class="line">          <span class="comment"># uri: http://127.0.0.1:8081 # 路由的目标地址 http就是固定地址</span></span><br><span class="line">          <span class="attr">uri:</span> <span class="string">lb://userservice</span> <span class="comment"># 路由的目标地址 lb就是负载均衡，后面跟服务名称</span></span><br><span class="line">          <span class="attr">predicates:</span> <span class="comment"># 路由断言，也就是判断请求是否符合路由规则的条件</span></span><br><span class="line">            <span class="bullet">-</span> <span class="string">Path=/user/**</span> <span class="comment"># 这个是按照路径匹配，只要以/user/开头就符合要求</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="网关路由流程图"><a href="#网关路由流程图" class="headerlink" title="网关路由流程图"></a>网关路由流程图</h4><img src="/pic/网关访问流程图.png" style="zoom:67%;" />
+
+<h3 id="断言工厂"><a href="#断言工厂" class="headerlink" title="断言工厂"></a>断言工厂</h3><p>spring提供了11种基本的断言工厂</p>
+<table>
+<thead>
+<tr>
+<th><strong>名称</strong></th>
+<th><strong>说明</strong></th>
+<th><strong>示例</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>After</td>
+<td>是某个时间点后的请求</td>
+<td>-  After&#x3D;2037-01-20T17:42:47.789-07:00[America&#x2F;Denver]</td>
+</tr>
+<tr>
+<td>Before</td>
+<td>是某个时间点之前的请求</td>
+<td>-  Before&#x3D;2031-04-13T15:14:47.433+08:00[Asia&#x2F;Shanghai]</td>
+</tr>
+<tr>
+<td>Between</td>
+<td>是某两个时间点之前的请求</td>
+<td>-  Between&#x3D;2037-01-20T17:42:47.789-07:00[America&#x2F;Denver],  2037-01-21T17:42:47.789-07:00[America&#x2F;Denver]</td>
+</tr>
+<tr>
+<td>Cookie</td>
+<td>请求必须包含某些cookie</td>
+<td>- Cookie&#x3D;chocolate, ch.p</td>
+</tr>
+<tr>
+<td>Header</td>
+<td>请求必须包含某些header</td>
+<td>- Header&#x3D;X-Request-Id, \d+</td>
+</tr>
+<tr>
+<td>Host</td>
+<td>请求必须是访问某个host（域名）</td>
+<td>-  Host&#x3D;<strong>.somehost.org,</strong>.anotherhost.org</td>
+</tr>
+<tr>
+<td>Method</td>
+<td>请求方式必须是指定方式</td>
+<td>- Method&#x3D;GET,POST</td>
+</tr>
+<tr>
+<td>Path</td>
+<td>请求路径必须符合指定规则</td>
+<td>- Path&#x3D;&#x2F;red&#x2F;{segment},&#x2F;blue&#x2F;**</td>
+</tr>
+<tr>
+<td>Query</td>
+<td>请求参数必须包含指定参数</td>
+<td>- Query&#x3D;name, Jack或者-  Query&#x3D;name</td>
+</tr>
+<tr>
+<td>RemoteAddr</td>
+<td>请求者的ip必须是指定范围</td>
+<td>- RemoteAddr&#x3D;192.168.1.1&#x2F;24</td>
+</tr>
+<tr>
+<td>Weight</td>
+<td>权重处理</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>上面配置网关时使用的就是Path路由工厂。</p>
+<h3 id="过滤器"><a href="#过滤器" class="headerlink" title="过滤器"></a>过滤器</h3><p>GatewayFilter是网关中提供的一种过滤器，可以对进入网关的<strong>请求</strong>和微服务返回的<strong>响应</strong>做处理：</p>
+<img src="/pic/过滤器工厂.png" style="zoom:67%;" />
+
+<p>Spring提供了31种不同的路由过滤器工厂。例如：</p>
+<table>
+<thead>
+<tr>
+<th><strong>名称</strong></th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AddRequestHeader</td>
+<td>给当前请求添加一个请求头</td>
+</tr>
+<tr>
+<td>RemoveRequestHeader</td>
+<td>移除请求中的一个请求头</td>
+</tr>
+<tr>
+<td>AddResponseHeader</td>
+<td>给响应结果中添加一个响应头</td>
+</tr>
+<tr>
+<td>RemoveResponseHeader</td>
+<td>从响应结果中移除有一个响应头</td>
+</tr>
+<tr>
+<td>RequestRateLimiter</td>
+<td>限制请求的流量</td>
+</tr>
+</tbody></table>
+<h4 id="请求头过滤器"><a href="#请求头过滤器" class="headerlink" title="请求头过滤器"></a>请求头过滤器</h4><blockquote>
+<p>给所有进入userservice的请求添加一个请求头：Truth&#x3D;fangjun</p>
+</blockquote>
+<p>只需要修改gateway服务的application.yml文件，添加路由过滤即可：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">gateway:</span></span><br><span class="line">      <span class="attr">routes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">user-service</span> </span><br><span class="line">        <span class="attr">uri:</span> <span class="string">lb://userservice</span> </span><br><span class="line">        <span class="attr">predicates:</span> </span><br><span class="line">        <span class="bullet">-</span> <span class="string">Path=/user/**</span> </span><br><span class="line">        <span class="attr">filters:</span> <span class="comment"># 过滤器</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">AddRequestHeader=Truth,</span> <span class="string">fangjun</span> <span class="comment"># 添加请求头</span></span><br></pre></td></tr></table></figure>
+
+<p>当前过滤器写在userservice路由下，因此仅仅对访问userservice的请求有效。</p>
+<p>如果要对所有的路由都生效，则可以将过滤器工厂写到default下，变成<strong>默认过滤器</strong>。格式如下：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">gateway:</span></span><br><span class="line">      <span class="attr">routes:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">id:</span> <span class="string">user-service</span> </span><br><span class="line">        <span class="attr">uri:</span> <span class="string">lb://userservice</span> </span><br><span class="line">        <span class="attr">predicates:</span> </span><br><span class="line">        <span class="bullet">-</span> <span class="string">Path=/user/**</span></span><br><span class="line">      <span class="attr">default-filters:</span> <span class="comment"># 默认过滤项</span></span><br><span class="line">        <span class="bullet">-</span> <span class="string">AddRequestHeader=Truth,</span> <span class="string">fangjun</span> <span class="comment"># 添加请求头 </span></span><br></pre></td></tr></table></figure>
+
+<h4 id="全局过滤器"><a href="#全局过滤器" class="headerlink" title="全局过滤器"></a>全局过滤器</h4><p>前面的过滤器都是组件提供的，处理逻辑固定，在开发中难免有别的需求，这就需要我们自定义过滤器的逻辑，可以通过GlobalFilter实现。</p>
+<p>定义方式是实现GlobalFilter接口。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">GlobalFilter</span> &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *  处理当前请求，有必要的话通过&#123;<span class="doctag">@link</span> GatewayFilterChain&#125;将请求交给下一个过滤器处理</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> exchange 请求上下文，里面可以获取Request、Response等信息</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> chain 用来把请求委托给下一个过滤器 </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> &#123;<span class="doctag">@code</span> Mono&lt;Void&gt;&#125; 返回标示当前过滤器业务结束</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    Mono&lt;Void&gt; <span class="title function_">filter</span><span class="params">(ServerWebExchange exchange, GatewayFilterChain chain)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在filter中编写自定义逻辑，可以实现下列功能：</p>
+<ul>
+<li>登录状态判断</li>
+<li>权限校验</li>
+<li>请求限流等</li>
+</ul>
+<p><strong>案例</strong>：判断当前用户是否为管理员</p>
+<ul>
+<li><p>参数中是否有authorization，</p>
+</li>
+<li><p>authorization参数值是否为admin</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> cn.itcast.gateway.filters;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义过滤器的顺序，值越小，优先级越高</span></span><br><span class="line"><span class="meta">@Order(-1)</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AuthorizeFilter</span> <span class="keyword">implements</span> <span class="title class_">GlobalFilter</span> &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Mono&lt;Void&gt; <span class="title function_">filter</span><span class="params">(ServerWebExchange exchange, GatewayFilterChain chain)</span> &#123;</span><br><span class="line">        <span class="comment">// 1.获取请求参数</span></span><br><span class="line">        MultiValueMap&lt;String, String&gt; params = exchange.getRequest().getQueryParams();</span><br><span class="line">        <span class="comment">// 2.获取authorization参数</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">auth</span> <span class="operator">=</span> params.getFirst(<span class="string">&quot;authorization&quot;</span>);</span><br><span class="line">        <span class="comment">// 3.校验</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="string">&quot;admin&quot;</span>.equals(auth)) &#123;</span><br><span class="line">            <span class="comment">// 放行</span></span><br><span class="line">            <span class="keyword">return</span> chain.filter(exchange);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 4.拦截</span></span><br><span class="line">        <span class="comment">// 4.1.禁止访问，设置状态码</span></span><br><span class="line">        exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);</span><br><span class="line">        <span class="comment">// 4.2.结束处理</span></span><br><span class="line">        <span class="keyword">return</span> exchange.getResponse().setComplete();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h4><p>请求进入网关会碰到三类过滤器：当前路由的过滤器、DefaultFilter、GlobalFilter</p>
+<p>请求路由后，会将当前路由过滤器和DefaultFilter、GlobalFilter，合并到一个<strong>过滤器链</strong>（集合）中，排序后依次执行每个过滤器：</p>
+<img src="/pic/过滤器顺序.png" style="zoom: 67%;" />
+
+<ul>
+<li>每一个过滤器都必须指定一个int类型的order值，<strong>order值越小，优先级越高，执行顺序越靠前</strong>。</li>
+<li>GlobalFilter通过实现Ordered接口，或者添加@Order注解来指定order值，由我们自己指定</li>
+<li>路由过滤器和defaultFilter的order由Spring指定，默认是按照声明顺序从1递增。</li>
+<li>当过滤器的order值一样时，会按照 defaultFilter &gt; 路由过滤器 &gt; GlobalFilter的顺序执行。</li>
+</ul>
+<h3 id="跨域问题"><a href="#跨域问题" class="headerlink" title="跨域问题"></a>跨域问题</h3><p>跨域：域名不一致就是跨域，主要包括：</p>
+<ul>
+<li><p>域名不同</p>
+</li>
+<li><p>域名相同，端口不同</p>
+</li>
+</ul>
+<p>跨域问题：浏览器禁止请求的发起者与服务端发生跨域ajax请求，请求被浏览器拦截的问题</p>
+<p>解决方案：CORS</p>
+<h2 id="Docker"><a href="#Docker" class="headerlink" title="Docker"></a>Docker</h2><p>大型项目组件较多，运行环境也较为复杂，部署时会碰到一些问题：</p>
+<ul>
+<li><p>依赖关系复杂，容易出现兼容性问题</p>
+</li>
+<li><p>开发、测试、生产环境有差异</p>
+</li>
+</ul>
+<p>Docker为了<strong>解决依赖的兼容问题</strong>，采用了两个手段：</p>
+<ul>
+<li><p>将应用的Libs（函数库）、Deps（依赖）、配置与应用一起打包</p>
+</li>
+<li><p>将每个应用放到一个隔离<strong>容器</strong>去运行，避免互相干扰</p>
+</li>
+</ul>
+<p>Docker如何<strong>解决不同系统环境的问题</strong>？</p>
+<ul>
+<li>Docker将用户程序与所需要调用的系统(比如Ubuntu)函数库一起打包</li>
+<li>Docker运行到不同操作系统时，直接基于打包的函数库，借助于操作系统的Linux内核来运行</li>
+</ul>
+<img src="/pic/Docker系统环境.png" style="zoom: 25%;" />
+
+<h3 id="Docker和虚拟机的区别"><a href="#Docker和虚拟机的区别" class="headerlink" title="Docker和虚拟机的区别"></a>Docker和虚拟机的区别</h3><ul>
+<li><p>docker是一个系统进程；虚拟机是在操作系统中的操作系统</p>
+</li>
+<li><p>docker体积小、启动速度快、性能好；虚拟机体积大、启动速度慢、性能一般</p>
+</li>
+</ul>
+<img src="/pic/Docker和虚拟机的区别.png" style="zoom: 33%;" />
+
+<h3 id="Docker架构"><a href="#Docker架构" class="headerlink" title="Docker架构"></a>Docker架构</h3><p><strong>镜像（Image）</strong>：Docker将应用程序及其所需的依赖、函数库、环境、配置等文件打包在一起，称为镜像。</p>
+<p><strong>容器（Container）</strong>：镜像中的应用程序运行后形成的进程就是<strong>容器</strong>，只是Docker会给容器进程做隔离，对外不可见。</p>
+<p>DockerHub：DockerHub是一个官方的Docker镜像的托管平台。这样的平台称为Docker Registry。</p>
+<p>Docker结构：</p>
+<ul>
+<li><p>服务端：接收命令或远程请求，操作镜像或容器</p>
+</li>
+<li><p>客户端：发送命令或者请求到Docker服务端</p>
+</li>
+</ul>
+<h3 id="数据卷"><a href="#数据卷" class="headerlink" title="数据卷"></a>数据卷</h3><p>Docker中容器与数据（容器内文件）耦合，解耦需要用到数据卷。</p>
+<p><strong>数据卷（volume）</strong>是一个虚拟目录，指向宿主机文件系统中的某个目录。</p>
 ]]></content>
       <categories>
         <category>Java</category>
@@ -11404,6 +11842,119 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 </li>
 <li>分库分表</li>
 </ul>
+<h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><p>事务是一组操作的集合，它是一个不可分割的工作单位，事务会把所有的操作作为一个整体一起向系统提交或撤销操作请求，即这些操作要么同时成功，要么同时失败。</p>
+<ul>
+<li>原子性（Atomicity）：事务是不可分割的最小操作单元，要么全部成功，要么全部失败。</li>
+<li>一致性（Consistency）：事务完成时，必须使所有的数据都保持一致状态。</li>
+<li>隔离性（Isolation）：数据库系统提供的隔离机制，保证事务在不受外部并发操作影响的独立环境下运行。</li>
+<li>持久性（Durability）：事务一旦提交或回滚，它对数据库中的数据的改变就是永久的。</li>
+</ul>
+<p>⭐事务的特性是什么？</p>
+<p>原子性( Atomicity )、一致性( Consistency )、隔离性( Isolation )、持久性( Durability )。结合转账案例说明。</p>
+<h3 id="并发事务问题"><a href="#并发事务问题" class="headerlink" title="并发事务问题"></a>并发事务问题</h3><table>
+<thead>
+<tr>
+<th><strong>问题</strong></th>
+<th><strong>描述</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>脏读</td>
+<td>一个事务读到另外一个事务还没有提交的数据。</td>
+</tr>
+<tr>
+<td>不可重复读</td>
+<td>一个事务先后读取同一条记录，但两次读取的数据不同，称之为不可重复读。</td>
+</tr>
+<tr>
+<td>幻读</td>
+<td>一个事务按照条件查询数据时，没有对应的数据行，但是在插入数据时，又发现这行数据已经存在，好像出现了”幻影”。</td>
+</tr>
+</tbody></table>
+<h4 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h4><p>设置隔离。</p>
+<table>
+<thead>
+<tr>
+<th>隔离级别</th>
+<th>脏读</th>
+<th>不可重复读</th>
+<th>幻读</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Read uncommitted</strong> 未提交读</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td><strong>Read committed</strong> 读已提交</td>
+<td>×</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>**Repeatable Read(默认) **可重复读</td>
+<td>×</td>
+<td>×</td>
+<td>√</td>
+</tr>
+<tr>
+<td><strong>Serializable</strong> <strong>串行化</strong></td>
+<td>×</td>
+<td>×</td>
+<td>×</td>
+</tr>
+</tbody></table>
+<p>从上至下，隔离级别越高，数据越安全，但是性能越差。</p>
+<h3 id="数据存储形式"><a href="#数据存储形式" class="headerlink" title="数据存储形式"></a>数据存储形式</h3><ul>
+<li>缓冲池（buffer pool）:主<strong>内存</strong>中的一个区域，里面可以缓存磁盘上经常操作的真实数据，在执行增删改查操作时，先操作缓冲池中的数据（若缓冲池没有数据，则从磁盘加载并缓存），以一定频率刷新到磁盘，从而减少磁盘IO，加快处理速度</li>
+<li>数据页（page）:是InnoDB 存储引擎<strong>磁盘</strong>管理的最小单元，每个页的大小默认为 16KB。页中存储的是行数据</li>
+</ul>
+<p>⭐介绍一下<code>undo log</code> 和 <code>redo log</code></p>
+<ul>
+<li>重做日志，记录的是事务提交时数据页的物理修改，是用来实现事务的持久性。<br>该日志文件由两部分组成：重做日志缓冲（redo log buffer）以及重做日志文件（redo log file）,前者是在内存中，后者在磁盘中。当事务提交之后会把所有修改信息都存到该日志文件中, 用于在刷新脏页到磁盘,发生错误时, 进行数据恢复使用。</li>
+<li>回滚日志，用于记录数据被修改前的信息 , 作用包含两个 : 提供回滚 和 MVCC(多版本并发控制) 。undo log和redo log记录物理日志不一样，它是逻辑日志。<ul>
+<li>可以认为当delete一条记录时，undo log中会记录一条对应的insert记录，反之亦然，</li>
+<li>当update一条记录时，它记录一条对应相反的update记录。当执行rollback时，就可以从undo log中的逻辑记录读取到相应的内容并进行回滚。</li>
+</ul>
+</li>
+</ul>
+<h2 id="主从同步"><a href="#主从同步" class="headerlink" title="主从同步"></a>主从同步</h2><p>MySQL主从复制的核心就是<strong>二进制日志</strong>，二进制日志（BINLOG）记录了所有的 DDL（数据定义语言）语句和 DML（数据操纵语言）语句，但不包括数据查询（SELECT、SHOW）语句，即会对数据产生改变的DML。</p>
+<img src="/pic/主从同步.png" style="zoom:67%;" />
+
+<p>复制分成三步：</p>
+<ul>
+<li>Master 主库在事务提交时，会把数据变更记录在二进制日志文件 Binlog 中。</li>
+<li>从库 读取主库的二进制日志文件 Binlog ，写入到从库的中继日志 Relay Log 。</li>
+<li>slave重做中继日志中的事件，将改变反映它自己的数据。</li>
+</ul>
+<p>⭐主从同步原理？</p>
+<p>MySQL主从复制的核心就是二进制日志binlog(DDL（数据定义语言）语句和 DML（数据操纵语言）语句)</p>
+<ul>
+<li>主库在事务提交时，会把数据变更记录在二进制日志文件 Binlog 中。</li>
+<li>从库读取主库的二进制日志文件 Binlog ，写入到从库的中继日志 Relay Log 。</li>
+<li>从库重做中继日志中的事件，将改变反映它自己的数据</li>
+</ul>
+<h2 id="分库分表"><a href="#分库分表" class="headerlink" title="分库分表"></a>分库分表</h2><h3 id="时机"><a href="#时机" class="headerlink" title="时机"></a>时机</h3><ul>
+<li>前提，项目业务数据逐渐增多，或业务发展比较迅速（单表的数据量达1000W或20G以后）</li>
+<li>优化解决不了性能问题（主从读写分离、查询索引…）</li>
+<li>IO瓶颈（磁盘IO、网络IO）、CPU瓶颈（聚合查询、连接数太多）</li>
+</ul>
+<h3 id="拆分策略"><a href="#拆分策略" class="headerlink" title="拆分策略"></a>拆分策略</h3><h4 id="垂直拆分"><a href="#垂直拆分" class="headerlink" title="垂直拆分"></a>垂直拆分</h4><p>拆分的是数据结构</p>
+<h5 id="垂直分库"><a href="#垂直分库" class="headerlink" title="垂直分库"></a>垂直分库</h5><p>以表为依据，根据业务将不同表拆分到不同库中(微服务)</p>
+<h5 id="垂直分表"><a href="#垂直分表" class="headerlink" title="垂直分表"></a>垂直分表</h5><p>以字段为依据，根据字段属性将不同字段拆分到不同表中。通常把不常用的字段单独放在一张表，或者把大字段拆分出来放在附表。</p>
+<p>可以冷热数据分离，同时减少IO过渡争抢，两表互不影响。</p>
+<h4 id="水平拆分"><a href="#水平拆分" class="headerlink" title="水平拆分"></a>水平拆分</h4><p>拆分的是数据</p>
+<h5 id="水平分库"><a href="#水平分库" class="headerlink" title="水平分库"></a>水平分库</h5><p>把一个库的数据拆分到多个库中，解决了单库大数量，高并发的性能瓶颈问题，提高了系统的稳定性和可用性。</p>
+<h5 id="水平分表"><a href="#水平分表" class="headerlink" title="水平分表"></a>水平分表</h5><p>将一张表的数据拆分到多个表中(可以在同一个库内)，优化单一表数据量过大而产生的性能问题；避免IO争抢并减少锁表的几率。</p>
+<h3 id="问题和解决"><a href="#问题和解决" class="headerlink" title="问题和解决"></a>问题和解决</h3><p>水平拆分后，由于同类型的数据涉及到跨库或跨表，会引发很多问题，比如</p>
+<ul>
+<li>分布式事务一致性问题</li>
+<li>跨节点关联查询</li>
+<li>跨节点分页、排序函数</li>
+</ul>
+<p>以上这些问题使用中间件可以解决，如mycat、sharding-sphere</p>
 ]]></content>
       <categories>
         <category>八股</category>
@@ -13823,6 +14374,210 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
       </categories>
       <tags>
         <tag>Algorithm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java虚拟机</title>
+    <url>/2024/02/05/11-00-37/</url>
+    <content><![CDATA[<h2 id="JVM介绍"><a href="#JVM介绍" class="headerlink" title="JVM介绍"></a>JVM介绍</h2><p>Java Virtual Machine ,  是Java程序的运行环境。可以实现一次编写，处处运行。</p>
+<p>Java程序执行的完整流程如下图所示：</p>
+<span id="more"></span>
+
+
+
+<img src="/pic/java程序执行.png" alt="image-20240203213438879" style="zoom: 50%;" />
+
+
+
+<h2 id="jvm组成"><a href="#jvm组成" class="headerlink" title="jvm组成"></a>jvm组成</h2><img src="/pic/jvm组成.png" alt="image-20240203214504562" style="zoom: 67%;" />
+
+<h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><p>程序计数器：线程私有的，因此是线程安全的，每个线程都有自己的程序计数器。内部保存字节码的行号。用于记录<strong>正在执行的字节码指令的地址</strong>。</p>
+<h3 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h3><p>线程共享的区域，保存<strong>对象实例，数组</strong>等，当堆中没有内存空间可以分配，也无法再扩展时，就抛出<code>OutOfMemoryError</code>异常(OOM异常)。</p>
+<p>堆可以被分为年轻代和老年代。</p>
+<ul>
+<li>年轻代被划分为三部分，Eden区和两个大小严格相同的Survivor区，根据JVM的策略，在经过几次垃圾收集后，仍存活于Survivor的对象将被移动到老年代区间。</li>
+<li>老年代主要保存生命周期长的对象，一般是一些老的对象</li>
+<li>在jdk1.7中，还有一个永久代，也叫方法区，存储了类信息、静态变量、常量、编译后的代码。而1.8把永久代移除出堆，放在本地内存中成为元空间，为了防止程序后期加载越来越多的类导致堆内存溢出。</li>
+</ul>
+<h3 id="虚拟机栈"><a href="#虚拟机栈" class="headerlink" title="虚拟机栈"></a>虚拟机栈</h3><ul>
+<li>每个<strong>线程</strong>运行时所需要的内存，称为虚拟机栈，先进后出</li>
+<li>每个栈由多个栈帧（frame）组成，对应着每次方法调用时所占用的内存</li>
+<li>每个线程只能有一个活动栈帧 ，对应着当前正在执行的那个方法</li>
+</ul>
+<p>⭐垃圾回收是否涉及栈内存？</p>
+<p>垃圾回收主要是堆内存，当栈帧出栈后，内存会自动释放</p>
+<p>⭐栈内存分配越大越好吗？</p>
+<p>默认的栈内存通常是1024K。栈内存大会导致线程数变少，比如机器总内存为512M，则能活动的线程就是512个，如果栈内存是2048K，能活动的线程就会减半。</p>
+<p>⭐方法内的局部变量是线程安全的吗？</p>
+<ul>
+<li>如果方法内局部变量没有逃离方法的作用范围，它就是线程安全的。因为每个线程都有各自的虚拟机栈，相互独立。</li>
+<li>如果局部变量引用了对象，并逃离方法的作用范围，需要考虑线程安全。</li>
+</ul>
+<img src="/pic/局部变量线程安全.png"  />
+
+<p>⭐栈内存溢出情况</p>
+<ul>
+<li>栈帧过多导致内存溢出，比如递归深度太深</li>
+<li>栈帧过大导致内存溢出</li>
+</ul>
+<p>⭐堆栈的区别？</p>
+<ul>
+<li>栈内存一般存储局部变量和方法调用，堆内存存储Java对象和数组；堆会垃圾回收，栈不会</li>
+<li>栈内存是线程私有的；堆内存是共享的</li>
+<li>栈空间不足：StackOverFlowError；堆空间不足：OutOfMemoryError</li>
+</ul>
+<h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><p>主要存储类的信息和运行时常量池，各<strong>线程共享</strong>。在虚拟机启动的时候创建，关闭虚拟机时释放。</p>
+<h4 id="常量池"><a href="#常量池" class="headerlink" title="常量池"></a>常量池</h4><p>可以看作是一张表，虚拟机指令根据这张常量表找到要执行的类名、方法名、参数类型、字面量等信息。</p>
+<h4 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h4><p>常量池是 *.class 文件中的，当该<strong>类被加载</strong>，它的<strong>常量池信息就会放入运行时常量池</strong>，并把里面的<strong>符号地址变为真实地址</strong>。</p>
+<p>⭐什么是直接内存？</p>
+<p>是虚拟机的系统内存，常见于 NIO 操作时，用于<strong>数据缓冲区</strong>，分配回收成本较高，但读写性能高，不受jvm内存回收管理。</p>
+<p>比如在读写文件时，传统IO需要先将磁盘文件读到系统缓冲区，再读到java缓冲区，然后java程序才能读写。</p>
+<img src="/pic/传统IO.png" style="zoom:67%;" />
+
+<p>而NIO会开辟直接内存区，系统可以读，java程序也可以直接读。</p>
+<img src="/pic/NIO.png" style="zoom:67%;" />
+
+<h2 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h2><p>类加载器（ClassLoader）的主要作用就是将<strong>字节码文件加载到JVM中</strong>，从而让Java程序能够启动起来。</p>
+<h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><ul>
+<li><p><strong>启动类加载器(BootStrap ClassLoader)：</strong></p>
+<p>该类并不继承ClassLoader类，其是由C++编写实现。用于加载<strong>JAVA_HOME&#x2F;jre&#x2F;lib</strong>目录下的类库。</p>
+</li>
+<li><p><strong>扩展类加载器(ExtClassLoader)：</strong></p>
+<p>该类是ClassLoader的子类，主要加载<strong>JAVA_HOME&#x2F;jre&#x2F;lib&#x2F;ext</strong>目录中的类库。</p>
+</li>
+<li><p><strong>应用类加载器(AppClassLoader)：</strong></p>
+<p>该类是ClassLoader的子类，主要用于加载<strong>classPath</strong>下的类，也就是加载开发者自己编写的Java类。</p>
+</li>
+<li><p><strong>自定义类加载器：</strong></p>
+<p>开发者自定义类继承ClassLoader，实现自定义类加载规则。</p>
+</li>
+</ul>
+<p>类加载器的体系并不是“继承”体系，而是<strong>委派体系</strong>。</p>
+<h3 id="双亲委派模型"><a href="#双亲委派模型" class="headerlink" title="双亲委派模型"></a>双亲委派模型</h3><p>类加载器在接到加载类的请求时，它首先不会自己尝试去加载这个类，而是把这个请求任务委托给父类加载器去完成，依次递归，如果父类加载器可以完成类加载任务，就返回成功；只有父类加载器无法完成此加载任务时，才由下一级去加载。 </p>
+<img src="/pic/双亲委派机制.png" style="zoom:80%;" />
+
+<p>⭐为什么采用双亲委派机制？</p>
+<ul>
+<li>通过双亲委派机制可以避免某一个类被重复加载，当父类已经加载后则无需重复加载，保证唯一性。比如String类，可以由启动类加载器加载到，就无需应用类加载器去随意加载。</li>
+<li>为了安全，保证类库API不会被修改。</li>
+</ul>
+<h2 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h2><p>在Java语言中，有自动的垃圾回收机制，也就是GC(Garbage Collection)。</p>
+<p>有了垃圾回收机制后，程序员只需要关心内存的申请即可，内存的释放由系统自动识别完成。</p>
+<p>在进行垃圾回收时，不同的对象引用类型，GC会采用不同的回收时机。</p>
+<p>⭐对象何时可以被垃圾器回收？</p>
+<p>如果一个或多个对象<strong>没有任何的引用</strong>指向它了，那么这个对象现在就是垃圾，如果定位了垃圾，则有可能会被垃圾回收器回收。</p>
+<p>要定位什么是垃圾，有两种方式来确定，第一个是引用计数法，第二个是可达性分析算法。</p>
+<h3 id="定位垃圾"><a href="#定位垃圾" class="headerlink" title="定位垃圾"></a>定位垃圾</h3><h4 id="引用计数法"><a href="#引用计数法" class="headerlink" title="引用计数法"></a>引用计数法</h4><p>每个对象都有一个计数器，一个对象被引用了一次，则递增一次引用次数，如果这个对象的引用次数为0，代表这个对象可回收。但是如果对象间出现了循环引用，会有问题。</p>
+<img src="/pic/引用计数法.png" style="zoom: 67%;" />
+
+<p>虽然a和b都为null，但是由于a和b存在循环引用，互相引用了对方，这样a和b永远都不会被回收。会<strong>引发内存泄漏</strong>，现在都用可达性分析法。</p>
+<h4 id="可达性分析法"><a href="#可达性分析法" class="headerlink" title="可达性分析法"></a>可达性分析法</h4><p>现在的虚拟机采用的都是通过可达性分析算法来确定哪些内容是垃圾。存在一个根节点【GC Roots】，引出它下面指向的下一个节点，再以下一个节点节点开始找出它下面的节点，依次往下类推。直到所有的节点全部遍历完毕。</p>
+<p>根对象是那些肯定不能当做垃圾回收的对象，比如局部变量，静态方法，静态变量，类信息</p>
+<p>核心是：判断某对象是否与根对象有直接或间接的引用，如果没有被引用，则可以当做垃圾回收。</p>
+<h3 id="垃圾回收算法"><a href="#垃圾回收算法" class="headerlink" title="垃圾回收算法"></a>垃圾回收算法</h3><h4 id="标记清除算法"><a href="#标记清除算法" class="headerlink" title="标记清除算法"></a>标记清除算法</h4><p>标记清除算法，是将垃圾回收分为2个阶段，分别是<strong>标记和清除</strong>。</p>
+<p>1.根据可达性分析算法得出的垃圾进行标记</p>
+<p>2.对这些标记为可回收的内容进行垃圾回收</p>
+<p>缺点：通过标记清除算法清理出来的内存，<strong>碎片化</strong>较为严重，因为被回收的对象可能存在于内存的各个角落，所以清理出来的内存是不连贯的</p>
+<img src="/pic/标记清除算法.png" style="zoom: 50%;" />
+
+<h4 id="复制算法"><a href="#复制算法" class="headerlink" title="复制算法"></a>复制算法</h4><p><strong>将原有的内存空间一分为二，每次只用其中的一块</strong>，在垃圾回收时，将正在使用的对象复制到另一个内存空间中，然后将该内存空间清空，交换两个内存的角色，完成垃圾的回收。</p>
+<img src="/pic/复制算法.png" style="zoom:50%;" />
+
+<p>缺点：分配的2块内存空间，在同一个时刻，只能使用一半，<strong>内存使用率较低</strong>。</p>
+<h4 id="标记整理算法"><a href="#标记整理算法" class="headerlink" title="标记整理算法"></a>标记整理算法</h4><p>在标记清除算法的基础上，将存活对象都向内存另一端移动，然后清理边界以外的垃圾，从而解决了碎片化的问题。</p>
+<img src="/pic/标记整理算法.png" style="zoom:50%;" />
+
+<p>缺点：效率受影响。</p>
+<h3 id="分代收集算法"><a href="#分代收集算法" class="headerlink" title="分代收集算法"></a>分代收集算法</h3><p>在java8时，堆被分为了两份：新生代和老年代【1：2】，新生代内部又被分为了三个区域。Eden区和两个survivor区(分别是from和to)【8：1：1】</p>
+<p>分代回收策略：</p>
+<ul>
+<li>新创建的对象会先分配到伊甸园</li>
+<li>当伊甸园内存不足，标记伊甸园和from的存活对象</li>
+<li>将存活对象通过复制算法复制到to中，之后释放伊甸园和from内存</li>
+<li>若伊甸园内存后面又不足，则标记伊甸园和to，复制到from(来回颠倒)</li>
+<li>survivor中的对象经过几次复制后(最多15次)，晋升到老年代(幸存区内存不足或有大对象时提前晋升)。</li>
+</ul>
+<p>⭐MinorGC、 Mixed GC 、 FullGC的区别是什么？</p>
+<ul>
+<li><p>MinorGC【young GC】发生在新生代的垃圾回收，暂停时间短（STW）</p>
+</li>
+<li><p>Mixed GC 新生代 + 老年代部分区域的垃圾回收，G1 收集器特有</p>
+</li>
+<li><p>FullGC： 新生代 + 老年代完整垃圾回收，暂停时间长（STW），应尽力避免？</p>
+</li>
+</ul>
+<blockquote>
+<p>注：STW（Stop-The-World）暂停所有应用程序线程，等待垃圾回收的完成</p>
+</blockquote>
+<h3 id="垃圾回收器"><a href="#垃圾回收器" class="headerlink" title="垃圾回收器"></a>垃圾回收器</h3><h4 id="串行垃圾收集器"><a href="#串行垃圾收集器" class="headerlink" title="串行垃圾收集器"></a>串行垃圾收集器</h4><p>Serial和Serial Old串行垃圾收集器，是指使用单线程进行垃圾回收，堆内存较小，适合个人电脑</p>
+<ul>
+<li><p>Serial 作用于新生代，采用复制算法</p>
+</li>
+<li><p>Serial Old 作用于老年代，采用标记-整理算法</p>
+</li>
+</ul>
+<p>垃圾回收时，只有一个线程在工作，并且java应用中的所有线程都要暂停（STW），等待垃圾回收的完成。</p>
+<img src="/pic/串行垃圾回收器.png" style="zoom: 80%;" />
+
+<h4 id="并行垃圾收集器"><a href="#并行垃圾收集器" class="headerlink" title="并行垃圾收集器"></a>并行垃圾收集器</h4><p>Parallel New和Parallel Old是一个并行垃圾回收器，<strong>JDK8默认使用此垃圾回收器</strong></p>
+<ul>
+<li><p>Parallel New作用于新生代，采用复制算法</p>
+</li>
+<li><p>Parallel Old作用于老年代，采用标记-整理算法</p>
+</li>
+</ul>
+<p>垃圾回收时，多个线程在工作，并且java应用中的所有线程都要暂停（STW），等待垃圾回收的完成。</p>
+<img src="/pic/并行垃圾收集器.png" style="zoom:80%;" />
+
+<h4 id="CMS-并发-垃圾收集器"><a href="#CMS-并发-垃圾收集器" class="headerlink" title="CMS(并发)垃圾收集器"></a>CMS(并发)垃圾收集器</h4><p>CMS全称 Concurrent Mark Sweep，是一款并发的、使用标记-清除算法的垃圾回收器，该回收器是针对老年代垃圾回收的，是一款以获取最短回收停顿时间为目标的收集器，停顿时间短，用户体验就好。其最大特点是<strong>在进行垃圾回收时，应用仍然能正常运行</strong>。</p>
+<img src="/pic/CMS垃圾收集器.png" style="zoom:80%;" />
+
+<h4 id="G1垃圾收集器"><a href="#G1垃圾收集器" class="headerlink" title="G1垃圾收集器"></a>G1垃圾收集器</h4><ul>
+<li>应用于新生代和老年代，<strong>在JDK9之后默认使用G1</strong>。 </li>
+<li>划分成多个区域，每个区域都可以充当 eden，survivor，old， humongous，其中 humongous 专为大对象准备</li>
+<li>采用复制算法</li>
+<li>响应时间与吞吐量兼顾</li>
+<li>分成三个阶段：新生代回收、并发标记、混合收集</li>
+<li>如果并发失败（即回收速度赶不上创建新对象速度），会触发 Full GC</li>
+</ul>
+<h5 id="年轻代垃圾回收"><a href="#年轻代垃圾回收" class="headerlink" title="年轻代垃圾回收"></a>年轻代垃圾回收</h5><ul>
+<li><p>初始时，所有区域都处于空闲状态</p>
+</li>
+<li><p>创建对象时，挑出一些空闲区域作为伊甸园区存储这些对象</p>
+</li>
+<li><p>当伊甸园需要垃圾回收时，挑出一个空闲区域作为幸存区，用复制算法复制存活对象，需要暂停用户线程</p>
+</li>
+<li><p>若伊甸园的内存又有不足，将伊甸园以及之前幸存区中的存活对象，采用复制算法，复制到新的幸存区，其中较老对象晋升至老年代</p>
+</li>
+</ul>
+<h5 id="并发标记"><a href="#并发标记" class="headerlink" title="并发标记"></a>并发标记</h5><p>当老年代占用内存超过阈值(默认是45%)后，触发并发标记，这时无需暂停用户线程</p>
+<ul>
+<li><p>并发标记之后，会有重新标记阶段解决漏标问题，此时需要暂停用户线程。</p>
+</li>
+<li><p>这些都完成后就知道了老年代有哪些存活对象，随后进入混合收集阶段。此时不会对所有老年代区域进行回收，而是根据暂停时间目标优先回收价值高（存活对象少）的区域（这也是 Gabage First 名称的由来）。</p>
+</li>
+</ul>
+<h5 id="混合收集"><a href="#混合收集" class="headerlink" title="混合收集"></a>混合收集</h5><p>不会对所有老年代区域进行回收，而是根据暂停时间目标优先回收价值高（存活对象少）的区域（这也是 Gabage First 名称的由来）。复制完成，内存得到释放。进入下一轮的新生代回收、并发标记、混合收集。</p>
+<h3 id="强引用、软引用、弱引用、虚引用"><a href="#强引用、软引用、弱引用、虚引用" class="headerlink" title="强引用、软引用、弱引用、虚引用"></a>强引用、软引用、弱引用、虚引用</h3><h4 id="强引用"><a href="#强引用" class="headerlink" title="强引用"></a>强引用</h4><p>只有所有 GC Roots 对象都不通过【强引用】引用该对象，该对象才能被垃圾回收</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br></pre></td></tr></table></figure>
+
+<p><img src="/%E5%BC%BA%E5%BC%95%E7%94%A8.png"></p>
+<h4 id="软引用"><a href="#软引用" class="headerlink" title="软引用"></a>软引用</h4><p>仅有软引用引用该对象时，在垃圾回收后，内存仍不足时会再次出发垃圾回收</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line"><span class="type">SoftReference</span> <span class="variable">softReference</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SoftReference</span>(user);</span><br></pre></td></tr></table></figure>
+
+<img src="/pic/软引用.png" style="zoom:80%;" />
+
+<h4 id="弱引用"><a href="#弱引用" class="headerlink" title="弱引用"></a>弱引用</h4><p>仅有弱引用引用该对象时，在垃圾回收时，无论内存是否充足，都会回收弱引用对象</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line"><span class="type">WeakReference</span> <span class="variable">weakReference</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">WeakReference</span>(user);</span><br></pre></td></tr></table></figure>
+
+<img src="/pic/弱引用.png" style="zoom:80%;" />
+
+<h4 id="虚引用"><a href="#虚引用" class="headerlink" title="虚引用"></a>虚引用</h4><h2 id="JVM调优"><a href="#JVM调优" class="headerlink" title="JVM调优"></a>JVM调优</h2>]]></content>
+      <categories>
+        <category>八股</category>
+      </categories>
+      <tags>
+        <tag>八股</tag>
       </tags>
   </entry>
 </search>
