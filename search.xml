@@ -8730,6 +8730,66 @@ function animate(obj, target) &#123;
 <li>Queue：消息队列也与以前一样，接收消息、缓存消息。</li>
 </ul>
 <p><strong>Exchange（交换机）只负责转发消息，不具备存储消息的能力</strong>，因此如果没有任何队列与Exchange绑定，或者没有符合路由规则的队列，那么消息会丢失！</p>
+<h2 id="分布式搜索引擎"><a href="#分布式搜索引擎" class="headerlink" title="分布式搜索引擎"></a>分布式搜索引擎</h2><h3 id="Elastic-Search介绍"><a href="#Elastic-Search介绍" class="headerlink" title="Elastic Search介绍"></a>Elastic Search介绍</h3><p>ES是一款非常强大的开源<strong>搜索引擎</strong>，具备非常多强大功能，可以帮助我们从海量数据中快速找到需要的内容，结合了kibana、Logstash、Beats，也就是elastic stack（ELK）。被广泛应用在日志数据分析、实时监控等领域。而ES是elastic stack的核心，负责存储、搜索和分析数据。</p>
+<img src="/pic/es.png" style="zoom: 80%;" />
+
+<p>ES底层基于<strong>lucene</strong>实现，<strong>Lucene</strong>是一个Java语言的搜索引擎类库，是Apache公司的顶级项目，提供了搜索引擎的核心API。</p>
+<h3 id="倒排索引"><a href="#倒排索引" class="headerlink" title="倒排索引"></a>倒排索引</h3><p>Lucene中的核心技术就是倒排索引，这个概念是相对于MySQL这样的正向索引而言的。在MySQL中，如果有局部内容查询，需要用到模糊查询的LIKE语句，会逐行扫描和比较数据，即全表扫描，当数据量大时不可取。</p>
+<p>倒排索引中有两个重要的概念：</p>
+<ul>
+<li>文档（<code>Document</code>）：用来搜索的数据，其中的<strong>每一条数据就是一个文档</strong>。</li>
+<li>词条（<code>Term</code>）：文档按照语义分成的词语。例如：我是中国人，就可以分为：我、是、中国人、中国、国人这样的几个词条</li>
+</ul>
+<p><strong>创建倒排索引</strong></p>
+<p>以词条为索引存储。</p>
+<ul>
+<li>将每一个文档的数据利用算法分词，得到一个个词条</li>
+<li>创建表，每行数据包括词条、词条所在文档id、位置等信息</li>
+<li>因为词条唯一性，可以给词条创建索引，例如hash表结构索引</li>
+</ul>
+<img src="/pic/倒排索引.png" style="zoom: 67%;" />
+
+<p>倒排索引的<strong>搜索流程</strong>如下（以搜索”华为手机”为例）：</p>
+<p>词条 –&gt;文档id –&gt;具体文档</p>
+<p>1）用户输入条件<code>&quot;华为手机&quot;</code>进行搜索。</p>
+<p>2）对用户输入内容<strong>分词</strong>，<strong>得到词条</strong>：<code>华为</code>、<code>手机</code>。</p>
+<p>3）拿着词条在倒排索引中查找，可以<strong>得到包含词条的文档id</strong>：1、2、3。</p>
+<p>4）拿着文档id到正向索引中<strong>查找具体文档</strong>。</p>
+<h3 id="ES对比SQL"><a href="#ES对比SQL" class="headerlink" title="ES对比SQL"></a>ES对比SQL</h3><table>
+<thead>
+<tr>
+<th><strong>MySQL</strong></th>
+<th>ES</th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Table</td>
+<td>Index</td>
+<td>索引(index)，是相同类型的文档的集合，类似数据库的表(table)</td>
+</tr>
+<tr>
+<td>Row</td>
+<td>Document</td>
+<td>文档（Document），就是一条条的数据，类似数据库中的行（Row），文档都是 <strong>JSON格式</strong></td>
+</tr>
+<tr>
+<td>Column</td>
+<td>Field</td>
+<td>字段（Field），就是JSON文档中的字段，类似数据库中的列（Column）</td>
+</tr>
+<tr>
+<td>Schema</td>
+<td>Mapping</td>
+<td>Mapping（映射）是索引中文档的字段约束信息。类似数据库的表结构（Schema）</td>
+</tr>
+<tr>
+<td>SQL</td>
+<td>DSL</td>
+<td>DSL是ES提供的JSON风格的请求语句，用来操作ES，实现CRUD。SQL通过连接，把SQL语句发给数据库，而DSL是通过<strong>http请求</strong>发出，符合Restful风格。</td>
+</tr>
+</tbody></table>
+<p>Mysql：擅长<strong>事务类型操作</strong>，可以确保数据的安全和一致性；而Elasticsearch擅长<strong>海量数据的搜索</strong>、分析、计算</p>
 ]]></content>
       <categories>
         <category>Java</category>
@@ -14757,6 +14817,636 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
       </categories>
       <tags>
         <tag>Algorithm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>java中间件</title>
+    <url>/2024/02/25/21-57-37/</url>
+    <content><![CDATA[<h2 id="RocketMQ"><a href="#RocketMQ" class="headerlink" title="RocketMQ"></a>RocketMQ</h2><p>RocketMQ 是一款功能强大的<strong>分布式消息系统</strong>，主要的使用场景有异步解耦、削峰填谷、顺序消息、分布式模式缓存同步、分布式定时&#x2F;延时调度。</p>
+<span id="more"></span>
+
+<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><h4 id="主题"><a href="#主题" class="headerlink" title="主题"></a>主题</h4><p>主题是消息传输和存储的顶层容器，用于标识同一类业务逻辑的消息。</p>
+<ul>
+<li><strong>定义数据的分类隔离：</strong> 将不同业务类型的数据拆分到不同的主题中管理，通过主题实现存储的隔离性和订阅隔离性。</li>
+<li><strong>定义数据的身份和权限：</strong> 消息本身是匿名无身份的，同一分类的消息使用相同的主题来做身份识别和权限管理。</li>
+</ul>
+<h4 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h4><p>队列是消息存储和传输的实际容器，也是<strong>消息的最小存储单元</strong>。主题都是由多个队列组成，以此实现队列数量的水平拆分和队列内部的流式存储。</p>
+<img src="/pic/rocketMQ.png" style="zoom: 50%;" />
+
+<h4 id="消息"><a href="#消息" class="headerlink" title="消息"></a>消息</h4><p>消息是<strong>最小数据传输单元</strong>。生产者将业务数据的负载和拓展属性包装成消息发送到服务端，服务端按照相关语义将消息投递到消费端进行消费。</p>
+<h4 id="生产者"><a href="#生产者" class="headerlink" title="生产者"></a>生产者</h4><p>发布消息的角色。Producer 通过 MQ 的负载均衡模块选择相应的 Broker 集群队列进行消息投递，投递的过程支持快速失败和重试。</p>
+<h4 id="消费者"><a href="#消费者" class="headerlink" title="消费者"></a>消费者</h4><ul>
+<li>支持以推（push），拉（pull）两种模式对消息进行消费。</li>
+<li>同时也支持<strong>集群方式</strong>和广播方式的消费。</li>
+<li>提供实时消息订阅机制，可以满足大多数用户的需求。</li>
+</ul>
+<h4 id="名字服务器"><a href="#名字服务器" class="headerlink" title="名字服务器"></a>名字服务器</h4><p>NameServer 是一个简单的 Topic 路由注册中心，支持 Topic、Broker 的动态注册与发现。</p>
+<ul>
+<li><strong>Broker管理</strong>，NameServer 接受 Broker 集群的注册信息并且保存下来作为路由信息的基本数据。然后提供心跳检测机制，检查 Broker 是否还存活；</li>
+<li><strong>路由信息管理</strong>，每个 NameServer 将保存关于 Broker 集群的整个路由信息和用于客户端查询的队列信息。Producer 和 Consumer 通过 NameServer 就可以知道整个 Broker 集群的路由信息，从而进行消息的投递和消费。</li>
+</ul>
+<h4 id="代理服务器-Broker"><a href="#代理服务器-Broker" class="headerlink" title="代理服务器 Broker"></a>代理服务器 Broker</h4><p>Broker主要负责消息的存储、投递和查询以及服务高可用保证。</p>
+<h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><img src="/pic/rocketMQ工作原理.png" style="zoom: 80%;" />
+
+<h4 id="启动NameServer"><a href="#启动NameServer" class="headerlink" title="启动NameServer"></a>启动NameServer</h4><p>启动 NameServer。NameServer 启动后监听端口，等待 Broker、Producer、Consumer 连接，相当于一个路由控制中心。</p>
+<h4 id="启动Broker"><a href="#启动Broker" class="headerlink" title="启动Broker"></a>启动Broker</h4><p>启动 Broker。与所有 NameServer 保持长连接，定时发送心跳包。心跳包中包含当前 Broker 信息以及存储所有 Topic 信息。注册成功后，NameServer 集群中就有 Topic 跟 Broker 的映射关系。</p>
+<h4 id="创建-Topic"><a href="#创建-Topic" class="headerlink" title="创建 Topic"></a>创建 Topic</h4><p>创建 Topic 时需要指定该 Topic 要存储在哪些 Broker 上，也可以在发送消息时自动创建 Topic。</p>
+<h4 id="生产者发送消息"><a href="#生产者发送消息" class="headerlink" title="生产者发送消息"></a>生产者发送消息</h4><p>生产者发送消息。启动时先跟 NameServer 集群中的其中一台建立长连接，并从 NameServer 中获取当前发送的 Topic 存在于哪些 Broker 上，轮询从队列列表中选择一个队列，然后与队列所在的 Broker 建立长连接从而向 Broker发消息。</p>
+<h4 id="消费者接受消息"><a href="#消费者接受消息" class="headerlink" title="消费者接受消息"></a>消费者接受消息</h4><p>消费者接受消息。跟其中一台 NameServer 建立长连接，获取当前订阅 Topic 存在哪些 Broker 上，然后直接跟 Broker 建立连接通道，然后开始消费消息。</p>
+<h2 id="Sentinel"><a href="#Sentinel" class="headerlink" title="Sentinel"></a>Sentinel</h2><h3 id="雪崩问题"><a href="#雪崩问题" class="headerlink" title="雪崩问题"></a>雪崩问题</h3><p>微服务中，服务间调用关系错综复杂，一个微服务往往依赖于多个其它微服务。如果某个微服务发生了故障，依赖这个服务的其他服务在请求时会被阻塞，随着时间推移，越来越多服务阻塞。</p>
+<p>雪崩就是 <strong>微服务调用链路中的某个服务故障，导致整个链路中所有的微服务都不可用。</strong></p>
+<p>常见的处理方式有四种：</p>
+<ul>
+<li><p>超时处理：设定超时时间，请求超过一定时间没有响应就返回错误信息，不会无休止等待</p>
+</li>
+<li><p>舱壁模式：限定每个业务能使用的线程数，避免耗尽整个tomcat的资源，因此也叫线程隔离。</p>
+</li>
+<li><p>断路器：由<strong>断路器</strong>统计业务执行的异常比例，如果超出阈值则会<strong>熔断</strong>该业务，拦截访问该业务的一切请求。</p>
+</li>
+<li><p><strong>流量控制</strong>：限制业务访问的QPS，避免服务因流量的突增而故障，是预防措施。</p>
+</li>
+</ul>
+<p>Sentinel就是一款微服务流量控制组件，由阿里巴巴开源，可以<strong>实现流量控制，舱壁模式和降级熔断三种方式</strong>。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Sentinel</strong></th>
+<th><strong>Hystrix</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>隔离策略</td>
+<td>信号量隔离</td>
+<td>线程池隔离&#x2F;信号量隔离</td>
+</tr>
+<tr>
+<td>熔断降级策略</td>
+<td>基于慢调用比例或异常比例</td>
+<td>基于失败比率</td>
+</tr>
+<tr>
+<td>实时指标实现</td>
+<td>滑动窗口</td>
+<td>滑动窗口（基于 RxJava）</td>
+</tr>
+<tr>
+<td>规则配置</td>
+<td>支持多种数据源</td>
+<td>支持多种数据源</td>
+</tr>
+<tr>
+<td>扩展性</td>
+<td>多个扩展点</td>
+<td>插件的形式</td>
+</tr>
+<tr>
+<td>基于注解的支持</td>
+<td>支持</td>
+<td>支持</td>
+</tr>
+<tr>
+<td>限流</td>
+<td>基于 QPS，支持基于调用关系的限流</td>
+<td>有限的支持</td>
+</tr>
+<tr>
+<td>流量整形</td>
+<td>支持慢启动、匀速排队模式</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>系统自适应保护</td>
+<td>支持</td>
+<td>不支持</td>
+</tr>
+<tr>
+<td>控制台</td>
+<td>开箱即用，可配置规则、查看秒级监控、机器发现等</td>
+<td>不完善</td>
+</tr>
+<tr>
+<td>常见框架的适配</td>
+<td>Servlet、Spring Cloud、Dubbo、gRPC  等</td>
+<td>Servlet、Spring Cloud Netflix</td>
+</tr>
+</tbody></table>
+<h3 id="安装与整合"><a href="#安装与整合" class="headerlink" title="安装与整合"></a>安装与整合</h3><h4 id="安装控制台"><a href="#安装控制台" class="headerlink" title="安装控制台"></a>安装控制台</h4><p>sentinel官方提供了UI控制台，方便我们对系统做限流设置。将jar包放到任意非中文目录，执行命令：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">java -jar sentinel-dashboard-1.8.1.jar</span><br></pre></td></tr></table></figure>
+
+<p>如果要修改Sentinel的默认端口、账户、密码，可以通过下列配置：</p>
+<table>
+<thead>
+<tr>
+<th><strong>配置项</strong></th>
+<th><strong>默认值</strong></th>
+<th><strong>说明</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>server.port</td>
+<td>8080</td>
+<td>服务端口</td>
+</tr>
+<tr>
+<td>sentinel.dashboard.auth.username</td>
+<td>sentinel</td>
+<td>默认用户名</td>
+</tr>
+<tr>
+<td>sentinel.dashboard.auth.password</td>
+<td>sentinel</td>
+<td>默认密码</td>
+</tr>
+</tbody></table>
+<p>例如，修改端口：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">java -Dserver.port=8090 -jar sentinel-dashboard-1.8.1.jar</span><br></pre></td></tr></table></figure>
+
+<p>访问<a href="http://localhost:8080页面，就可以看到sentinel的控制台了，账号和密码默认都是：sentinel">http://localhost:8080页面，就可以看到sentinel的控制台了，账号和密码默认都是：sentinel</a></p>
+<h4 id="项目整合Sentinel"><a href="#项目整合Sentinel" class="headerlink" title="项目整合Sentinel"></a>项目整合Sentinel</h4><p>引入sentinel依赖</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="comment">&lt;!--sentinel--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-alibaba-sentinel<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>配置控制台</p>
+<p>修改application.yaml文件，添加下面内容：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">8088</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span> </span><br><span class="line">    <span class="attr">sentinel:</span></span><br><span class="line">      <span class="attr">transport:</span></span><br><span class="line">        <span class="attr">dashboard:</span> <span class="string">localhost:8080</span></span><br></pre></td></tr></table></figure>
+
+<p>访问order-service的任意端点，触发sentinel的监控。</p>
+<h3 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h3><h4 id="簇点链路"><a href="#簇点链路" class="headerlink" title="簇点链路"></a>簇点链路</h4><p>当请求进入微服务时，首先会访问DispatcherServlet，然后进入Controller、Service、Mapper，这样的一个调用链就叫做<strong>簇点链路</strong>。簇点链路中被监控的每一个接口就是一个<strong>资源</strong>。</p>
+<p>默认情况下sentinel会监控SpringMVC的每一个<strong>端点</strong>（Endpoint，也就是controller中的方法），因此SpringMVC的<strong>每一个端点就是调用链路中的一个资源</strong>。</p>
+<img src="/pic/Sentinel控制台.png" style="zoom: 80%;" />
+
+<p>流控、熔断等都是针对簇点链路中的资源来设置的，因此我们可以点击对应资源后面的按钮来设置规则：</p>
+<ul>
+<li>流控：流量控制</li>
+<li>降级：降级熔断</li>
+<li>热点：热点参数限流，是限流的一种</li>
+<li>授权：请求的权限控制</li>
+</ul>
+<h4 id="流控选项"><a href="#流控选项" class="headerlink" title="流控选项"></a>流控选项</h4><p>流控表单如下：</p>
+<img src="/pic/流控表单.png" style="zoom:80%;" />
+
+<p>其含义是限制 &#x2F;order&#x2F;{orderId}这个资源的单机QPS为1，即每秒只允许1次请求，超出的请求会被拦截并报错。QPS的具体值可由压测得出。</p>
+<p>在高级选项中还有两个选项：流控模式和流控效果。</p>
+<h5 id="流控模式"><a href="#流控模式" class="headerlink" title="流控模式"></a>流控模式</h5><ul>
+<li><p>直接：统计当前资源的请求，触发阈值时对当前资源直接限流，也是默认的模式</p>
+</li>
+<li><p>关联：统计与当前资源相关的另一个资源，触发阈值时，对当前资源限流 (A触法阈值，对B限流)</p>
+<ul>
+<li>比如用户支付时需要修改订单状态，同时用户要查询订单。查询和修改操作会争抢数据库锁，产生竞争。业务需求是优先支付和更新订单的业务，因此当修改订单业务触发阈值时，需要对查询订单业务限流。</li>
+</ul>
+</li>
+<li><p>链路：统计从<strong>指定链路</strong>访问到本资源的请求，触发阈值时，对指定链路限流</p>
+<ul>
+<li><p>链路模式中，是对不同来源的两个链路做监控。但是sentinel默认会给进入SpringMVC的所有请求设置同一个root资源，会导致链路模式失效。</p>
+<p>我们需要关闭这种对SpringMVC的资源聚合，修改order-service服务的application.yml文件：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cloud:</span></span><br><span class="line">    <span class="attr">sentinel:</span></span><br><span class="line">      <span class="attr">web-context-unify:</span> <span class="literal">false</span> <span class="comment"># 关闭context整合</span></span><br></pre></td></tr></table></figure>
+
+<p>重启服务，访问&#x2F;order&#x2F;query和&#x2F;order&#x2F;save，可以查看到sentinel的簇点链路规则中，出现了新的资源</p>
+</li>
+</ul>
+</li>
+</ul>
+<h5 id="流控效果"><a href="#流控效果" class="headerlink" title="流控效果"></a>流控效果</h5><ul>
+<li>快速失败：达到阈值后，新的请求会被立即拒绝并抛出FlowException异常。是默认的处理方式。</li>
+<li>warm up：预热模式，对超出阈值的请求同样是拒绝并抛出异常。但这种模式阈值会动态变化，从一个较小值逐渐增加到最大阈值。<ul>
+<li>阈值一般是一个微服务能承担的最大QPS，但是一个服务刚刚启动时，一切资源尚未初始化（<strong>冷启动</strong>），如果直接将QPS跑到最大值，可能导致服务瞬间宕机。</li>
+<li>请求阈值初始值是 maxThreshold &#x2F; coldFactor，持续指定时长后，逐渐提高到maxThreshold值。而coldFactor的默认值是3.</li>
+</ul>
+</li>
+<li>排队等待：让所有的请求按照先后次序排队执行，如果请求预期的等待时间超出最大时长，则会被拒绝。<ul>
+<li>根据QPS计算出每个请求的处理时间，严格按照这个时间释放请求，可以得到排队中的请求的等待时间，设立timeout，当等待时间超过timeout就直接拒接。</li>
+</ul>
+</li>
+</ul>
+<h4 id="Jmeter并发模拟"><a href="#Jmeter并发模拟" class="headerlink" title="Jmeter并发模拟"></a>Jmeter并发模拟</h4><p>可以使用Jmeter工具来做并发模拟，在规定时间内多次发起请求，</p>
+<h4 id="热点参数限流"><a href="#热点参数限流" class="headerlink" title="热点参数限流"></a>热点参数限流</h4><p>以商品查询接口为例，请求路径是<code>/goods/&#123;id&#125;</code>，上面的限流方法对这个接口的所有商品一视同仁，也就是不考虑id。但在实际开发中，部分热门商品的请求数量肯定比冷门商品高，我们希望这部分商品分配到的QPS能高一些，这就需要热点参数限流了。</p>
+<p>热点参数限流会<strong>根据参数值分组，分别统计QPS</strong></p>
+<img src="/pic/热点参数限流.png" style="zoom: 67%;" />
+
+<p><strong>热点参数限流对默认的SpringMVC资源无效，需要利用@SentinelResource注解标记资源</strong></p>
+<img src="/pic/标记资源.png" style="zoom:67%;" />
+
+<p>接下来就可以在控制台进行配置，在控制台左侧边栏 热点规则中找到新增热点规则，</p>
+<img src="/pic/热点参数限流面板.png" style="zoom: 67%;" />
+
+<p>上面的选项就是给&#x2F;order&#x2F;{orderId}这个资源添加热点参数限流，规则如下：</p>
+<ul>
+<li>默认的热点参数规则是每1秒请求量不超过2</li>
+<li>给102这个参数设置例外：每1秒请求量不超过4</li>
+<li>给103这个参数设置例外：每1秒请求量不超过10</li>
+</ul>
+<p>另外，支持的参数类型只有基本数据类型和字符串，如果参数是其他类型就无法做热点参数限流。</p>
+<h2 id="ShardingSphere"><a href="#ShardingSphere" class="headerlink" title="ShardingSphere"></a>ShardingSphere</h2><h3 id="分库分表介绍"><a href="#分库分表介绍" class="headerlink" title="分库分表介绍"></a>分库分表介绍</h3><p>分库分表是一种数据库分片技术，用于解决大规模应用中单一数据库容量不足以支持高并发和大数据量的问题。它将一个大型的数据库拆分成多个小型数据库，每个小型数据库称为一个分片。每个分片存储部分数据，从而降低了单个数据库的负担。</p>
+<h4 id="分表时机"><a href="#分表时机" class="headerlink" title="分表时机"></a>分表时机</h4><p>数据量过大或者数据库表对应的磁盘文件过大。</p>
+<h4 id="分库时机"><a href="#分库时机" class="headerlink" title="分库时机"></a>分库时机</h4><p>当数据库的连接不够客户端使用时，可以考虑分库或读写分离。</p>
+<p>如果说当数据库的 QPS 越来越高以及数据量越来越大的时候，就需要考虑分库分表。</p>
+<h3 id="ShardingSphere介绍"><a href="#ShardingSphere介绍" class="headerlink" title="ShardingSphere介绍"></a>ShardingSphere介绍</h3><p><code>Apache ShardingSphere</code> 是一款分布式的数据库生态系统， 可以将任意数据库转换为分布式数据库，并通过数据分片、弹性伸缩、加密等能力对原有数据库进行增强。它关注如何充分合理地<strong>利用数据库的计算和存储能力</strong>，而并非实现一个全新的数据库。 它站在数据库的上层视角，<strong>关注数据库之间的协作</strong>多于数据库自身。</p>
+<p><code>ShardingSphere</code> 有两个产品在企业中广泛使用，分别是 <code>ShardingSphere-JDBC</code> 以及 <code>ShardingSphere-Proxy</code>。</p>
+<h4 id="ShardingSphere-JDBC"><a href="#ShardingSphere-JDBC" class="headerlink" title="ShardingSphere-JDBC"></a>ShardingSphere-JDBC</h4><p>轻量级 Java 框架，在 Java 的 JDBC 层提供的额外服务。 它使用客户端直连数据库，<strong>以 Jar 包形式提供服务</strong>，无需额外部署和依赖，可理解为增强版的 JDBC 驱动，完全兼容 JDBC 和各种 ORM 框架。</p>
+<p>采用无中心化架构，与应用程序共享资源，适用于 Java 开发的高性能的轻量级 OLTP 应用</p>
+<h4 id="ShardingSphere-Proxy"><a href="#ShardingSphere-Proxy" class="headerlink" title="ShardingSphere-Proxy"></a>ShardingSphere-Proxy</h4><p>透明化的数据库代理端，通过实现数据库二进制协议，对异构语言提供支持。</p>
+<p>通过混合使用 ShardingSphere-JDBC 和 ShardingSphere-Proxy，并采用同一注册中心统一配置分片策略，能够灵活的搭建适用于各种场景的应用系统，使得架构师更加自由地调整适合于当前业务的最佳系统架构。</p>
+<h4 id="常用功能"><a href="#常用功能" class="headerlink" title="常用功能"></a>常用功能</h4><table>
+<thead>
+<tr>
+<th>特性</th>
+<th>定义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据分片</td>
+<td>数据分片，是应对海量数据存储与计算的有效手段。ShardingSphere 基于底层数据库提供分布式数据库解决方案，可以水平扩展计算和存储。</td>
+</tr>
+<tr>
+<td>读写分离</td>
+<td>读写分离，是应对高压力业务访问的手段。基于对 SQL 语义理解及对底层数据库拓扑感知能力，ShardingSphere 提供灵活的读写流量拆分和读流量负载均衡</td>
+</tr>
+<tr>
+<td>数据加密</td>
+<td>数据加密，是保证数据安全的基本手段。ShardingSphere 提供完整、透明、安全、低成本的数据加密解决方案。</td>
+</tr>
+<tr>
+<td>影子库</td>
+<td>在全链路压测场景下，ShardingSphere 支持不同工作负载下的数据隔离，避免测试数据污染生产环境。</td>
+</tr>
+</tbody></table>
+<h3 id="数据分库核心概念"><a href="#数据分库核心概念" class="headerlink" title="数据分库核心概念"></a>数据分库核心概念</h3><h4 id="表"><a href="#表" class="headerlink" title="表"></a>表</h4><h5 id="逻辑表"><a href="#逻辑表" class="headerlink" title="逻辑表"></a>逻辑表</h5><p>相同结构的水平拆分数据库（表）的逻辑名称，是 SQL 中表的逻辑标识。 例：订单数据根据主键尾数拆分为 10 张表，分别是 <code>t_order_0</code> 到 <code>t_order_9</code>，他们的逻辑表名为 <code>t_order</code>。</p>
+<h5 id="真实表"><a href="#真实表" class="headerlink" title="真实表"></a>真实表</h5><p>在水平拆分的数据库中真实存在的物理表。 即上个示例中的 <code>t_order_0</code> 到 <code>t_order_9</code>。</p>
+<h5 id="广播表"><a href="#广播表" class="headerlink" title="广播表"></a>广播表</h5><p>指所有的数据源中都存在的表，表结构及其数据在每个数据库中均完全一致。 适用于数据量不大且需要与海量数据的表进行关联查询的场景，例如：字典表。</p>
+<h5 id="单表"><a href="#单表" class="headerlink" title="单表"></a>单表</h5><p>指所有的分片数据源中仅唯一存在的表。 适用于数据量不大且无需分片的表。</p>
+<h4 id="数据节点"><a href="#数据节点" class="headerlink" title="数据节点"></a>数据节点</h4><p>数据分片的最小单元，由数据源名称和真实表组成。 例：ds_0.t_order_0。 逻辑表与真实表的映射关系，可分为均匀分布和自定义分布两种形式。</p>
+<h5 id="均匀分布"><a href="#均匀分布" class="headerlink" title="均匀分布"></a>均匀分布</h5><p>数据表在每个数据源内呈现均匀分布的态势， 例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">db0</span><br><span class="line">  ├── t_order0</span><br><span class="line">  └── t_order1</span><br><span class="line">db1</span><br><span class="line">  ├── t_order0</span><br><span class="line">  └── t_order1</span><br></pre></td></tr></table></figure>
+
+<h5 id="自定义分布"><a href="#自定义分布" class="headerlink" title="自定义分布"></a>自定义分布</h5><p>指数据表呈现有特定规则的分布</p>
+<h4 id="分片"><a href="#分片" class="headerlink" title="分片"></a>分片</h4><h5 id="分片键"><a href="#分片键" class="headerlink" title="分片键"></a>分片键</h5><p>分片键是用于<strong>决定数据会被分布在哪个分片中</strong>的字段，原理就是根据分片键的值计算出数据所分布的分片 ID。计算过程就是分片键算法，常见的算法有三种：Range、Hash和Lookup。</p>
+<h5 id="自动化分片算法"><a href="#自动化分片算法" class="headerlink" title="自动化分片算法"></a>自动化分片算法</h5><p>分片算法语法糖，用于便捷的托管所有数据节点，使用者无需关注真实表的物理分布。 包括取模、哈希、范围、时间等常用分片算法的实现。</p>
+<h5 id="自定义分片算法"><a href="#自定义分片算法" class="headerlink" title="自定义分片算法"></a>自定义分片算法</h5><p>提供接口让应用开发者自行实现与业务实现紧密相关的分片算法，并允许使用者自行管理真实表的物理分布。</p>
+<h4 id="分布式主键"><a href="#分布式主键" class="headerlink" title="分布式主键"></a>分布式主键</h4><p>数据分片后，不同数据节点生成<strong>全局唯一主键</strong>是非常棘手的问题。为了方便用户使用、满足不同用户不同使用场景的需求， Apache ShardingSphere 不仅提供了内置的分布式主键生成器，例如 UUID、SNOWFLAKE，还抽离出分布式主键生成器的接口，方便用户自行实现自定义的自增主键生成器。</p>
+<h2 id="Redission"><a href="#Redission" class="headerlink" title="Redission"></a>Redission</h2><h3 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h3><p>在多线程环境中，如果多个线程同时访问共享资源，会发生数据竞争，可能会导致出现脏数据或者系统问题，威胁到程序的正常运行。</p>
+<p>为了保证共享资源被安全地访问，我们需要使用互斥操作对共享资源进行保护，即同一时刻只允许一个线程访问共享资源，其他线程需要等待当前线程释放后才能访问。这样可以避免数据竞争和脏数据问题，保证程序的正确性和稳定性。</p>
+<p>分布式系统下，不同的服务&#x2F;客户端通常运行在独立的 JVM 进程上。如果多个 JVM 进程共享同一份资源的话，使用本地锁就没办法实现资源的互斥访问了。于是，<strong>分布式锁</strong> 就诞生了。常见的实现方案有：</p>
+<ul>
+<li>基于分布式协调服务 ZooKeeper 实现分布式锁。</li>
+<li>基于分布式键值存储系统比如 Redis 、Etcd 实现分布式锁。</li>
+</ul>
+<h3 id="Redission介绍"><a href="#Redission介绍" class="headerlink" title="Redission介绍"></a>Redission介绍</h3><p>Redisson 是一个开源的 Java 语言 Redis 客户端，提供了很多开箱即用的功能，不仅仅包括多种分布式锁的实现。并且，Redisson 还支持 Redis 单机、Redis Sentinel、Redis Cluster 等多种部署架构。</p>
+<p>Redisson 中的分布式锁自带自动续期机制，使用起来非常简单，原理也比较简单，其提供了一个专门用来监控和续期锁的 <strong>Watch Dog（ 看门狗）</strong>，如果操作共享资源的线程还未执行完成的话，Watch Dog 会不断地延长锁的过期时间，进而保证锁不会因为超时而被释放。</p>
+<h2 id="Canal"><a href="#Canal" class="headerlink" title="Canal"></a>Canal</h2><p>随着业务量增大，数据量变多以及各种复杂场景下的分库分表的实现，使数据同步变得越来越困难。</p>
+<p>Canal的主要用途是基于 MySQL 数据库的增量日志 Binlog 解析，提供增量数据订阅和消费，支持将增量数据投递到下游消费者(如Kafka、MQ等)或存储(ES)的组件，简单说就是<strong>数据同步</strong>。当然也不止数据同步</p>
+<ul>
+<li>数据同步</li>
+<li>数据库实时监控</li>
+<li>数据分析和挖掘</li>
+<li>数据库备份</li>
+<li>数据集成</li>
+<li>数据库迁移</li>
+</ul>
+<h3 id="Binlog日志"><a href="#Binlog日志" class="headerlink" title="Binlog日志"></a>Binlog日志</h3><p>MySQL记录了所有DDL和DML语句，默认不开启，因为记录日志需要消耗时间，有性能损耗。</p>
+<p>一般来说，在下面两场景下会开启Binlog日志: </p>
+<ul>
+<li><p>MySQL 主从集群部署时，需要将在 Master 端开启 Binlog，方便将数据同步到Slaves中。</p>
+</li>
+<li><p>数据恢复了，通过使用 MySQL Binlog 工具来使恢复数据。</p>
+</li>
+</ul>
+<p>Binlog 的格式有三种，分别是 STATEMENT,MIXED,ROW。在配置文件中可以选择配置 <code>binlog_format= statement</code>。</p>
+<table>
+<thead>
+<tr>
+<th align="center">分类</th>
+<th align="left">介绍</th>
+<th align="center">优点</th>
+<th align="center">缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">STATEMENT</td>
+<td align="left"><strong>语句级别</strong>，记录每一次执行<strong>写操作</strong>的<strong>SQL语句</strong></td>
+<td align="center">节省空间</td>
+<td align="center">可能造成数据不一致如<code>update table set create_date=now()</code>，由于执行时间不同产生的数据就不同</td>
+</tr>
+<tr>
+<td align="center">ROW</td>
+<td align="left"><strong>行级</strong>，记录每次<strong>操作后每行记录的变化</strong>。</td>
+<td align="center">保持数据的绝对一致性。因为不管sql是什么，引用了什么函数，他只记录执行后的效果</td>
+<td align="center">占用较大空间</td>
+</tr>
+<tr>
+<td align="center">MIXED</td>
+<td align="left">是对statement的升级，如当函数中包含 UUID() 时，包含 AUTO_INCREMENT 字段的表被更新时，执行 INSERT DELAYED 语句时，用 UDF 时，会按照 ROW的方式进行处理</td>
+<td align="center">节省空间，同时兼顾了一定的一致性</td>
+<td align="center">还有些极个别情况依旧会造成不一致，另外statement和mixed对于需要对binlog的监控的情况都不方便</td>
+</tr>
+</tbody></table>
+<p><strong>综合上面对比，Canal 想做监控分析，选择 row 格式比较合适。</strong></p>
+<h3 id="Canal原理"><a href="#Canal原理" class="headerlink" title="Canal原理"></a>Canal原理</h3><ul>
+<li>Canal 将自己伪装为 MySQL slave(从库) ，向 MySQL master (主库)发送dump 协议</li>
+<li>MySQL master(主库) 收到 dump 请求，开始推送 binary log 给 slave (即 canal )</li>
+<li>Canal 接收并解析 Binlog 日志，得到变更的数据，执行后续逻辑</li>
+</ul>
+<img src="/pic/Canal原理.jpg" style="zoom: 67%;" />
+
+<h3 id="Canal安装与配置"><a href="#Canal安装与配置" class="headerlink" title="Canal安装与配置"></a>Canal安装与配置</h3><p>Canal发行版地址：<a href="https://github.com/alibaba/canal/releases%EF%BC%8C%E8%A7%A3%E5%8E%8B%E5%8D%B3%E7%94%A8%E3%80%82">https://github.com/alibaba/canal/releases，解压即用。</a></p>
+<p>修改<code>conf/canal.properties</code>配置</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 默认端口</span></span><br><span class="line"><span class="attr">canal.port</span> = <span class="string">11111</span></span><br><span class="line"><span class="comment"># tcp, kafka, rocketMQ, rabbitMQ, pulsarMQ</span></span><br><span class="line"><span class="comment"># 服务模式，tcp 表示输入客户端，xxMQ输出到各类消息中间件</span></span><br><span class="line"><span class="attr">canal.serverMode</span> = <span class="string">tcp</span></span><br><span class="line"><span class="comment"># 配置需要监控数据的数据库,每个数据库都有独立的配置文件控制，放在conf目录的各自文件夹下，以数据库名字命名。</span></span><br><span class="line"><span class="attr">canal.destinations</span> = <span class="string">databaseA, databaseB</span></span><br></pre></td></tr></table></figure>
+
+<p>对于每个数据库的配置文件，在<code>conf/&#123;databaseA&#125;</code>下创建<code>instance.properties</code>文件</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 把Canal作为第几个从库</span></span><br><span class="line"><span class="attr">canal.instance.mysql.slaveId</span>=<span class="string">20</span></span><br><span class="line"><span class="comment"># 数据库地址</span></span><br><span class="line"><span class="attr">canal.instance.master.address</span>=<span class="string">127.0.0.1:3306</span></span><br><span class="line"></span><br><span class="line"><span class="attr">canal.instance.dbUsername</span>=<span class="string">root</span></span><br><span class="line"><span class="attr">canal.instance.dbPassword</span>=<span class="string">admin</span></span><br></pre></td></tr></table></figure>
+
+<p>双击<code>bin/startup.bat</code>启动服务</p>
+<h3 id="Canal编程"><a href="#Canal编程" class="headerlink" title="Canal编程"></a>Canal编程</h3><p>Canal配置好后，MySQL的改动会自动同步给Canal，但Canal并不知道要把这些改动发送给谁，就需要代码进行接管。</p>
+<img src="/pic/Canal API.png" style="zoom:67%;" />
+
+<h4 id="Spring-Boot集成"><a href="#Spring-Boot集成" class="headerlink" title="Spring Boot集成"></a>Spring Boot集成</h4><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--非官方封装的起步依赖--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>top.javatool<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>canal-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.2.6-RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>8.0.12<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.google.protobuf<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>protobuf-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.21.4<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>配置文件</p>
+<figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="attr">canal</span>:<span class="string"></span></span><br><span class="line">  <span class="attr">server</span>: <span class="string">127.0.0.1:11111 #canal 默认端口11111</span></span><br><span class="line">  <span class="attr">destination</span>: <span class="string">databaseA</span></span><br><span class="line"><span class="attr">spring</span>:<span class="string"></span></span><br><span class="line">  <span class="attr">application</span>:<span class="string"></span></span><br><span class="line">    <span class="attr">name</span>: <span class="string">canal-demo</span></span><br><span class="line">  <span class="attr">datasource</span>:<span class="string"></span></span><br><span class="line">    <span class="attr">driver-class-name</span>: <span class="string">com.mysql.cj.jdbc.Driver</span></span><br><span class="line">    <span class="attr">url</span>: <span class="string">jdbc:mysql://127.0.0.1:3306/canal-demo?useUnicode=true&amp;characterEncoding=utf-8&amp;serverTimezone=UTC&amp;useSSL=false</span></span><br><span class="line">    <span class="attr">username</span>: <span class="string">root</span></span><br><span class="line">    <span class="attr">password</span>: <span class="string">admin</span></span><br></pre></td></tr></table></figure>
+
+<p>编写数据库实体对象</p>
+<p>编写监控处理类</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@CanalTable(value = &quot;user&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserHandler</span> <span class="keyword">implements</span> <span class="title class_">EntryHandler</span>&lt;User&gt; &#123;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">insert</span><span class="params">(User user)</span> &#123;</span><br><span class="line">        System.err.println(<span class="string">&quot;添加：&quot;</span> + user);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">update</span><span class="params">(User before, User after)</span> &#123;</span><br><span class="line">        System.err.println(<span class="string">&quot;改前：&quot;</span> + before);</span><br><span class="line">        System.err.println(<span class="string">&quot;改后：&quot;</span> + after);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">delete</span><span class="params">(User user)</span> &#123;</span><br><span class="line">        System.err.println(<span class="string">&quot;删除：&quot;</span> + user);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="TTL"><a href="#TTL" class="headerlink" title="TTL"></a>TTL</h2><p>在多线程环境下，ThreadLocal可以避免线程安全问题，但是在使用线程池等多线程环境时，ThreadLocal可能会出现一些问题。例如，当使用线程池时，线程池中的线程可能会被多个任务共享，如果使用ThreadLocal存储数据，可能会导致<strong>数据共享错误</strong>，不同线程的数据不一致。</p>
+<p><code>TransmittableThreadLocal</code>是ThreadLocal的增强版，可以在线程池等多线程环境下使用，解决了ThreadLocal在多线程环境下的一些问题。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadPoolDemo</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> TransmittableThreadLocal&lt;String&gt; threadLocal = <span class="keyword">new</span> <span class="title class_">TransmittableThreadLocal</span>&lt;&gt;();</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        <span class="type">ExecutorService</span> <span class="variable">executorService</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// 在主线程中设置TransmittableThreadLocal的值</span></span><br><span class="line">        threadLocal.set(<span class="string">&quot;Hello, World!&quot;</span>);</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// 在线程池中执行任务</span></span><br><span class="line">        executorService.execute(TtlRunnable.get(() -&gt; &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">value</span> <span class="operator">=</span> threadLocal.get();</span><br><span class="line">            System.out.println(<span class="string">&quot;TransmittableThreadLocal value in new thread: &quot;</span> + value);</span><br><span class="line">        &#125;));</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// 等待任务执行完成</span></span><br><span class="line">        executorService.shutdown();</span><br><span class="line">        executorService.awaitTermination(<span class="number">1</span>, TimeUnit.SECONDS);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在执行任务时，TtlRunnable会自动传递ThreadLocal的值，从而保证了数据的正确性</p>
+<h3 id="使用TtlExecutors"><a href="#使用TtlExecutors" class="headerlink" title="使用TtlExecutors"></a>使用<code>TtlExecutors</code></h3><p>TtlExecutors是阿里巴巴开源的一个工具类，用于在使用线程池的情况下使用TransmittableThreadLocal。具体来说，TtlExecutors提供了一些工具方法，可以方便地将线程池和TransmittableThreadLocal结合起来使用。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TtlExecutorsDemo</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> TransmittableThreadLocal&lt;String&gt; threadLocal = <span class="keyword">new</span> <span class="title class_">TransmittableThreadLocal</span>&lt;&gt;();</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 创建一个固定大小的线程池</span></span><br><span class="line">        <span class="type">ExecutorService</span> <span class="variable">executorService</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// 在主线程中设置TransmittableThreadLocal的值</span></span><br><span class="line">        threadLocal.set(<span class="string">&quot;Hello, World!&quot;</span>);</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// 使用TtlExecutors包装线程池</span></span><br><span class="line">        <span class="type">ExecutorService</span> <span class="variable">ttlExecutorService</span> <span class="operator">=</span> TtlExecutors.getTtlExecutorService(executorService);</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// 提交任务到线程池中</span></span><br><span class="line">        ttlExecutorService.submit(() -&gt; &#123;</span><br><span class="line">            <span class="type">String</span> <span class="variable">value</span> <span class="operator">=</span> threadLocal.get();</span><br><span class="line">            System.out.println(<span class="string">&quot;Task is running in thread: &quot;</span> + Thread.currentThread().getName() + <span class="string">&quot;, TransmittableThreadLocal value: &quot;</span> + value);</span><br><span class="line">        &#125;);</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// 关闭线程池</span></span><br><span class="line">        ttlExecutorService.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Fast-Json2"><a href="#Fast-Json2" class="headerlink" title="Fast Json2"></a>Fast Json2</h2><p>fastjson 是一个java语言编写的高性能且功能完善的JSON库，用于对JSON格式的数据进行解析和打包。它采用一种“假定有序快速匹配”的算法，把<strong>JSON Parse</strong> 的性能提升到了极致。</p>
+<p>fastjson2 是FAST JSON项目的重要升级，目标是为下一个十年提供一个高性能的JSON库， fastjson2 性能相比原先旧的 fastjson 有了很大提升,并且 fastjson2 更安全，完全删除autoType白名单，提升了安全性。</p>
+<h3 id="json与字符串"><a href="#json与字符串" class="headerlink" title="json与字符串"></a>json与字符串</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">//JSON对象转字符串</span></span><br><span class="line"><span class="type">String</span> <span class="variable">str</span> <span class="operator">=</span> JSON.toJSONString(json);</span><br><span class="line"><span class="comment">//JSON字符串转JSON对象</span></span><br><span class="line"><span class="type">JSONObject</span> <span class="variable">json</span> <span class="operator">=</span> JSONObject.parseObject(str);</span><br></pre></td></tr></table></figure>
+<h3 id="json数组与字符串"><a href="#json数组与字符串" class="headerlink" title="json数组与字符串"></a>json数组与字符串</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">String</span> <span class="variable">text</span> <span class="operator">=</span> <span class="string">&quot;[\&quot;张三\&quot;,\&quot;李四\&quot;,\&quot;王五\&quot;]&quot;</span>;</span><br><span class="line"><span class="comment">//json字符串转json数组</span></span><br><span class="line"><span class="type">JSONArray</span> <span class="variable">data</span> <span class="operator">=</span> JSON.parseArray(text);</span><br><span class="line"><span class="comment">//json数组转json字符串</span></span><br><span class="line"><span class="type">String</span> <span class="variable">str</span> <span class="operator">=</span> JSONArray.toJSONString(data);</span><br></pre></td></tr></table></figure>
+<h3 id="json与对象"><a href="#json与对象" class="headerlink" title="json与对象"></a>json与对象</h3><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">Student</span> <span class="variable">student</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Student</span>(<span class="string">&quot;张三&quot;</span>, <span class="number">18</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">//Student对象转JSON字符串</span></span><br><span class="line"><span class="type">String</span> <span class="variable">studentStr</span> <span class="operator">=</span> JSON.toJSONString(student);</span><br><span class="line"><span class="comment">//JSON字符串转Student对象</span></span><br><span class="line"><span class="type">Student</span> <span class="variable">data</span> <span class="operator">=</span> JSON.parseObject(studentStr, Student.class);</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="XXL-job"><a href="#XXL-job" class="headerlink" title="XXL-job"></a>XXL-job</h2><p>XXL-job是一个分布式任务调度平台，所谓分布式任务调度平台，其实就是一个定时任务实现方案。</p>
+<p>传统的定时任务实现方案，比如Timer，Quartz等都或多或少存在一些问题：</p>
+<ul>
+<li>不支持集群、不支持统计、没有管理平台、没有失败报警、没有监控等等而且在现在分布式的架构中，有一些场景需要分布式任务调度：</li>
+<li>同一个服务多个实例的任务存在互斥时，需要统一的调度。</li>
+<li>任务调度需要支持高可用、监控、故障告警。</li>
+<li>需要统一管理和追踪各个服务节点任务调度的结果，需要记录保存任务属性信息等。</li>
+</ul>
+<p>目前比较主流的分布式任务调度平台是elasticjob和xxl-job。</p>
+<ul>
+<li><p>xxl-job环境依赖于mysql，elasticjob依赖于ZooKeeper</p>
+</li>
+<li><p>elasticjob是无中心化的，通过ZooKeeper的选举机制选举出主服务器，如果主服务器挂了，会重新选举新的主服务器。因此elasticjob具有良好的扩展性和可用性，但是使用和运维有一定的复杂</p>
+</li>
+<li><p>xxl-job则相反，是通过一个中心式的调度平台，调度多个执行器执行任务，调度中心通过DB锁保证集群分布式调度的一致性，这样扩展执行器会增大DB的压力，但是如果实际上这里数据库只是负责任务的调度执行。但是如果没有大量的执行器的话和任务的情况，是不会造成数据库压力的。实际上大部分公司任务数，执行器并不多。</p>
+</li>
+</ul>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>XXL-job使用源码安装，先拉取源码，源码结构如下</p>
+<img src="/pic/XXL源码结构.png" style="zoom:67%;" />
+
+<p>XXL依赖于MySQL，因此要先初始化数据库，执行上图中的<code>tables_xxl_job.sql</code>。</p>
+<p>启动项目后访问<code>http://localhost:8080/xxl-job-admin/toLogin</code> 控制台，默认账号&#x2F;密码：admin&#x2F;123456</p>
+<h2 id="Hippo4j线程池"><a href="#Hippo4j线程池" class="headerlink" title="Hippo4j线程池"></a>Hippo4j线程池</h2><p>传统线程池存在以下问题：</p>
+<ul>
+<li><p>创建线程池核心参数不好评估，随着业务流量的波动，极有可能出现生产故障。</p>
+</li>
+<li><p>不支持优雅关闭，当项目关闭时，大量正在运行的线程池任务被丢弃。</p>
+</li>
+<li><p>不支持运行时监控，使用过程中业务无响应，不知道是不是线程池引起。</p>
+</li>
+<li><p>三方框架 RocketMQ、Dubbo 等线程池无法动态修改参数，修改后只能重启应用。</p>
+</li>
+</ul>
+<p>Hippo4j 框架提供以下功能支持：</p>
+<ul>
+<li>动态调参</li>
+<li>告警策略</li>
+<li>线程池监控</li>
+<li>框架适配</li>
+</ul>
+<h2 id="Skywalking"><a href="#Skywalking" class="headerlink" title="Skywalking"></a>Skywalking</h2><h3 id="ARP系统"><a href="#ARP系统" class="headerlink" title="ARP系统"></a>ARP系统</h3><p>即应用性能管理系统，是对企业系统即时监控以实现对应用程序性能管理和故障管理的系统化的解决方案，ARP系统是可以帮助理解系统行为，用于分析性能问题的工具，以便发送故障的时候能够快速定位和解决问题。</p>
+<p>ARP系统主要有三个方面的业务：</p>
+<ul>
+<li>日志 (ELK Stack)</li>
+<li>指标 (Prometheus)</li>
+<li>链路追踪 (Skywalking)</li>
+</ul>
+<p>市面上的各种实现方案都需要遵循OpenTracing标准。</p>
+<h3 id="快速入门"><a href="#快速入门" class="headerlink" title="快速入门"></a>快速入门</h3><p>Skywalking分为Agent和OAP</p>
+]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>黑马点评</title>
+    <url>/2024/03/02/11-00-37/</url>
+    <content><![CDATA[<h2 id="短信登录"><a href="#短信登录" class="headerlink" title="短信登录"></a>短信登录</h2><span id="more"></span>
+
+<h3 id="基于Session"><a href="#基于Session" class="headerlink" title="基于Session"></a>基于Session</h3><img src="/pic/点评-短信登录业务.png" style="zoom: 67%;" />
+
+<p>每次请求都要校验登录状态，所以这个业务逻辑要写在拦截器或过滤器里，通过threadLocal保存用户信息，供后续请求使用。</p>
+<p>基于session会存在很多问题，比如集群的session共享问题。为了解决这个问题，tomcat早期提供了session拷贝的功能，但是这样造成空间浪费，并且数据拷贝存在延时，在这段时间里问题依然存在。</p>
+<p>因此要找到一个替代方案，能满足</p>
+<ul>
+<li>数据共享</li>
+<li>内存存储 (读写效率高)</li>
+<li>key  value结构</li>
+</ul>
+<h3 id="基于Redis"><a href="#基于Redis" class="headerlink" title="基于Redis"></a>基于Redis</h3><p>用redis替代session</p>
+<p><img src="/pic/基于redis登录1.png" alt="image-20240303140002696" style="zoom: 67%;" /><img src="/C:/Users/19742/AppData/Roaming/Typora/typora-user-images/image-20240303140100964.png" alt="image-20240303140100964"></p>
+<p>首先要注意Session是<strong>独立</strong>的，不同浏览器发请求是不同的Session，天然就把不同用户隔离开了。因此Session中的key可以取通用字符串，比如code等。</p>
+<p>但是redis的空间是<strong>共享</strong>的，不同用户的信息存储在一个地方，如果每个用户都取一样的key，会存在覆盖问题导致信息丢失。因此在<strong>存储验证码</strong>时，可以取手机号作为key。这样设计将来要验证手机号和验证码时，也无需传入额外的信息，把手机号作为key就可以直接取到验证码。</p>
+<ul>
+<li>存储时key的唯一性</li>
+<li>取用时，携带key的方便性</li>
+</ul>
+<img src="/pic/基于redis登录2.png" alt="image-20240303140141609" style="zoom:67%;" />
+
+<p>用Hash数据结构存储用户信息</p>
+<img src="/pic/redis存储用户信息.png" alt="image-20240303135544679" style="zoom:67%;" />
+
+<p>为什么用户信息的key不用手机号呢？</p>
+<ul>
+<li>因为后面大部分请求需要登录校验，如果用手机号作为key，每次都要传递手机号参数，增加信息泄露的风险。</li>
+</ul>
+<h3 id="业务相关问题"><a href="#业务相关问题" class="headerlink" title="业务相关问题"></a>业务相关问题</h3><p>现在的请求架构如下图：</p>
+<img src="/pic/黑马点评1.png" alt="image-20240303152021924" style="zoom: 80%;" />
+
+<p>拦截器拦截用户请求完成登录校验，并且刷新token有效期，实现只要用户一直有请求，登陆状态就不会过期。但是拦截器会放行一些不需要登录的请求，比如商户信息。如果用户一直在请求这些信息，是不会被拦截器拦截的，时间一到登陆状态还是会过期。</p>
+<img src="/pic/黑马点评2.png" alt="image-20240303152432853" style="zoom: 80%;" />
+
+<p>解决方法是再加一个全局拦截器，拦截一切路径，作用是刷新token有效期。这个拦截器不做拦截，不管能否查到用户，都会放行，确保非登陆业务的通过。</p>
+<h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><p> 缓存就是数据交换的缓冲区（称作Cache），是存贮数据的临时地方，一般读写性能较高。</p>
+<p><strong>作用</strong></p>
+<ul>
+<li>降低后端负载</li>
+<li>提高读写效率，降低响应时间</li>
+</ul>
+<p><strong>成本</strong></p>
+<ul>
+<li>数据一致性成本</li>
+<li>代码维护成本</li>
+<li>运维成本</li>
+</ul>
+<h3 id="缓存作用模型"><a href="#缓存作用模型" class="headerlink" title="缓存作用模型"></a>缓存作用模型</h3><p><img src="/pic/%E7%BC%93%E5%AD%98%E4%BD%9C%E7%94%A8%E6%A8%A1%E5%9E%8B.png" alt="image-20240304101359340"></p>
+<h3 id="商品查询业务添加缓存"><a href="#商品查询业务添加缓存" class="headerlink" title="商品查询业务添加缓存"></a>商品查询业务添加缓存</h3><p><img src="/pic/%E5%95%86%E5%93%81%E7%BC%93%E5%AD%98.png"></p>
+<h3 id="缓存更新策略"><a href="#缓存更新策略" class="headerlink" title="缓存更新策略"></a>缓存更新策略</h3><img src="/pic/redis更新策略.png" style="zoom: 50%;" />
+
+<h4 id="主动更新"><a href="#主动更新" class="headerlink" title="主动更新"></a>主动更新</h4><p>有三种方式</p>
+<ul>
+<li><p>Cache Aside Pattern <strong>人工编码方式</strong>：缓存调用者在更新完数据库后再去更新缓存，也称之为双写方案</p>
+</li>
+<li><p>Read&#x2F;Write Through Pattern : 由系统本身完成，数据库与缓存的问题交由系统本身去处理</p>
+</li>
+<li><p>Write Behind Caching Pattern ：调用者只操作缓存，其他线程去异步处理数据库，实现最终一致</p>
+</li>
+</ul>
+<p>后面两种方案虽然简单，但是要找到或维护一个合适的服务很难。</p>
+<p>此外还需要考虑三个问题：</p>
+<ul>
+<li>删除缓存还是更新缓存？<ul>
+<li>更新缓存：每次更新数据库都更新缓存，无效写操作较多</li>
+<li>⭐<strong>删除缓存：更新数据库时让缓存失效，查询时再更新缓存</strong></li>
+</ul>
+</li>
+<li>如何保证缓存与数据库的操作的同时成功或失败？<ul>
+<li>单体系统，将缓存与数据库操作放在一个事务</li>
+<li>分布式系统，利用TCC等分布式事务方案</li>
+</ul>
+</li>
+<li>先操作缓存还是先操作数据库？<ul>
+<li>先操作数据库，再删除缓存 (数据库操作比redis耗时，先删缓存再操作数据库，中间时间缺口更大)</li>
+</ul>
+</li>
+</ul>
+<h3 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h3><p>缓存穿透是指客户端请求的数据在缓存中和数据库中都不存在，这样缓存永远不会生效，这些请求都会打到数据库。如果有大量这样的请求，可能造成数据库崩溃。</p>
+<h4 id="常见解决方案"><a href="#常见解决方案" class="headerlink" title="常见解决方案"></a>常见解决方案</h4><ul>
+<li><strong>缓存空对象</strong><ul>
+<li>优点是实现简单，维护方便</li>
+<li>缺点是有额外的内存消耗，且会造成短期的不一致 (比如查询一个不存在的id，设置缓存后数据库中立刻插入了该id的数据，此时数据库和缓存内容不一致)</li>
+</ul>
+</li>
+</ul>
+<p><img src="/pic/%E7%BC%93%E5%AD%98%E7%A9%BA%E5%AF%B9%E8%B1%A1.png" alt="image-20240304145447117"></p>
+<ul>
+<li>布隆过滤<ul>
+<li>实际上是一个很长的<strong>二进制向量</strong>和一系列<strong>随机映射函数</strong>。布隆过滤器可以用于检索一个元素是否在一个集合中。它的优点是空间效率和查询时间都比一般的算法要好的多，缺点是有一定的误识别率和删除困难。布隆过滤器可以告诉我们 <strong>“某样东西一定不存在或者可能存在”</strong></li>
+<li>优点：内存占用较少，没有多余key</li>
+<li>缺点：实现复杂，存在误判可能</li>
+</ul>
+</li>
+</ul>
+<p><img src="/pic/%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8.png" alt="image-20240304145728065"></p>
+<h3 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h3><p>同一时段大量的缓存key同时失效或者Redis服务宕机，导致大量请求到达数据库，带来巨大压力。</p>
+<h4 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h4><ul>
+<li>给不同的Key的TTL添加随机值</li>
+<li>利用Redis集群提高服务的可用性</li>
+<li>给缓存业务添加降级限流策略</li>
+<li>给业务添加多级缓存</li>
+</ul>
+<h3 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h3><p>也叫<strong>热点Key问题</strong>，就是一个被高并发访问并且缓存重建业务较复杂的key突然失效了，无数的请求访问会在瞬间给数据库带来巨大的冲击。</p>
+<h4 id="常见解决方案-1"><a href="#常见解决方案-1" class="headerlink" title="常见解决方案"></a>常见解决方案</h4><ul>
+<li>互斥锁<ul>
+<li>把并行变成串行，保证一致性，但是影响性能。</li>
+</ul>
+</li>
+<li>逻辑过期<ul>
+<li>不设置缓存物理过期时间，存储时加入逻辑过期字段expire。查询时若已过期，加锁后开启新线程重建缓存，<strong>返回过期的数据</strong>。性能较好，但不保证一致性。</li>
+</ul>
+</li>
+</ul>
+<img src="/pic/逻辑过期.png" style="zoom:67%;" />
+
+<h4 id="利用互斥锁解决"><a href="#利用互斥锁解决" class="headerlink" title="利用互斥锁解决"></a>利用互斥锁解决</h4><img src="/pic/互斥锁解决缓存击穿.png" style="zoom:67%;" />
+
+<p>利用redis的setnx方法来实现互斥锁(只有一个线程能使用)，该方法的作用是<strong>仅当key不存在时，设置一对key-value值</strong>。想加锁时，就尝试设置key，如果不成功说明其他线程在用锁；释放锁就直接删除这个key，让其他线程能设置。</p>
+<p>关于锁的粒度，就店铺查询而言，每个店铺应该有自己的锁。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="type">boolean</span> <span class="title function_">tryLock</span><span class="params">(String key)</span> &#123;</span><br><span class="line">    <span class="comment">// 设置过期时间，防止程序异常，锁无法释放</span></span><br><span class="line">    <span class="type">Boolean</span> <span class="variable">flag</span> <span class="operator">=</span> stringRedisTemplate.opsForValue().setIfAbsent(key, <span class="string">&quot;1&quot;</span>, <span class="number">10</span>, TimeUnit.SECONDS);</span><br><span class="line">    <span class="keyword">return</span> BooleanUtil.isTrue(flag);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">unlock</span><span class="params">(String key)</span> &#123;</span><br><span class="line">    <span class="comment">// 释放锁的操作就是把key删除，这样其他线程就可以设置该key</span></span><br><span class="line">    stringRedisTemplate.delete(key);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="秒杀"><a href="#秒杀" class="headerlink" title="秒杀"></a>秒杀</h2><h3 id="全局唯一ID"><a href="#全局唯一ID" class="headerlink" title="全局唯一ID"></a>全局唯一ID</h3><p>数据库的自增ID有几个缺点</p>
+<ul>
+<li>id规律明显，会暴露一些信息</li>
+<li>受表单数据量的限制</li>
+</ul>
+<p>全局ID生成器是一种在分布式系统下用于生成<strong>全局唯一</strong>ID的工具，需要满足：</p>
+<ul>
+<li>唯一性</li>
+<li>高可用</li>
+<li>高性能</li>
+<li>递增性，有利于数据库创建索引</li>
+<li>安全性</li>
+</ul>
+<p>常用的策略有：</p>
+<ul>
+<li>UUID</li>
+<li>redis自增</li>
+<li>雪花算法</li>
+</ul>
+<p>这里使用redis自增的方法</p>
+<ul>
+<li><p>不直接使用Redis自增的数值，而是拼接一些其它信息</p>
+</li>
+<li><p>ID的组成部分：符号位：1bit，永远为0</p>
+<p>时间戳：31bit，以秒为单位，可以使用69年</p>
+<p>序列号：32bit，秒内的计数器，支持每秒产生2^32个不同ID</p>
+</li>
+</ul>
+<img src="/pic/全局唯一ID.png" style="zoom: 80%;" />
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RedisIdWorker</span> &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 开始时间戳</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">long</span> <span class="variable">BEGIN_TIMESTAMP</span> <span class="operator">=</span> <span class="number">1640995200L</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 序列号的位数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">COUNT_BITS</span> <span class="operator">=</span> <span class="number">32</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> StringRedisTemplate stringRedisTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">long</span> <span class="title function_">nextId</span><span class="params">(String keyPrefix)</span> &#123;</span><br><span class="line">        <span class="comment">// 1.生成时间戳</span></span><br><span class="line">        <span class="type">LocalDateTime</span> <span class="variable">now</span> <span class="operator">=</span> LocalDateTime.now();</span><br><span class="line">        <span class="type">long</span> <span class="variable">nowSecond</span> <span class="operator">=</span> now.toEpochSecond(ZoneOffset.UTC);</span><br><span class="line">        <span class="type">long</span> <span class="variable">timestamp</span> <span class="operator">=</span> nowSecond - BEGIN_TIMESTAMP;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2.生成序列号</span></span><br><span class="line">        <span class="comment">// 2.1.获取当前日期，精确到天</span></span><br><span class="line">        <span class="comment">// 这里给keyPrefix拼上日期是为了防止数据过多，32位的序列号不够用</span></span><br><span class="line">        <span class="comment">// 这样每天都是一个新的key，既可以限定自增的值，也方便根据日期统计订单</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">date</span> <span class="operator">=</span> now.format(DateTimeFormatter.ofPattern(<span class="string">&quot;yyyy:MM:dd&quot;</span>));</span><br><span class="line">        <span class="comment">// 2.2.自增长</span></span><br><span class="line">        <span class="type">long</span> <span class="variable">count</span> <span class="operator">=</span> stringRedisTemplate.opsForValue().increment(<span class="string">&quot;icr:&quot;</span> + keyPrefix + <span class="string">&quot;:&quot;</span> + date);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3.拼接并返回</span></span><br><span class="line">        <span class="keyword">return</span> timestamp &lt;&lt; COUNT_BITS | count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="实现秒杀下单"><a href="#实现秒杀下单" class="headerlink" title="实现秒杀下单"></a>实现秒杀下单</h3><img src="/pic/秒杀下单.png" style="zoom: 80%;" />
+
+
+
+<h3 id="超卖问题"><a href="#超卖问题" class="headerlink" title="超卖问题"></a>超卖问题</h3><p>超卖问题是典型的多线程安全问题</p>
+<img src="/pic/超卖问题.png" style="zoom: 67%;" />
+
+<p>针对这一问题的常见解决方案就是加锁：而对于加锁，我们通常有两种解决方案</p>
+<h4 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h4><p>在操作数据前先获取锁，保证线程串行执行。</p>
+<p>实现对于数据的串行化执行，比如syn，和lock都是悲观锁的代表，同时，悲观锁中又可以再细分为公平锁，非公平锁，可重入锁，等等</p>
+<h4 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h4><p>只在<strong>更新数据时</strong>判断有没有其他线程对数据做了修改，如果没有修改则是安全的，去做更新数据操作；如果修改了则发送了安全问题，可以重试或异常。</p>
+<p>关键在于<strong>判断数据是否被修改</strong>。</p>
+<ul>
+<li>版本号法</li>
+</ul>
+<img src="/pic/版本号法.png" style="zoom: 67%;" />
+
+<ul>
+<li><p>CAS (比较与交换)</p>
+<ul>
+<li>把值取出来修改，在写回去之前比较最新的值和取出来的值，如果一样，说明中间没有别的线程修改，可以安全修改；如果不一样说明被别的线程修改过了，需要重新取最新值比较和修改。</li>
+</ul>
+<img src="/pic/CAS.png" alt="image-20240304193814818" style="zoom: 80%;" />
+
+<p>按照上面的逻辑修改代码</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="variable">success</span> <span class="operator">=</span> seckillVoucherService.update()</span><br><span class="line">            .setSql(<span class="string">&quot;stock= stock -1&quot;</span>) <span class="comment">//set stock = stock -1</span></span><br><span class="line">            .eq(<span class="string">&quot;voucher_id&quot;</span>, voucherId).eq(<span class="string">&quot;stock&quot;</span>,voucher.getStock()).update(); <span class="comment">//where id = ？ and stock = ?</span></span><br></pre></td></tr></table></figure>
+
+<p>但结果是<strong>即使有库存，也会下单失败</strong>。失败的原因在于：在使用乐观锁过程中假设100个线程同时都拿到了100的库存，然后大家一起去进行扣减，但是100个人中只有1个人能扣减成功，其他的人在处理时，他们在扣减时，库存已经被修改过了，所以此时很多线程都会失败。</p>
+<p>但其实对于业务而言，我们只关心库存是否&lt;0，只要还有库存就可以下单。</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">boolean</span> <span class="variable">success</span> <span class="operator">=</span> seckillVoucherService.update()</span><br><span class="line">            .setSql(<span class="string">&quot;stock= stock -1&quot;</span>)</span><br><span class="line">            .eq(<span class="string">&quot;voucher_id&quot;</span>, voucherId).update().gt(<span class="string">&quot;stock&quot;</span>,<span class="number">0</span>); <span class="comment">//where id = ? and stock &gt; 0</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="一人一单"><a href="#一人一单" class="headerlink" title="一人一单"></a>一人一单</h3><h3 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h3>]]></content>
+      <categories>
+        <category>Java</category>
+      </categories>
+      <tags>
+        <tag>Java</tag>
       </tags>
   </entry>
 </search>
