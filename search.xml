@@ -15934,7 +15934,7 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <li>避免额外的检查开销，AOF记录日志不会对命令进行语法检查</li>
 <li>执行命令完之后再记录，不会阻塞当前命令的执行。</li>
 </ul>
-<p>风险是</p>
+<p>风险</p>
 <ul>
 <li>刚执行完命令就宕机，导致对应的修改丢失</li>
 <li>可能阻塞后续其他命令的执行 (AOF记录日志在主线程进行)</li>
@@ -16038,7 +16038,7 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <li>返回结果</li>
 </ul>
 <p>耗费时间之和称为 <strong>Round Trip Time (RTT,往返时间)</strong> ，也就是<strong>数据在网络上传输的时间</strong>。</p>
-<h4 id="批量操作"><a href="#批量操作" class="headerlink" title="批量操作"></a>批量操作</h4><p>使用批量操作可以减少网络传输次数，进而有效减小网络开销，大幅减少 RTT。Redis 中有一些原生支持批量操作的命令</p>
+<h4 id="原生批量操作"><a href="#原生批量操作" class="headerlink" title="原生批量操作"></a>原生批量操作</h4><p>使用批量操作可以减少网络传输次数，进而有效减小网络开销，大幅减少 RTT。Redis 中有一些原生支持批量操作的命令</p>
 <ul>
 <li><p><code>MGET</code>(获取一个或多个指定 key 的值)、<code>MSET</code>(设置一个或多个指定 key 的值)</p>
 </li>
@@ -16054,7 +16054,103 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <li><p>原生批量操作命令是 Redis 服务端支持实现的，而 pipeline 需要服务端和客户端的共同实现</p>
 </li>
 </ul>
-<h4 id="Lua脚本"><a href="#Lua脚本" class="headerlink" title="Lua脚本"></a>Lua脚本</h4><h3 id="BigKey"><a href="#BigKey" class="headerlink" title="BigKey"></a>BigKey</h3><h3 id="hotKey"><a href="#hotKey" class="headerlink" title="hotKey"></a>hotKey</h3>]]></content>
+<h4 id="Lua脚本"><a href="#Lua脚本" class="headerlink" title="Lua脚本"></a>Lua脚本</h4><h3 id="BigKey"><a href="#BigKey" class="headerlink" title="BigKey"></a>BigKey</h3><p>如果一个 key 对应的 <strong>value 所占用的内存比较大</strong>，那这个 key 就可以看作是 bigkey</p>
+<p><img src="/pic/bigkey%E5%88%A4%E5%AE%9A%E6%A0%87%E5%87%86.png" alt="bigkey 判定标准"></p>
+<h4 id="产生原因"><a href="#产生原因" class="headerlink" title="产生原因"></a>产生原因</h4><ul>
+<li>程序设计不当，比如直接使用 String 类型存储较大的文件对应的二进制数据。</li>
+<li>对于业务的数据规模考虑不周到，比如使用集合类型的时候没有考虑到数据量的快速增长。</li>
+<li>未及时清理垃圾数据，比如哈希中冗余了大量的无用键值对。</li>
+</ul>
+<h4 id="危害"><a href="#危害" class="headerlink" title="危害"></a>危害</h4><ul>
+<li><p>客户端超时阻塞：由于 Redis 执行命令是单线程处理，然后在操作大 key 时会比较耗时，那么就会阻塞 Redis，从客户端这一视角看，就是很久很久都没有响应。</p>
+</li>
+<li><p>网络阻塞：每次获取大 key 产生的网络流量较大，如果一个 key 的大小是 1 MB，每秒访问量为 1000，那么每秒会产生 1000MB 的流量，这对于普通千兆网卡的服务器来说是灾难性的。</p>
+</li>
+<li><p>工作线程阻塞：如果使用 del 删除大 key 时，会阻塞工作线程，这样就没办法处理后续的命令</p>
+</li>
+</ul>
+<h4 id="发现bigkey"><a href="#发现bigkey" class="headerlink" title="发现bigkey"></a>发现bigkey</h4><ul>
+<li>使用 Redis 自带的 <code>--bigkeys</code> 参数来查找。</li>
+<li>使用 Redis 自带的 SCAN 命令</li>
+<li>借助公有云的 Redis 分析服务</li>
+</ul>
+<h4 id="处理"><a href="#处理" class="headerlink" title="处理"></a>处理</h4><ul>
+<li><p><strong>分割 bigkey</strong>：将一个 bigkey 分割为多个小 key。例如，将一个含有上万字段数量的 Hash 按照一定策略（比如二次哈希）拆分为多个 Hash。</p>
+</li>
+<li><p><strong>手动清理</strong>：Redis 4.0+ 可以使用 <code>UNLINK</code> 命令来异步删除一个或多个指定的 key。Redis 4.0 以下可以考虑使用 <code>SCAN</code> 命令结合 <code>DEL</code> 命令来分批次删除。</p>
+</li>
+<li><p><strong>采用合适的数据结构</strong>：例如，文件二进制数据不使用 String 保存、使用 HyperLogLog 统计页面 UV、Bitmap 保存状态信息（0&#x2F;1）。</p>
+</li>
+<li><p><strong>开启 lazy-free（惰性删除&#x2F;延迟释放）</strong>：lazy-free 特性是 Redis 4.0 开始引入的，指的是让 Redis 采用异步方式延迟释放 key 使用的内存，将该操作交给单独的子线程处理，避免阻塞主线程。</p>
+</li>
+</ul>
+<h3 id="hotKey"><a href="#hotKey" class="headerlink" title="hotKey"></a>hotKey</h3><p>hotkey 出现的原因主要是某个热点数据访问量暴增，如重大的热搜事件、参与秒杀的商品。</p>
+<h4 id="危害-1"><a href="#危害-1" class="headerlink" title="危害"></a>危害</h4><p>处理 hotkey 会占用大量的 CPU 和带宽，可能会影响 Redis 实例对其他请求的正常处理。会引发缓存击穿问题。</p>
+<h4 id="发现"><a href="#发现" class="headerlink" title="发现"></a>发现</h4><ul>
+<li><p>使用 Redis 自带的 <code>--hotkeys</code> 参数来查找。</p>
+</li>
+<li><p>使用<code>MONITOR</code> 命令</p>
+<ul>
+<li>实时查看redis所有操作，对性能影响很大，禁止长时间开启。</li>
+</ul>
+</li>
+<li><p>根据业务情况提前预估。</p>
+</li>
+</ul>
+<h4 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h4><ul>
+<li>读写分离<ul>
+<li>主节点处理写请求，从节点处理读请求</li>
+</ul>
+</li>
+<li>使用redis cluster<ul>
+<li>将热点数据分散存储在多个redis节点上</li>
+</ul>
+</li>
+<li>二级缓存<ul>
+<li>hotkey 采用二级缓存的方式进行处理，将 hotkey 存放一份到 JVM 本地内存中</li>
+</ul>
+</li>
+</ul>
+<h3 id="慢查询"><a href="#慢查询" class="headerlink" title="慢查询"></a>慢查询</h3><h4 id="定位慢查询命令"><a href="#定位慢查询命令" class="headerlink" title="定位慢查询命令"></a>定位慢查询命令</h4><p>在 <code>redis.conf</code> 文件中，我们可以使用 <code>slowlog-log-slower-than</code> 参数设置耗时命令的阈值，并使用 <code>slowlog-max-len</code> 参数设置耗时命令的最大记录条数。redis服务器会把执行时间超过阈值的命令记录在<strong>慢查询日志</strong>中。</p>
+<p>使用<code>SLOWLOG GET</code>命令获取日志内容</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">127.0.0.1:6379&gt; SLOWLOG GET      <span class="comment">#慢日志查询</span></span><br><span class="line">   1) (<span class="built_in">integer</span>) 5                <span class="comment">#唯一渐进的日志标识符。</span></span><br><span class="line">   2) (<span class="built_in">integer</span>) 1684326682       <span class="comment">#处理记录命令的 Unix 时间戳</span></span><br><span class="line">   3) (<span class="built_in">integer</span>) 12000            <span class="comment">#执行所需的时间量，以微秒为单位</span></span><br><span class="line">   4) 1) <span class="string">&quot;KEYS&quot;</span>                  <span class="comment">#组成命令参数的数组</span></span><br><span class="line">      2) <span class="string">&quot;*&quot;</span></span><br><span class="line">   5) <span class="string">&quot;172.17.0.1:61152&quot;</span>         <span class="comment">#客户端 IP 地址和端口</span></span><br><span class="line">   6) <span class="string">&quot;&quot;</span>                         <span class="comment">#客户端名称</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Redis内存碎片"><a href="#Redis内存碎片" class="headerlink" title="Redis内存碎片"></a>Redis内存碎片</h2><h3 id="产生原因-1"><a href="#产生原因-1" class="headerlink" title="产生原因"></a>产生原因</h3><ul>
+<li>Redis 存储数据时向操作系统<strong>申请</strong>的内存空间可能会<strong>大于</strong>数据<strong>实际需要</strong>的存储空间。</li>
+<li>频繁修改 Redis 中的数据也会产生内存碎片。</li>
+</ul>
+<h3 id="查看内存碎片"><a href="#查看内存碎片" class="headerlink" title="查看内存碎片"></a>查看内存碎片</h3><p>使用 <code>info memory</code> 命令即可查看 Redis 内存相关的信息</p>
+<p>Redis 内存碎片率的计算公式：<code>mem_fragmentation_ratio</code> （内存碎片率）&#x3D; <code>used_memory_rss</code> (操作系统实际分配给 Redis 的物理内存空间大小)&#x2F; <code>used_memory</code>(Redis 内存分配器为了存储数据实际申请使用的内存空间大小)</p>
+<p>通常<code>mem_fragmentation_ratio &gt; 1.5</code> 的话才需要清理内存碎片。</p>
+<h3 id="清理碎片"><a href="#清理碎片" class="headerlink" title="清理碎片"></a>清理碎片</h3><p>通过 <code>config set</code> 命令将 <code>activedefrag</code> 配置项设置为 <code>yes</code> 即可。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">config <span class="built_in">set</span> activedefrag <span class="built_in">yes</span></span><br></pre></td></tr></table></figure>
+
+<p>具体什么时候清理需要通过下面两个参数控制：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 内存碎片占用空间达到 500mb 的时候开始清理</span></span><br><span class="line">config <span class="built_in">set</span> active-defrag-ignore-bytes 500mb</span><br><span class="line"><span class="comment"># 内存碎片率大于 1.5 的时候开始清理</span></span><br><span class="line">config <span class="built_in">set</span> active-defrag-threshold-lower 50</span><br></pre></td></tr></table></figure>
+
+<p>通过 Redis 自动内存碎片清理机制可能会对 Redis 的性能产生影响，我们可以通过下面两个参数来减少对 Redis 性能的影响：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 内存碎片清理所占用 CPU 时间的比例不低于 20%</span></span><br><span class="line">config <span class="built_in">set</span> active-defrag-cycle-min 20</span><br><span class="line"><span class="comment"># 内存碎片清理所占用 CPU 时间的比例不高于 50%</span></span><br><span class="line">config <span class="built_in">set</span> active-defrag-cycle-max 50</span><br></pre></td></tr></table></figure>
+
+<p>另外，重启节点可以做到内存碎片重新整理。</p>
+<h2 id="常见阻塞原因"><a href="#常见阻塞原因" class="headerlink" title="常见阻塞原因"></a>常见阻塞原因</h2><ul>
+<li>O(n)命令</li>
+<li>RDB快照</li>
+<li>AOF<ul>
+<li>日志记录</li>
+<li>刷盘</li>
+<li>重写</li>
+</ul>
+</li>
+<li>bigkey<ul>
+<li>操作时</li>
+<li>查找时</li>
+<li>删除时</li>
+</ul>
+</li>
+<li>CPU竞争</li>
+<li>网络问题</li>
+</ul>
+]]></content>
       <categories>
         <category>八股</category>
       </categories>
