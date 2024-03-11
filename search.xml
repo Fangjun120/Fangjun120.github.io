@@ -15283,7 +15283,8 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <li>key  value结构</li>
 </ul>
 <h3 id="基于Redis"><a href="#基于Redis" class="headerlink" title="基于Redis"></a>基于Redis</h3><p>用redis替代session</p>
-<p><img src="/pic/基于redis登录1.png" alt="image-20240303140002696" style="zoom: 67%;" /><img src="/C:/Users/19742/AppData/Roaming/Typora/typora-user-images/image-20240303140100964.png" alt="image-20240303140100964"></p>
+<img src="/pic/基于redis登录1.png" alt="image-20240303140002696" style="zoom: 67%;" />
+
 <p>首先要注意Session是<strong>独立</strong>的，不同浏览器发请求是不同的Session，天然就把不同用户隔离开了。因此Session中的key可以取通用字符串，比如code等。</p>
 <p>但是redis的空间是<strong>共享</strong>的，不同用户的信息存储在一个地方，如果每个用户都取一样的key，会存在覆盖问题导致信息丢失。因此在<strong>存储验证码</strong>时，可以取手机号作为key。这样设计将来要验证手机号和验证码时，也无需传入额外的信息，把手机号作为key就可以直接取到验证码。</p>
 <ul>
