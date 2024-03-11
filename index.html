@@ -184,6 +184,143 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2024/03/09/11-00-37/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fang Jun">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="eidolon的小窝">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/03/09/11-00-37/" class="post-title-link" itemprop="url">java并发</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-03-09 11:00:37 / 修改时间：20:27:32" itemprop="dateCreated datePublished" datetime="2024-03-09T11:00:37+08:00">2024-03-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%85%AB%E8%82%A1/" itemprop="url" rel="index"><span itemprop="name">八股</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="进程和线程"><a href="#进程和线程" class="headerlink" title="进程和线程"></a>进程和线程</h2><p><strong>进程是资源分配的基本单位，线程是cpu调度的基本单位</strong>。</p>
+<p>同类的多个线程共享进程的<strong>堆</strong>和<strong>方法区</strong>资源，但每个线程有自己的<strong>程序计数器</strong>、<strong>虚拟机栈</strong>和<strong>本地方法栈</strong>，所以系统在产生一个线程，或是在各个线程之间作切换工作时，负担要比进程小得多。</p>
+<p><strong>一个 Java 程序的运行是 main 线程和多个其他线程同时运行</strong></p>
+<p>⭐程序计数器为什么私有？</p>
+<p>程序计数器的用于记录指令执行的位置和地址，私有是为了线程切换后能恢复到正确的执行位置，</p>
+<p>⭐虚拟机栈和本地方法栈为什么私有？</p>
+<p>为了<strong>保证线程中的局部变量不被别的线程访问到</strong></p>
+<h3 id="用户线程和内核线程"><a href="#用户线程和内核线程" class="headerlink" title="用户线程和内核线程"></a>用户线程和内核线程</h3><p>用户线程是由<strong>用户空间程序</strong>管理和调度的线程，运行在用户空间（专门给应用程序使用）。</p>
+<p>内核线程是由<strong>操作系统内核</strong>管理和调度的线程，运行在内核空间（只有内核程序可以访问）。</p>
+<p><strong>现在的 Java 线程的本质其实就是操作系统的线程</strong>。</p>
+<h3 id="线程模型"><a href="#线程模型" class="headerlink" title="线程模型"></a>线程模型</h3><p>线程模型是用户线程和内核线程之间的关联方式，常见的有三种：</p>
+<ul>
+<li>一对一（一个用户线程对应一个内核线程）</li>
+<li>多对一（多个用户线程映射到一个内核线程）</li>
+<li>多对多（多个用户线程映射到多个内核线程）</li>
+</ul>
+<p>在 Windows 和 Linux 等主流操作系统中，Java 线程采用的是一对一的线程模型</p>
+<h3 id="java线程生命周期"><a href="#java线程生命周期" class="headerlink" title="java线程生命周期"></a>java线程生命周期</h3><p>NEW: 初始状态，线程被创建出来但没有被调用 <code>start()</code> 。</p>
+<p>RUNNABLE: 运行状态，线程被调用了 <code>start()</code>等待运行的状态。</p>
+<p>BLOCKED：阻塞状态，需要等待锁释放。</p>
+<p>WAITING：等待状态，表示该线程需要等待其他线程做出一些特定动作（通知或中断）。</p>
+<p>TIME_WAITING：超时等待状态，可以在指定的时间后自行返回而不是像 WAITING 那样一直等待。</p>
+<p>TERMINATED：终止状态，表示该线程已经运行完毕</p>
+<img src="/pic/java线程状态转换图.png" alt="Java 线程状态变迁图" style="zoom: 80%;" />
+
+<p>在java中，没有区分RUNNING和READY</p>
+<h3 id="线程上下文切换"><a href="#线程上下文切换" class="headerlink" title="线程上下文切换"></a>线程上下文切换</h3><p>当出现如下情况的时候，线程会从占用 CPU 状态中退出。</p>
+<ul>
+<li><p>主动让出 CPU，比如调用了 <code>sleep()</code>, <code>wait()</code> 等。</p>
+</li>
+<li><p>时间片用完，因为操作系统要防止一个线程或者进程长时间占用 CPU 导致其他线程或者进程饿死。</p>
+</li>
+<li><p>调用了阻塞类型的系统中断，比如请求 IO，线程被阻塞。</p>
+</li>
+<li><p>被终止或结束运行</p>
+</li>
+</ul>
+<p>这其中前三种都会发生线程切换，线程切换意味着需要保存当前线程的上下文，留待线程下次占用 CPU 的时候恢复现场。并加载下一个将要占用 CPU 的线程上下文。这就是所谓的 <strong>上下文切换</strong>。</p>
+<h3 id="线程死锁"><a href="#线程死锁" class="headerlink" title="线程死锁"></a>线程死锁</h3><p>多个线程<strong>同时被阻塞</strong>，它们中的一个或者全部都在<strong>等待某个资源</strong>被释放。由于线程被无限期地阻塞，因此程序不可能正常终止。（占有且等待）</p>
+<h4 id="必要条件"><a href="#必要条件" class="headerlink" title="必要条件"></a>必要条件</h4><ul>
+<li>互斥<ul>
+<li>资源只能由一个线程占用</li>
+</ul>
+</li>
+<li>请求与保持<ul>
+<li>线程占有资源的同时申请资源</li>
+</ul>
+</li>
+<li>不可剥夺<ul>
+<li>线程已获得的资源在未使用完之前不能强行剥夺，只有自己使用完才释放</li>
+</ul>
+</li>
+<li>循环等待<ul>
+<li>若干线程间形成头尾相接的循环等待资源关系</li>
+</ul>
+</li>
+</ul>
+<h3 id="sleep-vs-wait"><a href="#sleep-vs-wait" class="headerlink" title="sleep vs wait"></a>sleep vs wait</h3><p>两者都可以暂停线程的执行。</p>
+<ul>
+<li><strong><code>sleep()</code> 方法没有释放锁，而 <code>wait()</code> 方法释放了锁</strong> 。</li>
+<li><code>wait()</code> 通常被用于线程间交互&#x2F;通信，<code>sleep()</code>通常被用于暂停执行。</li>
+<li><code>wait()</code> 方法被调用后，线程不会自动苏醒，需要别的线程调用同一个对象上的 <code>notify()</code>或者 <code>notifyAll()</code> 方法。<code>sleep()</code>方法执行完成后，线程会自动苏醒，或者也可以使用 <code>wait(long timeout)</code> 超时后线程会自动苏醒。</li>
+<li><code>sleep()</code> 是 <code>Thread</code> 类的静态本地方法，<code>wait()</code> 则是 <code>Object</code> 类的本地方法。<ul>
+<li>wait是让获得对象锁的线程实现等待，会自动释放锁，既然要释放当前线程占有的对象锁，自然要操作对应的对象(Object)，而不是当前的线程(Thread)</li>
+</ul>
+</li>
+</ul>
+<p>⭐可以直接调用Thread 类的 run 方法吗？</p>
+<p>调用 <code>start()</code>方法，会启动一个线程并使线程进入了就绪状态，当分配到时间片后就可以开始运行了。<code>start()</code> 会执行线程的相应准备工作，然后自动执行 <code>run()</code> 方法的内容，这是真正的多线程工作。</p>
+<p> 但是，直接执行 <code>run()</code> 方法，会把 <code>run()</code> 方法当成一个 main 线程下的普通方法去执行，并不会在某个线程中执行它，所以这并不是多线程工作。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2024/03/06/11-00-37/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -296,7 +433,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-07 17:51:53" itemprop="dateModified" datetime="2024-03-07T17:51:53+08:00">2024-03-07</time>
+                <time title="修改时间：2024-03-09 15:20:06" itemprop="dateModified" datetime="2024-03-09T15:20:06+08:00">2024-03-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -925,87 +1062,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2023/11/12/11-00-37/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Fang Jun">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="eidolon的小窝">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/11/12/11-00-37/" class="post-title-link" itemprop="url">java-Web案例</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-11-12 11:00:37" itemprop="dateCreated datePublished" datetime="2023-11-12T11:00:37+08:00">2023-11-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-19 14:22:37" itemprop="dateModified" datetime="2024-01-19T14:22:37+08:00">2024-01-19</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><p>Springboot中的请求和响应 用于后端与前端的交互，Mybatis为三层架构中的Dao持久层提供了更方便的管理，在mybatis中一般称为mapper。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/11/12/11-00-37/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1075,7 +1131,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">95</span>
+          <span class="site-state-item-count">96</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
