@@ -67,7 +67,7 @@
 <meta property="og:image" content="https://fangjun120.github.io/pic/GEO%E5%88%86%E7%BB%84.png">
 <meta property="og:image" content="https://fangjun120.github.io/pic/UV%E7%BB%9F%E8%AE%A1.png">
 <meta property="article:published_time" content="2024-03-02T03:00:37.000Z">
-<meta property="article:modified_time" content="2024-03-11T08:19:15.381Z">
+<meta property="article:modified_time" content="2024-03-13T07:58:44.860Z">
 <meta property="article:author" content="Fang Jun">
 <meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
@@ -260,7 +260,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-11 16:19:15" itemprop="dateModified" datetime="2024-03-11T16:19:15+08:00">2024-03-11</time>
+                <time title="修改时间：2024-03-13 15:58:44" itemprop="dateModified" datetime="2024-03-13T15:58:44+08:00">2024-03-13</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -410,10 +410,10 @@
 
 
 
-<h2 id="秒杀"><a href="#秒杀" class="headerlink" title="秒杀"></a>秒杀</h2><h3 id="全局唯一ID"><a href="#全局唯一ID" class="headerlink" title="全局唯一ID"></a>全局唯一ID</h3><p>数据库的自增ID有几个缺点</p>
+<h2 id="秒杀"><a href="#秒杀" class="headerlink" title="秒杀"></a>秒杀</h2><h3 id="全局唯一ID"><a href="#全局唯一ID" class="headerlink" title="全局唯一ID"></a>全局唯一ID</h3><p>用户抢购后会生成订单，保存到订单表中，如果订单的id用数据库的自增ID，有几个缺点</p>
 <ul>
-<li>id规律明显，会暴露一些信息</li>
-<li>受表单数据量的限制</li>
+<li>id规律明显，会暴露一些信息(卖了多少单)</li>
+<li>受表单数据量的限制，当数据量过大以后要分库分表，分表后从逻辑上还是同一张表，id不能一样</li>
 </ul>
 <p>全局ID生成器是一种在分布式系统下用于生成<strong>全局唯一</strong>ID的工具，需要满足：</p>
 <ul>
@@ -429,21 +429,20 @@
 <li>redis自增</li>
 <li>雪花算法</li>
 </ul>
-<p>这里使用redis自增的方法</p>
+<p>这里使用redis自增的方法，redis生成自增id也需要传递key值</p>
 <ul>
 <li><p>不直接使用Redis自增的数值，而是拼接一些其它信息</p>
 </li>
 <li><p>ID的组成部分：符号位：1bit，永远为0</p>
-<p>时间戳：31bit，以秒为单位，可以使用69年</p>
-<p>序列号：32bit，秒内的计数器，支持每秒产生2^32个不同ID</p>
+<p>时间戳：31bit，以<strong>秒</strong>为单位，可以使用69年，自己计算</p>
+<p>序列号：32bit，秒内的计数器，支持每秒产生2^32个不同ID，使用redis自增，key值为业务+日期。</p>
 </li>
 </ul>
 <img src="/pic/全局唯一ID.png" style="zoom: 80%;" />
 
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RedisIdWorker</span> &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 开始时间戳</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">long</span> <span class="variable">BEGIN_TIMESTAMP</span> <span class="operator">=</span> <span class="number">1640995200L</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 序列号的位数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">COUNT_BITS</span> <span class="operator">=</span> <span class="number">32</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> StringRedisTemplate stringRedisTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="type">long</span> <span class="title function_">nextId</span><span class="params">(String keyPrefix)</span> &#123;</span><br><span class="line">        <span class="comment">// 1.生成时间戳</span></span><br><span class="line">        <span class="type">LocalDateTime</span> <span class="variable">now</span> <span class="operator">=</span> LocalDateTime.now();</span><br><span class="line">        <span class="type">long</span> <span class="variable">nowSecond</span> <span class="operator">=</span> now.toEpochSecond(ZoneOffset.UTC);</span><br><span class="line">        <span class="type">long</span> <span class="variable">timestamp</span> <span class="operator">=</span> nowSecond - BEGIN_TIMESTAMP;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2.生成序列号</span></span><br><span class="line">        <span class="comment">// 2.1.获取当前日期，精确到天</span></span><br><span class="line">        <span class="comment">// 这里给keyPrefix拼上日期是为了防止数据过多，32位的序列号不够用</span></span><br><span class="line">        <span class="comment">// 这样每天都是一个新的key，既可以限定自增的值，也方便根据日期统计订单</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">date</span> <span class="operator">=</span> now.format(DateTimeFormatter.ofPattern(<span class="string">&quot;yyyy:MM:dd&quot;</span>));</span><br><span class="line">        <span class="comment">// 2.2.自增长</span></span><br><span class="line">        <span class="type">long</span> <span class="variable">count</span> <span class="operator">=</span> stringRedisTemplate.opsForValue().increment(<span class="string">&quot;icr:&quot;</span> + keyPrefix + <span class="string">&quot;:&quot;</span> + date);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3.拼接并返回</span></span><br><span class="line">        <span class="keyword">return</span> timestamp &lt;&lt; COUNT_BITS | count;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-
+<p>redis中会存储string类型的数据，key是之前指定的key，value是自增的ID。因此方便根据日期统计每天的订单。</p>
 <h3 id="实现秒杀下单"><a href="#实现秒杀下单" class="headerlink" title="实现秒杀下单"></a>实现秒杀下单</h3><img src="/pic/秒杀下单.png" style="zoom: 80%;" />
 
 
