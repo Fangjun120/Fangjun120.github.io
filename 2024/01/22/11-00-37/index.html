@@ -40,7 +40,7 @@
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E8%BF%87%E7%A8%8B3.png">
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E8%BF%87%E7%A8%8B4.png">
 <meta property="article:published_time" content="2024-01-22T03:00:37.000Z">
-<meta property="article:modified_time" content="2024-03-05T13:25:50.976Z">
+<meta property="article:modified_time" content="2024-03-18T11:09:32.536Z">
 <meta property="article:author" content="Fang Jun">
 <meta property="article:tag" content="八股">
 <meta name="twitter:card" content="summary">
@@ -233,7 +233,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-05 21:25:50" itemprop="dateModified" datetime="2024-03-05T21:25:50+08:00">2024-03-05</time>
+                <time title="修改时间：2024-03-18 19:09:32" itemprop="dateModified" datetime="2024-03-18T19:09:32+08:00">2024-03-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -445,8 +445,8 @@
 <p>所以在1.8中，改头插法为尾插法，保持元素的顺序不变，避免死循环问题的产生。</p>
 <p>⭐ 为什么HashMap可以存null，HashTable和ConcurrentHashMap不行？</p>
 <p>在计算hash值时，HashMap会单独判断是否为null，是则返回0；而HashTable不会判断，如果为null，计算hash值时会抛出空指针异常。</p>
-<h2 id="ConcurrentHashMap"><a href="#ConcurrentHashMap" class="headerlink" title="ConcurrentHashMap"></a>ConcurrentHashMap</h2><p>底层用hash表实现，1.7之前是数组+链表+分段，1.8开始是数组+链表+红黑树。</p>
-<p>是线程安全的HashMap，线程安全主要通过对Node节点(jdk1.8) 或segement(jdk1.7) 加锁来保证数据更新的安全性，	</p>
+<h2 id="ConcurrentHashMap"><a href="#ConcurrentHashMap" class="headerlink" title="ConcurrentHashMap"></a>ConcurrentHashMap</h2><p>底层用hash表实现，1.7之前是分段的数组+链表，1.8开始是数组+链表+红黑树。</p>
+<p>是线程安全的HashMap，线程安全主要通过对Node节点(jdk1.8) 或segement(jdk1.7) 加锁来保证数据更新的安全性</p>
 <h2 id="扩展知识"><a href="#扩展知识" class="headerlink" title="扩展知识"></a>扩展知识</h2><h3 id="transient"><a href="#transient" class="headerlink" title="transient"></a>transient</h3><p>ArrayList源码中，元素存放在elementData变量，这个变量被transient修饰，用来表示一个域不是该对象序行化的一部分，当一个对象被序行化的时候，transient修饰的变量的值是不包括在序行化的表示中的。</p>
 <p>但是如果不序列化，那反序列化后的ArrayList岂不是丢失了原先的元素？</p>
 <p>在ArrayList中有两个方法</p>
@@ -455,7 +455,7 @@
 <p>ArrayList在序列化的时候会调用writeObject，直接将size和element写入ObjectOutputStream；反序列化时调用readObject，从ObjectInputStream获取size和element，再恢复到elementData。</p>
 <p>为什么不直接用elementData来序列化，而采用上诉的方式来实现序列化呢？原因在于elementData是一个缓存数组，它通常会预留一些容量，等容量不足时再扩充容量，那么有些空间可能就没有实际存储元素，采用上诉的方式来实现序列化时，就可以保证只序列化实际存储的那些元素，而不是整个数组，从而节省空间和时间。</p>
 <h3 id="fail-fast"><a href="#fail-fast" class="headerlink" title="fail-fast"></a>fail-fast</h3><p>fail-fast是一种错误检测机制，一旦检测到可能发生错误，就立马抛出异常，程序不继续往下执行。</p>
-<p>在阿里巴巴开发手册中写道，**不要在foreach或增强for循环里对集合元素进行<code>remove/add</code>，增删需要使用Iterator。</p>
+<p>在阿里巴巴开发手册中写道，不要在foreach或增强for循环里对集合元素进行<code>remove/add</code>，增删需要使用Iterator。</p>
 <p>其实foreach或增强for循环语法<strong>底层还是依赖了Iterator</strong>去做遍历，但是增删元素时使用的是自己的方法。</p>
 <p>以ArrayList为例，<code>modCount</code>是一个成员遍历，代表集合实际被修改的次数；<code>expectedModCount</code>是ArrayList中的一个内部类<code>Iterator</code>的成员遍历，代表迭代器预期该集合被修改的次数。在增删元素时，只修改了<code>modCount</code>，这就<strong>导致<code>modCount</code>和<code>expectedModCount</code>不相等</strong>。每次iterator遍历会调用next方法，如果不相等，会抛出<code>ConcurrentModificationException</code>异常。</p>
 <h4 id="替代方案"><a href="#替代方案" class="headerlink" title="替代方案"></a>替代方案</h4><ul>
@@ -560,7 +560,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">98</span>
+          <span class="site-state-item-count">100</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

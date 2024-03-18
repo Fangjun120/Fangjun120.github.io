@@ -40,11 +40,11 @@
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E4%B8%B2%E8%A1%8C%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8.png">
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E5%B9%B6%E8%A1%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8.png">
 <meta property="og:image" content="https://fangjun120.github.io/pic/CMS%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8.png">
-<meta property="og:image" content="https://fangjun120.github.io/%E5%BC%BA%E5%BC%95%E7%94%A8.png">
+<meta property="og:image" content="https://fangjun120.github.io/pic/%E5%BC%BA%E5%BC%95%E7%94%A8.png">
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E8%BD%AF%E5%BC%95%E7%94%A8.png">
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E5%BC%B1%E5%BC%95%E7%94%A8.png">
 <meta property="article:published_time" content="2024-02-05T03:00:37.000Z">
-<meta property="article:modified_time" content="2024-02-23T07:01:25.720Z">
+<meta property="article:modified_time" content="2024-03-18T12:36:35.844Z">
 <meta property="article:author" content="Fang Jun">
 <meta property="article:tag" content="八股">
 <meta name="twitter:card" content="summary">
@@ -237,7 +237,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-02-23 15:01:25" itemprop="dateModified" datetime="2024-02-23T15:01:25+08:00">2024-02-23</time>
+                <time title="修改时间：2024-03-18 20:36:35" itemprop="dateModified" datetime="2024-03-18T20:36:35+08:00">2024-03-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -272,14 +272,19 @@
 
 <h2 id="jvm组成"><a href="#jvm组成" class="headerlink" title="jvm组成"></a>jvm组成</h2><img src="/pic/jvm组成.png" alt="image-20240203214504562" style="zoom: 67%;" />
 
-<h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><p>程序计数器：线程私有的，因此是线程安全的，每个线程都有自己的程序计数器。内部保存字节码的行号。用于记录<strong>正在执行的字节码指令的地址</strong>。</p>
-<h3 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h3><p>线程共享的区域，保存<strong>对象实例，数组</strong>等，当堆中没有内存空间可以分配，也无法再扩展时，就抛出<code>OutOfMemoryError</code>异常(OOM异常)。</p>
-<p>堆可以被分为年轻代和老年代。</p>
+<p><strong>线程私有的：</strong></p>
 <ul>
-<li>年轻代被划分为三部分，Eden区和两个大小严格相同的Survivor区，根据JVM的策略，在经过几次垃圾收集后，仍存活于Survivor的对象将被移动到老年代区间。</li>
-<li>老年代主要保存生命周期长的对象，一般是一些老的对象</li>
-<li>在jdk1.7中，还有一个永久代，也叫方法区，存储了类信息、静态变量、常量、编译后的代码。而1.8把永久代移除出堆，放在本地内存中成为元空间，为了防止程序后期加载越来越多的类导致堆内存溢出。</li>
+<li>程序计数器</li>
+<li>虚拟机栈</li>
+<li>本地方法栈</li>
 </ul>
+<p><strong>线程共享的：</strong></p>
+<ul>
+<li>堆</li>
+<li>方法区</li>
+<li>直接内存 (非运行时数据区的一部分)</li>
+</ul>
+<h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><p>程序计数器：线程私有的，因此是线程安全的，每个线程都有自己的程序计数器。内部保存字节码的行号。用于记录<strong>正在执行的字节码指令的地址</strong>。</p>
 <h3 id="虚拟机栈"><a href="#虚拟机栈" class="headerlink" title="虚拟机栈"></a>虚拟机栈</h3><ul>
 <li>每个<strong>线程</strong>运行时所需要的内存，称为虚拟机栈，先进后出</li>
 <li>每个栈由多个栈帧（frame）组成，对应着每次方法调用时所占用的内存</li>
@@ -307,18 +312,41 @@
 <li>栈内存是线程私有的；堆内存是共享的</li>
 <li>栈空间不足：StackOverFlowError；堆空间不足：OutOfMemoryError</li>
 </ul>
+<h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><p>和虚拟机栈所发挥的作用非常相似，区别是：<strong>虚拟机栈为虚拟机执行 Java 方法 （也就是字节码）服务，而本地方法栈则为虚拟机使用到的 Native 方法服务。</strong> 在 HotSpot 虚拟机中和 Java 虚拟机栈合二为一。</p>
+<h3 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h3><p>线程共享的区域，保存<strong>对象实例，数组</strong>等，当堆中没有内存空间可以分配，也无法再扩展时，就抛出<code>OutOfMemoryError</code>异常(OOM异常)。</p>
+<p>堆可以被分为年轻代和老年代。</p>
+<ul>
+<li>年轻代被划分为三部分，Eden区和两个大小严格相同的Survivor区，根据JVM的策略，在经过几次垃圾收集后，仍存活于Survivor的对象将被移动到老年代区间。</li>
+<li>老年代主要保存生命周期长的对象，一般是一些老的对象</li>
+<li>在jdk1.7中，还有一个永久代，也叫方法区，存储了类信息、静态变量、常量、编译后的代码。而1.8把永久代移除出堆，放在本地内存中成为元空间，为了防止程序后期加载越来越多的类导致堆内存溢出。</li>
+</ul>
 <h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><p>主要存储类的信息和运行时常量池，各<strong>线程共享</strong>。在虚拟机启动的时候创建，关闭虚拟机时释放。</p>
 <h4 id="常量池"><a href="#常量池" class="headerlink" title="常量池"></a>常量池</h4><p>可以看作是一张表，虚拟机指令根据这张常量表找到要执行的类名、方法名、参数类型、字面量等信息。</p>
 <h4 id="运行时常量池"><a href="#运行时常量池" class="headerlink" title="运行时常量池"></a>运行时常量池</h4><p>常量池是 *.class 文件中的，当该<strong>类被加载</strong>，它的<strong>常量池信息就会放入运行时常量池</strong>，并把里面的<strong>符号地址变为真实地址</strong>。</p>
-<p>⭐什么是直接内存？</p>
-<p>是虚拟机的系统内存，常见于 NIO 操作时，用于<strong>数据缓冲区</strong>，分配回收成本较高，但读写性能高，不受jvm内存回收管理。</p>
+<h3 id="直接内存"><a href="#直接内存" class="headerlink" title="直接内存"></a>直接内存</h3><p>是虚拟机的系统内存，常见于 NIO 操作时，用于<strong>数据缓冲区</strong>，分配回收成本较高，但读写性能高，不受jvm内存回收管理。</p>
 <p>比如在读写文件时，传统IO需要先将磁盘文件读到系统缓冲区，再读到java缓冲区，然后java程序才能读写。</p>
 <img src="/pic/传统IO.png" style="zoom:67%;" />
 
 <p>而NIO会开辟直接内存区，系统可以读，java程序也可以直接读。</p>
 <img src="/pic/NIO.png" style="zoom:67%;" />
 
+<h3 id="NIO、BIO、AIO"><a href="#NIO、BIO、AIO" class="headerlink" title="NIO、BIO、AIO"></a>NIO、BIO、AIO</h3><ul>
+<li><p>NIO是一种基于事件驱动的I&#x2F;O模型，通过使用通道（Channel）和缓冲区（Buffer）来实现非阻塞I&#x2F;O操作。在NIO中，一个线程可以处理多个I&#x2F;O操作，通过选择器（Selector）来监听多个通道的事件，当通道发生事件时，通过事件驱动模式来处理数据。</p>
+</li>
+<li><p>NIO提供了更高的并发性和性能，适用于处理大量的并发连接和高吞吐量的场景，例如网络服务器、聊天室等。</p>
+</li>
+<li><p>BIO是最传统的I&#x2F;O模型，也称为同步阻塞I&#x2F;O模型。在BIO中，每个I&#x2F;O操作都会阻塞当前线程，直到操作完成才会返回结果。这意味着当有大量的并发请求时，每个请求都需要创建一个新的线程来处理，会导致线程数量的急剧增加，从而降低了系统的性能和吞吐量。</p>
+</li>
+<li><p>BIO适用于连接数较少、并发量不高的情况，例如传统的Socket通信，简单的客户端-服务器应用等。</p>
+</li>
+<li><p>AIO是一种更高级别的I&#x2F;O模型，也称为异步非阻塞I&#x2F;O模型。在AIO中，I&#x2F;O操作是异步执行的，即操作被提交后会立即返回，不会阻塞当前线程，当操作完成时会通知应用程序。</p>
+</li>
+<li><p>AIO适用于处理大量的并发连接和高并发I&#x2F;O操作的场景，例如高性能的网络服务器、文件IO等，但是AIO通常需要操作系统的支持，因此在某些平台上可能不太容易实现。</p>
+</li>
+</ul>
 <h2 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h2><p>类加载器（ClassLoader）的主要作用就是将<strong>字节码文件加载到JVM中</strong>，从而让Java程序能够启动起来。</p>
+<p>JVM 启动的时候，并不会一次性加载所有的类，而是根据需要去动态加载。也就是说，大部分类在具体用到的时候才会去加载，这样对内存更加友好。</p>
+<p>对于已经加载的类会被放在 <code>ClassLoader</code> 中。在类加载的时候，系统会首先判断当前类是否被加载过。已经被加载的类会直接返回，否则才会尝试加载。也就是说，对于一个类加载器来说，<strong>相同二进制名称的类只会被加载一次</strong>。</p>
 <h3 id="分类"><a href="#分类" class="headerlink" title="分类"></a>分类</h3><ul>
 <li><p><strong>启动类加载器(BootStrap ClassLoader)：</strong></p>
 <p>该类并不继承ClassLoader类，其是由C++编写实现。用于加载<strong>JAVA_HOME&#x2F;jre&#x2F;lib</strong>目录下的类库。</p>
@@ -345,6 +373,17 @@
 <h2 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h2><p>在Java语言中，有自动的垃圾回收机制，也就是GC(Garbage Collection)。</p>
 <p>有了垃圾回收机制后，程序员只需要关心内存的申请即可，内存的释放由系统自动识别完成。</p>
 <p>在进行垃圾回收时，不同的对象引用类型，GC会采用不同的回收时机。</p>
+<h3 id="内存分配和回收原则"><a href="#内存分配和回收原则" class="headerlink" title="内存分配和回收原则"></a>内存分配和回收原则</h3><ul>
+<li><p>对象优先在Eden区分配</p>
+</li>
+<li><p>大对象直接进入老年代</p>
+</li>
+<li><p>长期存活的对象进入老年代</p>
+<ul>
+<li>动态年龄计算。对象年龄计数器，每经过一次GC就+1</li>
+</ul>
+</li>
+</ul>
 <p>⭐对象何时可以被垃圾器回收？</p>
 <p>如果一个或多个对象<strong>没有任何的引用</strong>指向它了，那么这个对象现在就是垃圾，如果定位了垃圾，则有可能会被垃圾回收器回收。</p>
 <p>要定位什么是垃圾，有两种方式来确定，第一个是引用计数法，第二个是可达性分析算法。</p>
@@ -369,14 +408,10 @@
 <img src="/pic/标记整理算法.png" style="zoom:50%;" />
 
 <p>缺点：效率受影响。</p>
-<h3 id="分代收集算法"><a href="#分代收集算法" class="headerlink" title="分代收集算法"></a>分代收集算法</h3><p>在java8时，堆被分为了两份：新生代和老年代【1：2】，新生代内部又被分为了三个区域。Eden区和两个survivor区(分别是from和to)【8：1：1】</p>
-<p>分代回收策略：</p>
+<h3 id="分代收集算法"><a href="#分代收集算法" class="headerlink" title="分代收集算法"></a>分代收集算法</h3><p>为什么HotSpot要分新生代和老年代？</p>
 <ul>
-<li>新创建的对象会先分配到伊甸园</li>
-<li>当伊甸园内存不足，标记伊甸园和from的存活对象</li>
-<li>将存活对象通过复制算法复制到to中，之后释放伊甸园和from内存</li>
-<li>若伊甸园内存后面又不足，则标记伊甸园和to，复制到from(来回颠倒)</li>
-<li>survivor中的对象经过几次复制后(最多15次)，晋升到老年代(幸存区内存不足或有大对象时提前晋升)。</li>
+<li>分代回收策略的核心是根据不同区域的特点对症下药。</li>
+<li>比如在新生代中，每次收集都会有大量对象死去，所以可以选择”标记-复制“算法，只需要付出<strong>少量对象的复制成本</strong>就可以完成每次垃圾收集。而老年代的对象存活几率是比较高的，而且没有额外的空间对它进行分配担保，所以我们必须选择“标记-清除”或“标记-整理”算法进行垃圾收集。</li>
 </ul>
 <p>⭐MinorGC、 Mixed GC 、 FullGC的区别是什么？</p>
 <ul>
@@ -390,7 +425,8 @@
 <blockquote>
 <p>注：STW（Stop-The-World）暂停所有应用程序线程，等待垃圾回收的完成</p>
 </blockquote>
-<h3 id="垃圾回收器"><a href="#垃圾回收器" class="headerlink" title="垃圾回收器"></a>垃圾回收器</h3><h4 id="串行垃圾收集器"><a href="#串行垃圾收集器" class="headerlink" title="串行垃圾收集器"></a>串行垃圾收集器</h4><p>Serial和Serial Old串行垃圾收集器，是指使用单线程进行垃圾回收，堆内存较小，适合个人电脑</p>
+<h3 id="垃圾回收器"><a href="#垃圾回收器" class="headerlink" title="垃圾回收器"></a>垃圾回收器</h3><p>基于垃圾回收算法。</p>
+<h4 id="串行垃圾收集器"><a href="#串行垃圾收集器" class="headerlink" title="串行垃圾收集器"></a>串行垃圾收集器</h4><p>Serial和Serial Old串行垃圾收集器，是指使用单线程进行垃圾回收，堆内存较小，适合个人电脑</p>
 <ul>
 <li><p>Serial 作用于新生代，采用复制算法</p>
 </li>
@@ -400,7 +436,8 @@
 <p>垃圾回收时，只有一个线程在工作，并且java应用中的所有线程都要暂停（STW），等待垃圾回收的完成。</p>
 <img src="/pic/串行垃圾回收器.png" style="zoom: 80%;" />
 
-<h4 id="并行垃圾收集器"><a href="#并行垃圾收集器" class="headerlink" title="并行垃圾收集器"></a>并行垃圾收集器</h4><p>Parallel New和Parallel Old是一个并行垃圾回收器，<strong>JDK8默认使用此垃圾回收器</strong></p>
+<h4 id="并行垃圾收集器"><a href="#并行垃圾收集器" class="headerlink" title="并行垃圾收集器"></a>并行垃圾收集器</h4><p>这里并行是指多条垃圾收集线程并行工作，但此时用户线程仍然处于等待状态。</p>
+<p>Parallel New和Parallel Old是一个并行垃圾回收器，<strong>JDK8默认使用此垃圾回收器</strong></p>
 <ul>
 <li><p>Parallel New作用于新生代，采用复制算法</p>
 </li>
@@ -410,10 +447,11 @@
 <p>垃圾回收时，多个线程在工作，并且java应用中的所有线程都要暂停（STW），等待垃圾回收的完成。</p>
 <img src="/pic/并行垃圾收集器.png" style="zoom:80%;" />
 
-<h4 id="CMS-并发-垃圾收集器"><a href="#CMS-并发-垃圾收集器" class="headerlink" title="CMS(并发)垃圾收集器"></a>CMS(并发)垃圾收集器</h4><p>CMS全称 Concurrent Mark Sweep，是一款并发的、使用标记-清除算法的垃圾回收器，该回收器是针对老年代垃圾回收的，是一款以获取最短回收停顿时间为目标的收集器，停顿时间短，用户体验就好。其最大特点是<strong>在进行垃圾回收时，应用仍然能正常运行</strong>。</p>
+<h4 id="🌟CMS-并发-垃圾收集器"><a href="#🌟CMS-并发-垃圾收集器" class="headerlink" title="🌟CMS(并发)垃圾收集器"></a>🌟CMS(并发)垃圾收集器</h4><p>这里并发是指用户线程与垃圾收集线程同时执行（但不一定是并行，可能会交替执行），用户程序在继续运行，而垃圾收集器运行在另一个 CPU 上。</p>
+<p>CMS全称 Concurrent Mark Sweep，是一款并发的、使用<strong>标记-清除算法</strong>的垃圾回收器，该回收器是针对老年代垃圾回收的，是一款以获取最短回收停顿时间为目标的收集器，停顿时间短，用户体验就好。其最大特点是<strong>在进行垃圾回收时，应用仍然能正常运行</strong>。</p>
 <img src="/pic/CMS垃圾收集器.png" style="zoom:80%;" />
 
-<h4 id="G1垃圾收集器"><a href="#G1垃圾收集器" class="headerlink" title="G1垃圾收集器"></a>G1垃圾收集器</h4><ul>
+<h4 id="🌟G1垃圾收集器"><a href="#🌟G1垃圾收集器" class="headerlink" title="🌟G1垃圾收集器"></a>🌟G1垃圾收集器</h4><ul>
 <li>应用于新生代和老年代，<strong>在JDK9之后默认使用G1</strong>。 </li>
 <li>划分成多个区域，每个区域都可以充当 eden，survivor，old， humongous，其中 humongous 专为大对象准备</li>
 <li>采用复制算法</li>
@@ -439,21 +477,23 @@
 </li>
 </ul>
 <h5 id="混合收集"><a href="#混合收集" class="headerlink" title="混合收集"></a>混合收集</h5><p>不会对所有老年代区域进行回收，而是根据暂停时间目标优先回收价值高（存活对象少）的区域（这也是 Gabage First 名称的由来）。复制完成，内存得到释放。进入下一轮的新生代回收、并发标记、混合收集。</p>
-<h3 id="强引用、软引用、弱引用、虚引用"><a href="#强引用、软引用、弱引用、虚引用" class="headerlink" title="强引用、软引用、弱引用、虚引用"></a>强引用、软引用、弱引用、虚引用</h3><h4 id="强引用"><a href="#强引用" class="headerlink" title="强引用"></a>强引用</h4><p>只有所有 GC Roots 对象都不通过【强引用】引用该对象，该对象才能被垃圾回收</p>
+<h3 id="强引用、软引用、弱引用、虚引用"><a href="#强引用、软引用、弱引用、虚引用" class="headerlink" title="强引用、软引用、弱引用、虚引用"></a>强引用、软引用、弱引用、虚引用</h3><h4 id="强引用"><a href="#强引用" class="headerlink" title="强引用"></a>强引用</h4><p>只有所有 GC Roots 对象都不通过【强引用】引用该对象，该对象才能被垃圾回收。类似于<strong>必不可少的生活用品</strong>，垃圾回收器绝不会回收它。当内存空间不足，Java 虚拟机宁愿抛出 OutOfMemoryError 错误，使程序异常终止，也不会靠随意回收具有强引用的对象来解决内存不足问题。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br></pre></td></tr></table></figure>
 
-<p><img src="/%E5%BC%BA%E5%BC%95%E7%94%A8.png"></p>
-<h4 id="软引用"><a href="#软引用" class="headerlink" title="软引用"></a>软引用</h4><p>仅有软引用引用该对象时，在垃圾回收后，内存仍不足时会再次出发垃圾回收</p>
+<p><img src="/pic/%E5%BC%BA%E5%BC%95%E7%94%A8.png"></p>
+<h4 id="软引用"><a href="#软引用" class="headerlink" title="软引用"></a>软引用</h4><p>类似于<strong>可有可无的生活用品</strong>。仅有软引用引用该对象时，在垃圾回收后，内存仍不足时会再次出发垃圾回收</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line"><span class="type">SoftReference</span> <span class="variable">softReference</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SoftReference</span>(user);</span><br></pre></td></tr></table></figure>
 
 <img src="/pic/软引用.png" style="zoom:80%;" />
 
-<h4 id="弱引用"><a href="#弱引用" class="headerlink" title="弱引用"></a>弱引用</h4><p>仅有弱引用引用该对象时，在垃圾回收时，无论内存是否充足，都会回收弱引用对象</p>
+<p><strong>软引用可以加速 JVM 对垃圾内存的回收速度，可以维护系统的运行安全，防止内存溢出（OutOfMemory）等问题的产生</strong>。</p>
+<h4 id="弱引用"><a href="#弱引用" class="headerlink" title="弱引用"></a>弱引用</h4><p>类似于<strong>可有可无的生活用品</strong>。仅有弱引用引用该对象时，在垃圾回收时，无论内存是否充足，都会回收弱引用对象</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">User</span> <span class="variable">user</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">User</span>();</span><br><span class="line"><span class="type">WeakReference</span> <span class="variable">weakReference</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">WeakReference</span>(user);</span><br></pre></td></tr></table></figure>
 
 <img src="/pic/弱引用.png" style="zoom:80%;" />
 
-<h4 id="虚引用"><a href="#虚引用" class="headerlink" title="虚引用"></a>虚引用</h4><h2 id="JVM调优"><a href="#JVM调优" class="headerlink" title="JVM调优"></a>JVM调优</h2>
+<h4 id="虚引用"><a href="#虚引用" class="headerlink" title="虚引用"></a>虚引用</h4><p>形同虚设，不会决定对象的生命周期。如果一个对象仅持有虚引用，那么它就和没有任何引用一样，在任何时候都可能被垃圾回收。</p>
+<h2 id="JVM调优"><a href="#JVM调优" class="headerlink" title="JVM调优"></a>JVM调优</h2>
     </div>
 
     
@@ -536,7 +576,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">JVM介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jvm%E7%BB%84%E6%88%90"><span class="nav-number">2.</span> <span class="nav-text">jvm组成</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">2.1.</span> <span class="nav-text">程序计数器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A0%86"><span class="nav-number">2.2.</span> <span class="nav-text">堆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88"><span class="nav-number">2.3.</span> <span class="nav-text">虚拟机栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%8C%BA"><span class="nav-number">2.4.</span> <span class="nav-text">方法区</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F%E6%B1%A0"><span class="nav-number">2.4.1.</span> <span class="nav-text">常量池</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%B8%B8%E9%87%8F%E6%B1%A0"><span class="nav-number">2.4.2.</span> <span class="nav-text">运行时常量池</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">类加载器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB"><span class="nav-number">3.1.</span> <span class="nav-text">分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.2.</span> <span class="nav-text">双亲委派模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">4.</span> <span class="nav-text">垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%BD%8D%E5%9E%83%E5%9C%BE"><span class="nav-number">4.1.</span> <span class="nav-text">定位垃圾</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E6%B3%95"><span class="nav-number">4.1.1.</span> <span class="nav-text">引用计数法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E8%BE%BE%E6%80%A7%E5%88%86%E6%9E%90%E6%B3%95"><span class="nav-number">4.1.2.</span> <span class="nav-text">可达性分析法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95"><span class="nav-number">4.2.</span> <span class="nav-text">垃圾回收算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95"><span class="nav-number">4.2.1.</span> <span class="nav-text">标记清除算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E7%AE%97%E6%B3%95"><span class="nav-number">4.2.2.</span> <span class="nav-text">复制算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E6%95%B4%E7%90%86%E7%AE%97%E6%B3%95"><span class="nav-number">4.2.3.</span> <span class="nav-text">标记整理算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E4%BB%A3%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95"><span class="nav-number">4.3.</span> <span class="nav-text">分代收集算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8"><span class="nav-number">4.4.</span> <span class="nav-text">垃圾回收器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%B2%E8%A1%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-number">4.4.1.</span> <span class="nav-text">串行垃圾收集器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-number">4.4.2.</span> <span class="nav-text">并行垃圾收集器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CMS-%E5%B9%B6%E5%8F%91-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-number">4.4.3.</span> <span class="nav-text">CMS(并发)垃圾收集器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#G1%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-number">4.4.4.</span> <span class="nav-text">G1垃圾收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B9%B4%E8%BD%BB%E4%BB%A3%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">4.4.4.1.</span> <span class="nav-text">年轻代垃圾回收</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E6%A0%87%E8%AE%B0"><span class="nav-number">4.4.4.2.</span> <span class="nav-text">并发标记</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E6%94%B6%E9%9B%86"><span class="nav-number">4.4.4.3.</span> <span class="nav-text">混合收集</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%BA%E5%BC%95%E7%94%A8%E3%80%81%E8%BD%AF%E5%BC%95%E7%94%A8%E3%80%81%E5%BC%B1%E5%BC%95%E7%94%A8%E3%80%81%E8%99%9A%E5%BC%95%E7%94%A8"><span class="nav-number">4.5.</span> <span class="nav-text">强引用、软引用、弱引用、虚引用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%BA%E5%BC%95%E7%94%A8"><span class="nav-number">4.5.1.</span> <span class="nav-text">强引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AF%E5%BC%95%E7%94%A8"><span class="nav-number">4.5.2.</span> <span class="nav-text">软引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%B1%E5%BC%95%E7%94%A8"><span class="nav-number">4.5.3.</span> <span class="nav-text">弱引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%99%9A%E5%BC%95%E7%94%A8"><span class="nav-number">4.5.4.</span> <span class="nav-text">虚引用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM%E8%B0%83%E4%BC%98"><span class="nav-number">5.</span> <span class="nav-text">JVM调优</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">JVM介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jvm%E7%BB%84%E6%88%90"><span class="nav-number">2.</span> <span class="nav-text">jvm组成</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">2.1.</span> <span class="nav-text">程序计数器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88"><span class="nav-number">2.2.</span> <span class="nav-text">虚拟机栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88"><span class="nav-number">2.3.</span> <span class="nav-text">本地方法栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A0%86"><span class="nav-number">2.4.</span> <span class="nav-text">堆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%8C%BA"><span class="nav-number">2.5.</span> <span class="nav-text">方法区</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F%E6%B1%A0"><span class="nav-number">2.5.1.</span> <span class="nav-text">常量池</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E5%B8%B8%E9%87%8F%E6%B1%A0"><span class="nav-number">2.5.2.</span> <span class="nav-text">运行时常量池</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E5%86%85%E5%AD%98"><span class="nav-number">2.6.</span> <span class="nav-text">直接内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NIO%E3%80%81BIO%E3%80%81AIO"><span class="nav-number">2.7.</span> <span class="nav-text">NIO、BIO、AIO</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">类加载器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%B1%BB"><span class="nav-number">3.1.</span> <span class="nav-text">分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.2.</span> <span class="nav-text">双亲委派模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">4.</span> <span class="nav-text">垃圾回收</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E5%92%8C%E5%9B%9E%E6%94%B6%E5%8E%9F%E5%88%99"><span class="nav-number">4.1.</span> <span class="nav-text">内存分配和回收原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%BD%8D%E5%9E%83%E5%9C%BE"><span class="nav-number">4.2.</span> <span class="nav-text">定位垃圾</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E7%94%A8%E8%AE%A1%E6%95%B0%E6%B3%95"><span class="nav-number">4.2.1.</span> <span class="nav-text">引用计数法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E8%BE%BE%E6%80%A7%E5%88%86%E6%9E%90%E6%B3%95"><span class="nav-number">4.2.2.</span> <span class="nav-text">可达性分析法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95"><span class="nav-number">4.3.</span> <span class="nav-text">垃圾回收算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E6%B8%85%E9%99%A4%E7%AE%97%E6%B3%95"><span class="nav-number">4.3.1.</span> <span class="nav-text">标记清除算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E7%AE%97%E6%B3%95"><span class="nav-number">4.3.2.</span> <span class="nav-text">复制算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E6%95%B4%E7%90%86%E7%AE%97%E6%B3%95"><span class="nav-number">4.3.3.</span> <span class="nav-text">标记整理算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E4%BB%A3%E6%94%B6%E9%9B%86%E7%AE%97%E6%B3%95"><span class="nav-number">4.4.</span> <span class="nav-text">分代收集算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8"><span class="nav-number">4.5.</span> <span class="nav-text">垃圾回收器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%B2%E8%A1%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-number">4.5.1.</span> <span class="nav-text">串行垃圾收集器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-number">4.5.2.</span> <span class="nav-text">并行垃圾收集器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%8C%9FCMS-%E5%B9%B6%E5%8F%91-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-number">4.5.3.</span> <span class="nav-text">🌟CMS(并发)垃圾收集器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%F0%9F%8C%9FG1%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-number">4.5.4.</span> <span class="nav-text">🌟G1垃圾收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B9%B4%E8%BD%BB%E4%BB%A3%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">4.5.4.1.</span> <span class="nav-text">年轻代垃圾回收</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E6%A0%87%E8%AE%B0"><span class="nav-number">4.5.4.2.</span> <span class="nav-text">并发标记</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E6%94%B6%E9%9B%86"><span class="nav-number">4.5.4.3.</span> <span class="nav-text">混合收集</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%BA%E5%BC%95%E7%94%A8%E3%80%81%E8%BD%AF%E5%BC%95%E7%94%A8%E3%80%81%E5%BC%B1%E5%BC%95%E7%94%A8%E3%80%81%E8%99%9A%E5%BC%95%E7%94%A8"><span class="nav-number">4.6.</span> <span class="nav-text">强引用、软引用、弱引用、虚引用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%BA%E5%BC%95%E7%94%A8"><span class="nav-number">4.6.1.</span> <span class="nav-text">强引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AF%E5%BC%95%E7%94%A8"><span class="nav-number">4.6.2.</span> <span class="nav-text">软引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%B1%E5%BC%95%E7%94%A8"><span class="nav-number">4.6.3.</span> <span class="nav-text">弱引用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%99%9A%E5%BC%95%E7%94%A8"><span class="nav-number">4.6.4.</span> <span class="nav-text">虚引用</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM%E8%B0%83%E4%BC%98"><span class="nav-number">5.</span> <span class="nav-text">JVM调优</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -550,7 +590,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">98</span>
+          <span class="site-state-item-count">100</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
