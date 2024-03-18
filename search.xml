@@ -16485,12 +16485,62 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <ul>
 <li>以往关注的是功能的实现，实习让我关注性能。</li>
 </ul>
-<p>自我介绍</p>
-<p>项目介绍，背景等</p>
-<p>项目难点</p>
-<ul>
-<li>秒杀</li>
+<h2 id="自我介绍"><a href="#自我介绍" class="headerlink" title="自我介绍"></a>自我介绍</h2><p>面试官好，我叫xx，是一名南京理工大学的硕士研究生，专业是计算机技术。</p>
+<h2 id="介绍MTR课表"><a href="#介绍MTR课表" class="headerlink" title="介绍MTR课表"></a>介绍MTR课表</h2><h3 id="总体介绍"><a href="#总体介绍" class="headerlink" title="总体介绍"></a>总体介绍</h3><p>MTR课表是我在去年和组里同学一起开发的项目，初衷是帮南理工的同学们查询课表、成绩等教务信息。主要的技术栈是springboot、mybatis-plus、redis、mysql、es做搜索、kafka做消息队列。</p>
+<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>做这个是因为我们学校的教务信息查看很麻烦，手机上只能打开浏览器，进入学校网站才能查看。所以就想着开发一下这个小程序，方便同学们查询这些信息。</p>
+<h3 id="我的模块"><a href="#我的模块" class="headerlink" title="我的模块"></a>我的模块</h3><p>我主要负责登陆模块和论坛模块。</p>
+<h3 id="如何获取教务信息"><a href="#如何获取教务信息" class="headerlink" title="如何获取教务信息"></a>如何获取教务信息</h3><p>学校的教务网站有个统一的入口，通过这个入口就可以访问各种信息，课表、考试教室、考试成绩等等，具体实现是我们可以登录教务系统拿到一个cookie，然后之后就可以直接带着cookie访问来查询这些信息了。</p>
+<h3 id="登陆模块"><a href="#登陆模块" class="headerlink" title="登陆模块"></a>登陆模块</h3><p>第一个版本使用的是最常规的Session的登录方式（session-localStorage方案），后来改了多服务器以后，Session这种方式就出现了问题，首先就是Session不共享的问题。</p>
+<p>我们最后选择了JWT，解决了Session共享的问题，用户登陆时，服务器端生成一个token令牌响应给前端。后续的请求中需要携带令牌到服务器端，服务器端可以解析token，得到用户信息做校验。</p>
+<p><a href="https://fangjun120.github.io/2023/11/12/11-00-37/">jwt</a>是目前最流行的跨域认证的解决方案，是基于token的认证授权机制。本质是一组字符串，由3个部分组成。</p>
+<h4 id="CSRF攻击"><a href="#CSRF攻击" class="headerlink" title="CSRF攻击"></a>CSRF攻击</h4><p>跨站请求伪造，通常发生在受害者已经登录了一个网站时，攻击者通过欺骗方式诱导受害者在其他网站上执行操作，从而利用受害者在原始网站上的身份进行操作。用jwt可以避免CSRF攻击，因为在发起请求时，cookie会自动把token请求出去，而jwt不会。</p>
+<h4 id="jwt优点"><a href="#jwt优点" class="headerlink" title="jwt优点"></a>jwt优点</h4><ul>
+<li>不用服务器存储，节省服务器资源</li>
+<li>避免CSRF攻击，由前端保存在localstorage中</li>
+<li>集群可用</li>
 </ul>
+<h3 id="论坛模块"><a href="#论坛模块" class="headerlink" title="论坛模块"></a>论坛模块</h3><h4 id="数据库设计"><a href="#数据库设计" class="headerlink" title="数据库设计"></a>数据库设计</h4><p>帖子表：帖子id、发布者id、标题、内容、发布时间、评论数量</p>
+<p>评论表：评论id、帖子id、评论用户id、评论时间、内容、回复用户id</p>
+<p>评论图片表：帖子id、图片链接</p>
+<h4 id="评论实现方式"><a href="#评论实现方式" class="headerlink" title="评论实现方式"></a>评论实现方式</h4><p>把评论和回复都当做评论，按时间排序。因为我们回复评论的情况较少，实现起来也比较简单。</p>
+<h4 id="多线程评论数量不同步"><a href="#多线程评论数量不同步" class="headerlink" title="多线程评论数量不同步"></a>多线程评论数量不同步</h4><p>一开始使用sycronized锁实现，不同管锁的获取和释放，挺方便的。后来因为使用了多个服务器，单机锁不适用了（集群环境下由于JVM不同，内部的锁监视器也不同）。</p>
+<p>后来抱着学习的心态使用了redis的<strong>分布式锁</strong>，原本打算用<strong>setnx</strong>做一个简单的分布式锁。考虑到可能出现客户端宕机，没有释放锁，导致死锁。于是加了<strong>过期时间</strong>。</p>
+<p>但是如果过期时间到了，程序还没执行完呢？万一把别人的锁释放了，可以使用uuid标识，防止释放别人的锁。没有超时续约，使用redission，watchDog机制优雅续期。</p>
+<p>为什么不直接用redis统计评论数？</p>
+<ul>
+<li>因为想要数据直接持久化在数据库里，redis只作为工具。</li>
+</ul>
+<p>单机为什么不用事务呢？</p>
+<ul>
+<li><strong>事务不能解决并发问题</strong>啊，事务只是保证事务不出错，而不是不执行。</li>
+</ul>
+<h3 id="Nginx反向代理"><a href="#Nginx反向代理" class="headerlink" title="Nginx反向代理"></a>Nginx反向代理</h3><p>因为我们的主要点击量还是在课表查询，成绩查询之类的。所以主要限制我们的还是cpu资源，因为后来用户量上去了，用的是2核4G的学生机，用的都是公网，在云服务器上面看监控，看到cpu资源已经很满了。所以后来就打算多搞几台机子，本来搞两台的学生机应该也够用了，但是想以后又不太够用就比较麻烦，最后就弄了3台机子。然后采用Nginx做反向代理，采用的是<strong>轮询</strong>的方式，进行负载均衡。</p>
+<p>出现过问题吗？</p>
+<ul>
+<li>有一段时间经常有人攻击，后来查了nginx访问日志，发现有些ip的请求不像普通用户，短时间内发了很多条，所以就把那些人的ip给封了，怎么封的？在nginx上直接deny。</li>
+</ul>
+<p>正向代理 代表客户端</p>
+<p>反向代理 代表服务器</p>
+<h4 id="Nginx负载均衡策略"><a href="#Nginx负载均衡策略" class="headerlink" title="Nginx负载均衡策略"></a>Nginx负载均衡策略</h4><ul>
+<li>轮询</li>
+<li>权重</li>
+<li>最少连接</li>
+</ul>
+<h4 id="动静分离"><a href="#动静分离" class="headerlink" title="动静分离"></a>动静分离</h4><p>配置动静分离</p>
+<p>把图片分配在静态目录下</p>
+<h4 id="Nginx限流"><a href="#Nginx限流" class="headerlink" title="Nginx限流"></a>Nginx限流</h4><p><strong>令牌桶算法：</strong></p>
+<p>令牌以固定速率产生，缓存到令牌桶里面。令牌桶放满时，多余的令牌被丢弃。每次请求要消耗等比例的令牌才能被处理。令牌不够的时候，请求被缓存。<strong>允许某种程度的突发处理（可能有一段时间执行的快）。</strong></p>
+<p><strong>漏桶算法：</strong></p>
+<p>缓存请求（请求放进桶里），然后匀速处理请求（处理漏出来的水），请求满了，就丢弃（水溢出桶）。<strong>对突发容量不做额外处理（永远保持匀速）</strong></p>
+<h3 id="打包步骤"><a href="#打包步骤" class="headerlink" title="打包步骤"></a>打包步骤</h3><ol>
+<li>mvn clean</li>
+<li>mvn install</li>
+<li>在target里找到jar包</li>
+<li>Java -jar xx.jar运行，可以用nohup 后台运行</li>
+</ol>
+<h2 id="介绍校园探店"><a href="#介绍校园探店" class="headerlink" title="介绍校园探店"></a>介绍校园探店</h2><h3 id="总体介绍-1"><a href="#总体介绍-1" class="headerlink" title="总体介绍"></a>总体介绍</h3><p>校园探店是我仿照大众点评开发的练手项目，主要是想学习redis的相关知识，因为之前使用redis只是用来做缓存，后来做MTR课表发现redis有很多其他功能，比如分布式锁等。</p>
+<p>因为是个练手项目，所以对比大众点评不是十分完整，主要有登录注册、店铺查询、秒杀优惠、UV统计等功能。</p>
+<p>主要技术栈有springboot、mybatis-plus、redis、mysql、redission</p>
 ]]></content>
       <categories>
         <category>面试</category>
@@ -16503,7 +16553,10 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
     <title>MTR课表</title>
     <url>/2024/03/16/11-00-37/</url>
     <content><![CDATA[<p><a href="https://blog.csdn.net/huahuahuaz/article/details/125554369?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522171057631616800185863173%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=171057631616800185863173&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-125554369-null-null.142%5Ev99%5Epc_search_result_base8&utm_term=%E7%89%9B%E5%AE%A2%E8%AE%BA%E5%9D%9B&spm=1018.2226.3001.4187">项目总结</a></p>
-<h2 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h2><p>是一个分布式、支持分区的（partition）、多副本的（replica），基于zookeeper协调的分布式消息系统。把数据存储在硬盘里，这一点好像与kafka的高性能相违背。其实对于硬盘的<strong>顺序读写</strong>性能是比内存的<strong>随机读写</strong>更好的。Kafka正是利用了这一点，读写数据时尽量做顺序读写。</p>
+<span id="more"></span>
+
+<h2 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h2><p>是一个分布式、支持分区的（partition）、多副本的（replica），基于zookeeper协调的分布式消息系统。把数据存储在硬盘里，这一点好像与kafka的高性能相违背。</p>
+<p>其实磁盘读写的快慢取决于你怎么使用它，也就是顺序读写或者随机读写。在顺序读写的情况下，磁盘的顺序读写速度和内存持平。因为硬盘是机械结构，每次读写都会寻址-&gt;写入，其中寻址是一个“机械动作”，它是最耗时的。所以硬盘最讨厌随机I&#x2F;O，最喜欢顺序I&#x2F;O。为了提高读写硬盘的速度，Kafka就是使用顺序I&#x2F;O。并且读取数据实现了零拷贝。</p>
 <ul>
 <li>订阅发布模式，一条消息可以被多个消费者消费。</li>
 <li>消息持久化</li>
@@ -16534,9 +16587,7 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 
 
 
-<h2 id="Elasticsearch"><a href="#Elasticsearch" class="headerlink" title="Elasticsearch"></a>Elasticsearch</h2><p>ES中存哪些数据</p>
-<p>ES查找到的数据怎么返回显示</p>
-<p><a href="https://blog.csdn.net/qq_41433002/category_11804826.html">https://blog.csdn.net/qq_41433002/category_11804826.html</a></p>
+<h2 id="Elasticsearch"><a href="#Elasticsearch" class="headerlink" title="Elasticsearch"></a>Elasticsearch</h2><p><a href="https://fangjun120.github.io/2024/01/22/21-57-37/">介绍和原理</a></p>
 <h3 id="spring整合-1"><a href="#spring整合-1" class="headerlink" title="spring整合"></a>spring整合</h3><ul>
 <li>导入依赖</li>
 <li>添加配置</li>

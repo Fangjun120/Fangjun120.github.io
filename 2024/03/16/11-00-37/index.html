@@ -20,16 +20,16 @@
     var CONFIG = {"hostname":"fangjun120.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="项目总结 Kafka是一个分布式、支持分区的（partition）、多副本的（replica），基于zookeeper协调的分布式消息系统。把数据存储在硬盘里，这一点好像与kafka的高性能相违背。其实对于硬盘的顺序读写性能是比内存的随机读写更好的。Kafka正是利用了这一点，读写数据时尽量做顺序读写。  订阅发布模式，一条消息可以被多个消费者消费。 消息持久化 分区机制，broker端支持消息分">
+  <meta name="description" content="项目总结">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MTR课表">
 <meta property="og:url" content="https://fangjun120.github.io/2024/03/16/11-00-37/index.html">
 <meta property="og:site_name" content="eidolon的小窝">
-<meta property="og:description" content="项目总结 Kafka是一个分布式、支持分区的（partition）、多副本的（replica），基于zookeeper协调的分布式消息系统。把数据存储在硬盘里，这一点好像与kafka的高性能相违背。其实对于硬盘的顺序读写性能是比内存的随机读写更好的。Kafka正是利用了这一点，读写数据时尽量做顺序读写。  订阅发布模式，一条消息可以被多个消费者消费。 消息持久化 分区机制，broker端支持消息分">
+<meta property="og:description" content="项目总结">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E7%B3%BB%E7%BB%9F%E9%80%9A%E7%9F%A5.png">
 <meta property="article:published_time" content="2024-03-16T03:00:37.000Z">
-<meta property="article:modified_time" content="2024-03-18T03:29:20.058Z">
+<meta property="article:modified_time" content="2024-03-18T08:15:46.744Z">
 <meta property="article:author" content="Fang Jun">
 <meta property="article:tag" content="Java">
 <meta name="twitter:card" content="summary">
@@ -222,7 +222,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-18 11:29:20" itemprop="dateModified" datetime="2024-03-18T11:29:20+08:00">2024-03-18</time>
+                <time title="修改时间：2024-03-18 16:15:46" itemprop="dateModified" datetime="2024-03-18T16:15:46+08:00">2024-03-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -246,7 +246,10 @@
 
       
         <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/huahuahuaz/article/details/125554369?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522171057631616800185863173%2522%252C%2522scm%2522%253A%252220140713.130102334..%2522%257D&request_id=171057631616800185863173&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~all~top_positive~default-1-125554369-null-null.142%5Ev99%5Epc_search_result_base8&utm_term=%E7%89%9B%E5%AE%A2%E8%AE%BA%E5%9D%9B&spm=1018.2226.3001.4187">项目总结</a></p>
-<h2 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h2><p>是一个分布式、支持分区的（partition）、多副本的（replica），基于zookeeper协调的分布式消息系统。把数据存储在硬盘里，这一点好像与kafka的高性能相违背。其实对于硬盘的<strong>顺序读写</strong>性能是比内存的<strong>随机读写</strong>更好的。Kafka正是利用了这一点，读写数据时尽量做顺序读写。</p>
+<span id="more"></span>
+
+<h2 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h2><p>是一个分布式、支持分区的（partition）、多副本的（replica），基于zookeeper协调的分布式消息系统。把数据存储在硬盘里，这一点好像与kafka的高性能相违背。</p>
+<p>其实磁盘读写的快慢取决于你怎么使用它，也就是顺序读写或者随机读写。在顺序读写的情况下，磁盘的顺序读写速度和内存持平。因为硬盘是机械结构，每次读写都会寻址-&gt;写入，其中寻址是一个“机械动作”，它是最耗时的。所以硬盘最讨厌随机I&#x2F;O，最喜欢顺序I&#x2F;O。为了提高读写硬盘的速度，Kafka就是使用顺序I&#x2F;O。并且读取数据实现了零拷贝。</p>
 <ul>
 <li>订阅发布模式，一条消息可以被多个消费者消费。</li>
 <li>消息持久化</li>
@@ -277,9 +280,7 @@
 
 
 
-<h2 id="Elasticsearch"><a href="#Elasticsearch" class="headerlink" title="Elasticsearch"></a>Elasticsearch</h2><p>ES中存哪些数据</p>
-<p>ES查找到的数据怎么返回显示</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41433002/category_11804826.html">https://blog.csdn.net/qq_41433002/category_11804826.html</a></p>
+<h2 id="Elasticsearch"><a href="#Elasticsearch" class="headerlink" title="Elasticsearch"></a>Elasticsearch</h2><p><a href="https://fangjun120.github.io/2024/01/22/21-57-37/">介绍和原理</a></p>
 <h3 id="spring整合-1"><a href="#spring整合-1" class="headerlink" title="spring整合"></a>spring整合</h3><ul>
 <li>导入依赖</li>
 <li>添加配置</li>
