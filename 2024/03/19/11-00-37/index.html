@@ -20,17 +20,20 @@
     var CONFIG = {"hostname":"fangjun120.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta property="og:type" content="article">
-<meta property="og:title" content="eidolon的小窝">
-<meta property="og:url" content="https://fangjun120.github.io/2024/03/18/16-33-32/index.html">
+  <meta name="description" content="技术面自我介绍 两个项目哪个参与度高？ 缓存和数据库的双写一致性，具体怎么操作  先更新数据库再删除缓存。数据库操作比redis耗时，如果先删缓存，更新数据库时有新的访问，从数据库中读到数据后又更新了缓存，那就相当于没删除缓存。  哪些数据放到redis 里(校园探店)  手机号验证码 用户信息 商铺信息 优惠券库存信息  项目最大的收获  学redis 关注性能  分布式锁用的是redis哪个命">
+<meta property="og:type" content="article">
+<meta property="og:title" content="vivo">
+<meta property="og:url" content="https://fangjun120.github.io/2024/03/19/11-00-37/index.html">
 <meta property="og:site_name" content="eidolon的小窝">
+<meta property="og:description" content="技术面自我介绍 两个项目哪个参与度高？ 缓存和数据库的双写一致性，具体怎么操作  先更新数据库再删除缓存。数据库操作比redis耗时，如果先删缓存，更新数据库时有新的访问，从数据库中读到数据后又更新了缓存，那就相当于没删除缓存。  哪些数据放到redis 里(校园探店)  手机号验证码 用户信息 商铺信息 优惠券库存信息  项目最大的收获  学redis 关注性能  分布式锁用的是redis哪个命">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2024-03-18T08:33:32.614Z">
-<meta property="article:modified_time" content="2024-03-18T08:33:32.614Z">
+<meta property="article:published_time" content="2024-03-19T03:00:37.000Z">
+<meta property="article:modified_time" content="2024-03-20T11:56:26.063Z">
 <meta property="article:author" content="Fang Jun">
+<meta property="article:tag" content="面试">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://fangjun120.github.io/2024/03/18/16-33-32/">
+<link rel="canonical" href="https://fangjun120.github.io/2024/03/19/11-00-37/">
 
 
 <script id="page-configurations">
@@ -43,7 +46,7 @@
   };
 </script>
 
-  <title> | eidolon的小窝</title>
+  <title>vivo | eidolon的小窝</title>
   
 
 
@@ -187,7 +190,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2024/03/18/16-33-32/">
+    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2024/03/19/11-00-37/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -200,7 +203,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          vivo
         </h1>
 
         <div class="post-meta">
@@ -210,7 +213,23 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2024-03-18 16:33:32" itemprop="dateCreated datePublished" datetime="2024-03-18T16:33:32+08:00">2024-03-18</time>
+              <time title="创建时间：2024-03-19 11:00:37" itemprop="dateCreated datePublished" datetime="2024-03-19T11:00:37+08:00">2024-03-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-03-20 19:56:26" itemprop="dateModified" datetime="2024-03-20T19:56:26+08:00">2024-03-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9D%A2%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">面试</span></a>
+                </span>
             </span>
 
           
@@ -224,7 +243,109 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <h2 id="技术面"><a href="#技术面" class="headerlink" title="技术面"></a>技术面</h2><p>自我介绍</p>
+<p>两个项目哪个参与度高？</p>
+<p>缓存和数据库的双写一致性，具体怎么操作</p>
+<ul>
+<li><strong>先更新数据库再删除缓存</strong>。数据库操作比redis耗时，如果先删缓存，更新数据库时有新的访问，从数据库中读到数据后又更新了缓存，那就相当于没删除缓存。</li>
+</ul>
+<p>哪些数据放到redis 里(校园探店)</p>
+<ul>
+<li>手机号验证码</li>
+<li>用户信息</li>
+<li>商铺信息</li>
+<li>优惠券库存信息</li>
+</ul>
+<p>项目最大的收获</p>
+<ul>
+<li>学redis</li>
+<li>关注性能</li>
+</ul>
+<p>分布式锁用的是redis哪个命令</p>
+<ul>
+<li>setnx</li>
+</ul>
+<p>kafka做通知具体是怎么做的</p>
+<ul>
+<li>websocket实时返回</li>
+</ul>
+<p>数据是怎么同步到ES里去的</p>
+<ul>
+<li>发布帖子时，将帖子异步提交到ES</li>
+<li>删除帖子时，将帖子异步删除</li>
+</ul>
+<p>写入不成功怎么办</p>
+<ul>
+<li>延迟后重试，若仍失败，则从数据库删除新加入的帖子并返回错误信息，记录日志</li>
+</ul>
+<p>Stringbuilder和Stringbuffer底层</p>
+<ul>
+<li>char数组，加锁和不加锁</li>
+</ul>
+<p>Object类中有哪些方法</p>
+<ul>
+<li>equals</li>
+<li>clone</li>
+<li>hashcode</li>
+<li>toString</li>
+</ul>
+<p>深拷贝、浅拷贝、引用拷贝</p>
+<ul>
+<li>浅拷贝会在堆上创建一个新的对象（区别于引用拷贝的一点），不过，如果原对象内部的属性是引用类型的话，浅拷贝会直接复制内部对象的引用地址，也就是说拷贝对象和原对象共用同一个内部对象。</li>
+<li>深拷贝完全复制整个对象，包括这个对象包含的内部对象</li>
+<li>引用拷贝是两个不同的引用指向同一个对象</li>
+</ul>
+<p>get和post的区别</p>
+<ul>
+<li>语义：get用于获取；post用于创建</li>
+<li>幂等：get幂等；post不幂等</li>
+<li>格式：get请求参数在URL中，post在body里</li>
+<li>缓存：get可以缓存，post不可以</li>
+<li>安全：get比post更容易泄露敏感数据</li>
+</ul>
+<p>字面量定义和new定义字符串的区别</p>
+<ul>
+<li>存储位置不同：字符串常量池和堆区</li>
+<li>字符串常量池有共享</li>
+</ul>
+<p>sql优化的步骤</p>
+<ul>
+<li>避免使用SELECT *</li>
+<li>分页优化</li>
+<li>避免多表作join</li>
+<li>避免使用外键和级联操作</li>
+<li>选择合适的字段类型</li>
+<li>尽量⽤ UNION ALL 代替 UNION</li>
+<li>批量操作</li>
+<li>优化慢SQL查询</li>
+<li>正确使用索引</li>
+</ul>
+<p>where条件哪些写法用不到索引</p>
+<ul>
+<li>以%开头的LIKE模糊查询</li>
+<li>表达式计算</li>
+<li>隐式转换</li>
+</ul>
+<p>乐观锁的实现方式</p>
+<ul>
+<li>CAS</li>
+<li>版本号</li>
+</ul>
+<p>反问环节</p>
+<h2 id="HR面"><a href="#HR面" class="headerlink" title="HR面"></a>HR面</h2><p>对vivo的了解</p>
+<p>本科是保研还是考的？</p>
+<p>家庭情况</p>
+<p>实习做了什么</p>
+<p>期望工作地点</p>
+<p>期望薪资</p>
+<p>🌟想从实习中获得什么</p>
+<p>🌟未来规划</p>
+<p>🌟读研带来最大的提升</p>
+<p>做好这个岗位需要的核心能力</p>
+<p>实习时间</p>
+<p>倾向于什么类型的企业</p>
+<p>反问环节</p>
+
     </div>
 
     
@@ -232,6 +353,9 @@
     
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%9D%A2%E8%AF%95/" rel="tag"># 面试</a>
+          </div>
 
         
 
@@ -301,6 +425,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E9%9D%A2"><span class="nav-number">1.</span> <span class="nav-text">技术面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HR%E9%9D%A2"><span class="nav-number">2.</span> <span class="nav-text">HR面</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

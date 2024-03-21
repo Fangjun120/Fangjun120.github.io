@@ -184,7 +184,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2024/03/18/16-33-32/">
+    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2024/03/19/11-00-37/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -198,7 +198,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2024/03/18/16-33-32/" class="post-title-link" itemprop="url">未命名</a>
+            <a href="/2024/03/19/11-00-37/" class="post-title-link" itemprop="url">vivo</a>
         </h2>
 
         <div class="post-meta">
@@ -208,7 +208,23 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2024-03-18 16:33:32" itemprop="dateCreated datePublished" datetime="2024-03-18T16:33:32+08:00">2024-03-18</time>
+              <time title="创建时间：2024-03-19 11:00:37" itemprop="dateCreated datePublished" datetime="2024-03-19T11:00:37+08:00">2024-03-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-03-20 19:56:26" itemprop="dateModified" datetime="2024-03-20T19:56:26+08:00">2024-03-20</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E9%9D%A2%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">面试</span></a>
+                </span>
             </span>
 
           
@@ -222,7 +238,109 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
+          <h2 id="技术面"><a href="#技术面" class="headerlink" title="技术面"></a>技术面</h2><p>自我介绍</p>
+<p>两个项目哪个参与度高？</p>
+<p>缓存和数据库的双写一致性，具体怎么操作</p>
+<ul>
+<li><strong>先更新数据库再删除缓存</strong>。数据库操作比redis耗时，如果先删缓存，更新数据库时有新的访问，从数据库中读到数据后又更新了缓存，那就相当于没删除缓存。</li>
+</ul>
+<p>哪些数据放到redis 里(校园探店)</p>
+<ul>
+<li>手机号验证码</li>
+<li>用户信息</li>
+<li>商铺信息</li>
+<li>优惠券库存信息</li>
+</ul>
+<p>项目最大的收获</p>
+<ul>
+<li>学redis</li>
+<li>关注性能</li>
+</ul>
+<p>分布式锁用的是redis哪个命令</p>
+<ul>
+<li>setnx</li>
+</ul>
+<p>kafka做通知具体是怎么做的</p>
+<ul>
+<li>websocket实时返回</li>
+</ul>
+<p>数据是怎么同步到ES里去的</p>
+<ul>
+<li>发布帖子时，将帖子异步提交到ES</li>
+<li>删除帖子时，将帖子异步删除</li>
+</ul>
+<p>写入不成功怎么办</p>
+<ul>
+<li>延迟后重试，若仍失败，则从数据库删除新加入的帖子并返回错误信息，记录日志</li>
+</ul>
+<p>Stringbuilder和Stringbuffer底层</p>
+<ul>
+<li>char数组，加锁和不加锁</li>
+</ul>
+<p>Object类中有哪些方法</p>
+<ul>
+<li>equals</li>
+<li>clone</li>
+<li>hashcode</li>
+<li>toString</li>
+</ul>
+<p>深拷贝、浅拷贝、引用拷贝</p>
+<ul>
+<li>浅拷贝会在堆上创建一个新的对象（区别于引用拷贝的一点），不过，如果原对象内部的属性是引用类型的话，浅拷贝会直接复制内部对象的引用地址，也就是说拷贝对象和原对象共用同一个内部对象。</li>
+<li>深拷贝完全复制整个对象，包括这个对象包含的内部对象</li>
+<li>引用拷贝是两个不同的引用指向同一个对象</li>
+</ul>
+<p>get和post的区别</p>
+<ul>
+<li>语义：get用于获取；post用于创建</li>
+<li>幂等：get幂等；post不幂等</li>
+<li>格式：get请求参数在URL中，post在body里</li>
+<li>缓存：get可以缓存，post不可以</li>
+<li>安全：get比post更容易泄露敏感数据</li>
+</ul>
+<p>字面量定义和new定义字符串的区别</p>
+<ul>
+<li>存储位置不同：字符串常量池和堆区</li>
+<li>字符串常量池有共享</li>
+</ul>
+<p>sql优化的步骤</p>
+<ul>
+<li>避免使用SELECT *</li>
+<li>分页优化</li>
+<li>避免多表作join</li>
+<li>避免使用外键和级联操作</li>
+<li>选择合适的字段类型</li>
+<li>尽量⽤ UNION ALL 代替 UNION</li>
+<li>批量操作</li>
+<li>优化慢SQL查询</li>
+<li>正确使用索引</li>
+</ul>
+<p>where条件哪些写法用不到索引</p>
+<ul>
+<li>以%开头的LIKE模糊查询</li>
+<li>表达式计算</li>
+<li>隐式转换</li>
+</ul>
+<p>乐观锁的实现方式</p>
+<ul>
+<li>CAS</li>
+<li>版本号</li>
+</ul>
+<p>反问环节</p>
+<h2 id="HR面"><a href="#HR面" class="headerlink" title="HR面"></a>HR面</h2><p>对vivo的了解</p>
+<p>本科是保研还是考的？</p>
+<p>家庭情况</p>
+<p>实习做了什么</p>
+<p>期望工作地点</p>
+<p>期望薪资</p>
+<p>🌟想从实习中获得什么</p>
+<p>🌟未来规划</p>
+<p>🌟读研带来最大的提升</p>
+<p>做好这个岗位需要的核心能力</p>
+<p>实习时间</p>
+<p>倾向于什么类型的企业</p>
+<p>反问环节</p>
+
       
     </div>
 
@@ -428,7 +546,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-18 18:20:25" itemprop="dateModified" datetime="2024-03-18T18:20:25+08:00">2024-03-18</time>
+                <time title="修改时间：2024-03-19 12:25:28" itemprop="dateModified" datetime="2024-03-19T12:25:28+08:00">2024-03-19</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -451,67 +569,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>实习带来了什么</p>
-<ul>
-<li>以往关注的是功能的实现，实习让我关注性能。</li>
-</ul>
-<h2 id="自我介绍"><a href="#自我介绍" class="headerlink" title="自我介绍"></a>自我介绍</h2><p>面试官好，我叫xx，是一名南京理工大学的硕士研究生，专业是计算机技术。在校期间，我参与完成了MTR课表程序，帮南理工的同学们快捷查询课表、成绩等教务信息。同时在研究所实习期间完成了多个横向，主要是参与巡逻无人车的开发。</p>
-<h2 id="介绍MTR课表"><a href="#介绍MTR课表" class="headerlink" title="介绍MTR课表"></a>介绍MTR课表</h2><h3 id="总体介绍"><a href="#总体介绍" class="headerlink" title="总体介绍"></a>总体介绍</h3><p>MTR课表是我在去年和组里同学一起开发的项目，初衷是帮南理工的同学们查询课表、成绩等教务信息。主要的技术栈是springboot、mybatis-plus、redis、mysql、es做搜索、kafka做消息队列。</p>
-<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>做这个是因为我们学校的教务信息查看很麻烦，手机上只能打开浏览器，进入学校网站才能查看。所以就想着开发一下这个小程序，方便同学们查询这些信息。</p>
-<h3 id="我的模块"><a href="#我的模块" class="headerlink" title="我的模块"></a>我的模块</h3><p>我主要负责登陆模块和论坛模块。</p>
-<h3 id="如何获取教务信息"><a href="#如何获取教务信息" class="headerlink" title="如何获取教务信息"></a>如何获取教务信息</h3><p>学校的教务网站有个统一的入口，通过这个入口就可以访问各种信息，课表、考试教室、考试成绩等等，具体实现是我们可以登录教务系统拿到一个cookie，然后之后就可以直接带着cookie访问来查询这些信息了。</p>
-<h3 id="登陆模块"><a href="#登陆模块" class="headerlink" title="登陆模块"></a>登陆模块</h3><p>第一个版本使用的是最常规的Session的登录方式（session-localStorage方案），后来改了多服务器以后，Session这种方式就出现了问题，首先就是Session不共享的问题。</p>
-<p>我们最后选择了JWT，解决了Session共享的问题，用户登陆时，服务器端生成一个token令牌响应给前端。后续的请求中需要携带令牌到服务器端，服务器端可以解析token，得到用户信息做校验。</p>
-<p><a href="https://fangjun120.github.io/2023/11/12/11-00-37/">jwt</a>是目前最流行的跨域认证的解决方案，是基于token的认证授权机制。本质是一组字符串，由3个部分组成。</p>
-<h4 id="CSRF攻击"><a href="#CSRF攻击" class="headerlink" title="CSRF攻击"></a>CSRF攻击</h4><p>跨站请求伪造，通常发生在受害者已经登录了一个网站时，攻击者通过欺骗方式诱导受害者在其他网站上执行操作，从而利用受害者在原始网站上的身份进行操作。用jwt可以避免CSRF攻击，因为在发起请求时，cookie会自动把token请求出去，而jwt不会。</p>
-<h4 id="jwt优点"><a href="#jwt优点" class="headerlink" title="jwt优点"></a>jwt优点</h4><ul>
-<li>不用服务器存储，节省服务器资源</li>
-<li>避免CSRF攻击，由前端保存在localstorage中</li>
-<li>集群可用</li>
-</ul>
-<h3 id="论坛模块"><a href="#论坛模块" class="headerlink" title="论坛模块"></a>论坛模块</h3><h4 id="数据库设计"><a href="#数据库设计" class="headerlink" title="数据库设计"></a>数据库设计</h4><p>帖子表：帖子id、发布者id、标题、内容、发布时间、评论数量</p>
-<p>评论表：评论id、帖子id、评论用户id、评论时间、内容、回复用户id</p>
-<p>评论图片表：帖子id、图片链接</p>
-<h4 id="评论实现方式"><a href="#评论实现方式" class="headerlink" title="评论实现方式"></a>评论实现方式</h4><p>把评论和回复都当做评论，按时间排序。因为我们回复评论的情况较少，实现起来也比较简单。</p>
-<h4 id="多线程评论数量不同步"><a href="#多线程评论数量不同步" class="headerlink" title="多线程评论数量不同步"></a>多线程评论数量不同步</h4><p>一开始使用sycronized锁实现，不同管锁的获取和释放，挺方便的。后来因为使用了多个服务器，单机锁不适用了（集群环境下由于JVM不同，内部的锁监视器也不同）。</p>
-<p>后来抱着学习的心态使用了redis的<strong>分布式锁</strong>，原本打算用<strong>setnx</strong>做一个简单的分布式锁。考虑到可能出现客户端宕机，没有释放锁，导致死锁。于是加了<strong>过期时间</strong>。</p>
-<p>但是如果过期时间到了，程序还没执行完呢？万一把别人的锁释放了，可以使用uuid标识，防止释放别人的锁。没有超时续约，使用redission，watchDog机制优雅续期。</p>
-<p>为什么不直接用redis统计评论数？</p>
-<ul>
-<li>因为想要数据直接持久化在数据库里，redis只作为工具。</li>
-</ul>
-<p>单机为什么不用事务呢？</p>
-<ul>
-<li><strong>事务不能解决并发问题</strong>啊，事务只是保证事务不出错，而不是不执行。</li>
-</ul>
-<h3 id="Nginx反向代理"><a href="#Nginx反向代理" class="headerlink" title="Nginx反向代理"></a>Nginx反向代理</h3><p>因为我们的主要点击量还是在课表查询，成绩查询之类的。所以主要限制我们的还是cpu资源，因为后来用户量上去了，用的是2核4G的学生机，用的都是公网，在云服务器上面看监控，看到cpu资源已经很满了。所以后来就打算多搞几台机子，本来搞两台的学生机应该也够用了，但是想以后又不太够用就比较麻烦，最后就弄了3台机子。然后采用Nginx做反向代理，采用的是<strong>轮询</strong>的方式，进行负载均衡。</p>
-<p>出现过问题吗？</p>
-<ul>
-<li>有一段时间经常有人攻击，后来查了nginx访问日志，发现有些ip的请求不像普通用户，短时间内发了很多条，所以就把那些人的ip给封了，怎么封的？在nginx上直接deny。</li>
-</ul>
-<p>正向代理 代表客户端</p>
-<p>反向代理 代表服务器</p>
-<h4 id="Nginx负载均衡策略"><a href="#Nginx负载均衡策略" class="headerlink" title="Nginx负载均衡策略"></a>Nginx负载均衡策略</h4><ul>
-<li>轮询</li>
-<li>权重</li>
-<li>最少连接</li>
-</ul>
-<h4 id="动静分离"><a href="#动静分离" class="headerlink" title="动静分离"></a>动静分离</h4><p>配置动静分离</p>
-<p>把图片分配在静态目录下</p>
-<h4 id="Nginx限流"><a href="#Nginx限流" class="headerlink" title="Nginx限流"></a>Nginx限流</h4><p><strong>令牌桶算法：</strong></p>
-<p>令牌以固定速率产生，缓存到令牌桶里面。令牌桶放满时，多余的令牌被丢弃。每次请求要消耗等比例的令牌才能被处理。令牌不够的时候，请求被缓存。<strong>允许某种程度的突发处理（可能有一段时间执行的快）。</strong></p>
-<p><strong>漏桶算法：</strong></p>
-<p>缓存请求（请求放进桶里），然后匀速处理请求（处理漏出来的水），请求满了，就丢弃（水溢出桶）。<strong>对突发容量不做额外处理（永远保持匀速）</strong></p>
-<h3 id="打包步骤"><a href="#打包步骤" class="headerlink" title="打包步骤"></a>打包步骤</h3><ol>
-<li>mvn clean</li>
-<li>mvn install</li>
-<li>在target里找到jar包</li>
-<li>Java -jar xx.jar运行，可以用nohup 后台运行</li>
-</ol>
-<h2 id="介绍校园探店"><a href="#介绍校园探店" class="headerlink" title="介绍校园探店"></a>介绍校园探店</h2><h3 id="总体介绍-1"><a href="#总体介绍-1" class="headerlink" title="总体介绍"></a>总体介绍</h3><p>校园探店是我仿照大众点评开发的练手项目，主要是想学习redis的相关知识，因为之前使用redis只是用来做缓存，后来做MTR课表发现redis有很多其他功能，比如分布式锁等。</p>
-<p>因为是个练手项目，所以对比大众点评不是十分完整，主要有登录注册、店铺查询、秒杀优惠、UV统计等功能。</p>
-<p>主要技术栈有springboot、mybatis-plus、redis、mysql、redission</p>
-
+          <h2 id="自我介绍"><a href="#自我介绍" class="headerlink" title="自我介绍"></a>自我介绍</h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/03/15/11-00-37/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -968,7 +1034,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-02-23 14:59:49" itemprop="dateModified" datetime="2024-02-23T14:59:49+08:00">2024-02-23</time>
+                <time title="修改时间：2024-03-18 22:55:40" itemprop="dateModified" datetime="2024-03-18T22:55:40+08:00">2024-03-18</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
