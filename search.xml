@@ -13886,14 +13886,94 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
   <entry>
     <title>数据库</title>
     <url>/2024/01/25/11-00-37/</url>
-    <content><![CDATA[<h2 id="慢查询"><a href="#慢查询" class="headerlink" title="慢查询"></a>慢查询</h2><p>表象：页面加载过慢、接口响应时间过长(超过1s)。</p>
+    <content><![CDATA[<h2 id="SQL查询"><a href="#SQL查询" class="headerlink" title="SQL查询"></a>SQL查询</h2><span id="more"></span>
+
+<h3 id="去重"><a href="#去重" class="headerlink" title="去重"></a>去重</h3><p><code>distinct</code> 或 <code>group by</code></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">DISTINCT</span> prod_id <span class="keyword">FROM</span> <span class="keyword">order</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">SELECT</span> prod_id <span class="keyword">from</span> <span class="keyword">order</span> <span class="keyword">group</span> <span class="keyword">by</span> pro_id</span><br></pre></td></tr></table></figure>
+
+<h3 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h3><p><code>order by</code></p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="comment">-- 先排序的放前面，desc代表降序</span></span><br><span class="line"><span class="keyword">SELECT</span> cust_id, order_num</span><br><span class="line"><span class="keyword">FROM</span> Orders</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> cust_id,order_date <span class="keyword">DESC</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="过滤"><a href="#过滤" class="headerlink" title="过滤"></a>过滤</h3><p><code>where</code>语句，在<strong>查询执行之前对行过滤</strong></p>
+<p><strong>因此where必须放在order by之前</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">运算符</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">&#x3D;</td>
+<td align="left">等于</td>
+</tr>
+<tr>
+<td align="left">&lt;&gt;</td>
+<td align="left">不等于。 <strong>注释：</strong> 在 SQL 的一些版本中，该操作符可被写成 !&#x3D;</td>
+</tr>
+<tr>
+<td align="left">&gt;</td>
+<td align="left">大于</td>
+</tr>
+<tr>
+<td align="left">&lt;</td>
+<td align="left">小于</td>
+</tr>
+<tr>
+<td align="left">&gt;&#x3D;</td>
+<td align="left">大于等于</td>
+</tr>
+<tr>
+<td align="left">&lt;&#x3D;</td>
+<td align="left">小于等于</td>
+</tr>
+<tr>
+<td align="left">BETWEEN…and</td>
+<td align="left">在某个范围内</td>
+</tr>
+<tr>
+<td align="left">(not) LIKE</td>
+<td align="left">搜索某种模式，%任意字符，_一个字符，其他mysql不支持</td>
+</tr>
+<tr>
+<td align="left">IN</td>
+<td align="left">指定针对某个列的多个可能值</td>
+</tr>
+<tr>
+<td align="left">and</td>
+<td align="left">连接上面的多个条件</td>
+</tr>
+</tbody></table>
+<p><code>having</code>语句，在<strong>查询执行后对结果集进行过滤</strong>，作用于已经对数据进行了<strong>聚合操作</strong>（如 GROUP BY）后的结果集。</p>
+<h3 id="别名"><a href="#别名" class="headerlink" title="别名"></a>别名</h3><p>起别名前可以运算</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> prod_id, prod_price, prod_price <span class="operator">*</span> <span class="number">0.9</span> <span class="keyword">AS</span> sale_price</span><br><span class="line"><span class="keyword">FROM</span> Products</span><br></pre></td></tr></table></figure>
+
+<h3 id="处理函数"><a href="#处理函数" class="headerlink" title="处理函数"></a>处理函数</h3><h4 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h4><ul>
+<li><p>截取函数<code>SUBSTRING()</code>：截取字符串，<code>substring(str ,n ,m)</code>（n 表示起始截取位置，m 表示要截取的字符个数）表示返回字符串 str 从第 n 个字符开始截取 m 个字符；</p>
+</li>
+<li><p>拼接函数<code>CONCAT()</code>：将两个或多个字符串连接成一个字符串，select concat(A,B)：连接字符串 A 和 B。</p>
+</li>
+<li><p>大写函数 <code>UPPER()</code>：将指定字符串转换为大写。</p>
+</li>
+</ul>
+<h4 id="数据"><a href="#数据" class="headerlink" title="数据"></a>数据</h4><ul>
+<li><code>avg()</code></li>
+<li><code>count()</code></li>
+<li><code>max()</code></li>
+<li><code>min()</code></li>
+<li><code>sum()</code></li>
+</ul>
+<h3 id="子查询"><a href="#子查询" class="headerlink" title="子查询"></a>子查询</h3><p>子查询常用在 <code>WHERE</code>子句 (作为判断条件) 和 <code>FROM</code>子句 (作为数据来源) 后边。</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> cust_id</span><br><span class="line"><span class="keyword">from</span> orders</span><br><span class="line"><span class="keyword">where</span> order_num <span class="keyword">in</span> (<span class="keyword">SELECT</span> order_num </span><br><span class="line">	<span class="keyword">from</span> orderItems</span><br><span class="line">	<span class="keyword">where</span> item_price <span class="operator">&gt;=</span> <span class="number">10</span>)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> p.prod_name, tb.quant_sold</span><br><span class="line"><span class="keyword">FROM</span> (<span class="keyword">SELECT</span> prod_id, <span class="built_in">Sum</span>(quantity) <span class="keyword">AS</span> quant_sold</span><br><span class="line">    <span class="keyword">FROM</span> OrderItems</span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span> prod_id) <span class="keyword">AS</span> tb,</span><br><span class="line">  Products p</span><br><span class="line"><span class="keyword">WHERE</span> tb.prod_id <span class="operator">=</span> p.prod_id</span><br></pre></td></tr></table></figure>
+
+<h3 id="连接表"><a href="#连接表" class="headerlink" title="连接表"></a>连接表</h3><h2 id="慢查询"><a href="#慢查询" class="headerlink" title="慢查询"></a>慢查询</h2><p>表象：页面加载过慢、接口响应时间过长(超过1s)。</p>
 <h3 id="定位慢查询"><a href="#定位慢查询" class="headerlink" title="定位慢查询"></a>定位慢查询</h3><p>主要有两种方案</p>
 <h4 id="开源工具"><a href="#开源工具" class="headerlink" title="开源工具"></a>开源工具</h4><ul>
 <li>调试工具：Arthas</li>
 <li>运维工具：Prometheus、Skywalking</li>
 </ul>
-<span id="more"></span>
-
 <h4 id="MySQL自带的慢日志"><a href="#MySQL自带的慢日志" class="headerlink" title="MySQL自带的慢日志"></a>MySQL自带的慢日志</h4><p>这个方法一般只在调试阶段使用，生产阶段不用，会损耗性能。</p>
 <p>慢查询日志记录了所有执行时间超过指定参数(long_query_time，单位：秒，默认10)的所有SQL语句。但默认没有开启，需要在MySQL的配置文件 <code>/etc/my.cnf</code> 中配置如下信息：</p>
 <figure class="highlight properties"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 开启慢日志</span></span><br><span class="line"><span class="attr">slow_query_log</span> = <span class="string">1</span></span><br><span class="line"><span class="comment"># 设置阈值</span></span><br><span class="line"><span class="attr">long_query_time</span> = <span class="string">2</span></span><br></pre></td></tr></table></figure>
@@ -16826,6 +16906,180 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
       </categories>
       <tags>
         <tag>面试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>问题大全</title>
+    <url>/2024/03/21/11-00-37/</url>
+    <content><![CDATA[<h2 id="java基础篇"><a href="#java基础篇" class="headerlink" title="java基础篇"></a>java基础篇</h2><p>jvm、jdk、jre的区别</p>
+<ul>
+<li>jvm是java虚拟机，是java程序运行的地方</li>
+<li>jdk是java开发工具，包含了jre和编译java源码的编译器javac等工具</li>
+<li>jre是java运行环境，包含java程序运行时所需的内容，包括jvm和基础类库</li>
+</ul>
+<p>final、finalize和finally 的区别</p>
+<ul>
+<li>final用于修饰类、方法或变量，代表不可变</li>
+<li><strong>finalize</strong>是object类中的一个方法，用于在对象被<strong>垃圾回收前</strong>执行清理操作</li>
+<li>finally定义在异常处理代码块中的语句，无论是否发生异常，finally中的代码都会执行</li>
+</ul>
+<p>object类有哪些方法</p>
+<ul>
+<li>equals，clone，toString，hashcode，wait</li>
+</ul>
+<p>Stringbuilder和Stringbuffer底层</p>
+<ul>
+<li>char数组，加锁和不加锁(synchronized)</li>
+</ul>
+<p>深拷贝、浅拷贝、引用拷贝</p>
+<ul>
+<li>浅拷贝会在堆上创建一个新的对象（区别于引用拷贝的一点），不过，如果原对象内部的属性是引用类型的话，浅拷贝会直接复制内部对象的引用地址，也就是说拷贝对象和原对象共用同一个内部对象。</li>
+<li>深拷贝完全复制整个对象，包括这个对象包含的内部对象</li>
+<li>引用拷贝是两个不同的引用指向同一个对象</li>
+</ul>
+<p>HashMap和ConcurrentHashMap的实现原理</p>
+<ul>
+<li>JDK1.7的ConcurrentHashMap底层采用分段数组+链表；分段锁</li>
+<li>JDK1.8是和HashMap一样的哈希表+红黑树；synchronized和CAS</li>
+</ul>
+<p>synchronized锁升级</p>
+<ul>
+<li>锁主要有四种状态，无锁、偏向锁、轻量锁、重量锁，随着竞争的激烈逐渐升级，不可降级。</li>
+<li>共享资源首次被访问时，加偏向锁，程序间串行访问代码；出现竞争时，JVM先尝试轻量级锁，以CAS自旋方式获取锁，成功则状态为轻量锁，失败就升级到重量锁；</li>
+<li>如果共享资源锁已经被某个线程持有，此时是偏向锁状态，未释放锁前，再有其他线程来竞争时，则会升级到重量级锁，另外轻量级锁状态多线程竞争锁时，也会升级到重量级锁</li>
+</ul>
+<p>BIO、NIO和AIO的区别</p>
+<ul>
+<li>同步阻塞BIO会一直阻塞等待数据、同步非阻塞NIO在等待时间内轮询、异步非阻塞AIO</li>
+<li>BIO：用户进程发起IO后必须等待完成</li>
+<li>NIO：用户进程发起IO后可以去做其它事，但需要轮询</li>
+<li>AIO：用户发起IO后返回，IO完成后收到通知去处理</li>
+</ul>
+<p>类加载过程</p>
+<ul>
+<li>加载—链接 (验证—准备—解析) —初始化</li>
+<li>类加载器 双亲委派机制</li>
+</ul>
+<h2 id="并发编程篇"><a href="#并发编程篇" class="headerlink" title="并发编程篇"></a>并发编程篇</h2><h3 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h3><p>乐观锁的实现方式</p>
+<ul>
+<li>CAS；版本号</li>
+</ul>
+<p>java的线程有那些状态，转换关系</p>
+<ul>
+<li>新建、就绪、运行、等待、阻塞、超时等待、终止</li>
+<li>线程创建后进入新建态、调用start进入就绪态、分到时间片进入运行态、执行wait方法后进入等待态、未获取到锁进入阻塞态、执行完毕或异常退出进入终止态。 超时等待在等待基础上增加了超时限制。</li>
+</ul>
+<h3 id="JMM"><a href="#JMM" class="headerlink" title="JMM"></a>JMM</h3><p>介绍一下内存模型？</p>
+<ul>
+<li><p>JMM定义了多线程并发访问主内存的规则，不同操作系统的实现不一样，java作为跨设备的语言需要统一这些差异。</p>
+</li>
+<li><p>内存模型抽象了线程和主内存之间的关系，当前的java内存模型下，线程把变量保存在本地内存，而不是在主存中读写。</p>
+</li>
+</ul>
+<p>指令序列重排序是什么？</p>
+<ul>
+<li>系统在执行代码时，在不改变执行结果的情况下，对代码的执行顺序进行修改。</li>
+</ul>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><p>如何理解TheadLocal</p>
+<ul>
+<li>ThreadLocal是线程独立的，多个线程之间互不干扰</li>
+<li>ThreadLocal中实际存放值的是ThreadLocalMap，key存放了threadlocal，value是代码中放入的值</li>
+<li>ThreadLocal有内存泄露的风险，key是弱引用，value是强引用，gc后可能会有空key的value，可能内存泄露，每次使用完threadlocal都调用它的remove方法</li>
+<li>为什么key不使用强引用？ 如果使用完不删除，就不会被gc，会内存泄露</li>
+</ul>
+<h2 id="MySQL篇"><a href="#MySQL篇" class="headerlink" title="MySQL篇"></a>MySQL篇</h2><h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p>查询语句执行过程</p>
+<ul>
+<li>查询缓存(8.0之后删除) -&gt;分析器 -&gt; 优化器-&gt; 执行器操作引擎返回结果(存储引擎提供读写接口)</li>
+</ul>
+<p>查询语句select中where条件一样，查询效率有区别吗?</p>
+<p>- </p>
+<p>什么是回表查询</p>
+<ul>
+<li>回标查询是先通过非聚簇索引找到对应主键值，再到聚集索引查找整行数据。</li>
+</ul>
+<h3 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h3><p>索引有几类？</p>
+<ul>
+<li>按应用维度分：主键索引、普通索引、唯一索引、覆盖索引、联合索引</li>
+<li>按底层存储方式分：聚集索引、非聚集索引</li>
+</ul>
+<p>where条件索引失效</p>
+<ul>
+<li>%开头的like；表达式计算；字符串没加单引号，隐式转换</li>
+</ul>
+<p>为什么索引可以更快</p>
+<ul>
+<li>减少数据访问量，提高数据定位效率</li>
+</ul>
+<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>sql优化步骤</p>
+<ul>
+<li>避免select*；避免外键和级联；避免多表联查；分页优化；选择合适的字段类型；用union all代替union(不去重)；批量操作；优化慢查询；</li>
+</ul>
+<h2 id="redis篇"><a href="#redis篇" class="headerlink" title="redis篇"></a>redis篇</h2><h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p>redis数据结构</p>
+<ul>
+<li>String(简单动态字符串)、List(双向链表)、Hash(字典)、set(字典 整数集合)、zset(压缩表 跳表)</li>
+</ul>
+<p>zset实现原理？score从1到10000，找score&#x3D;5500，怎么找更快</p>
+<ul>
+<li>跳表。<code>ZRANGEBYSCORE myZset 5500 +inf LIMIT 0 1</code></li>
+</ul>
+<h3 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h3><h2 id="JVM篇"><a href="#JVM篇" class="headerlink" title="JVM篇"></a>JVM篇</h2><h3 id="内存模区域"><a href="#内存模区域" class="headerlink" title="内存模区域"></a>内存模区域</h3><p>JVM 内存是如何对应到操作系统内存的？</p>
+<ul>
+<li>堆内存对应os的虚拟内存</li>
+<li>方法区对应os的堆内存</li>
+</ul>
+<h3 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h3><p>强引用、软引用、弱引用</p>
+<ul>
+<li>强引用的对象不会被gc，即使程序抛异常退出</li>
+<li>软引用的对象第一次不会gc，后面内存还不够就会gc</li>
+<li>弱引用直接gc</li>
+</ul>
+<p>CMS和G1回收器的区别</p>
+<ul>
+<li>CMS使用标记–清除算法，G1划分内存区域后再通过并发标记回收</li>
+<li>CMS设计的目的是减少垃圾回收的停顿时间，G1提供可预测的停顿时间，同时兼顾吞吐量和停顿时间。</li>
+</ul>
+<p>垃圾回收算法</p>
+<ul>
+<li>标记清除</li>
+<li>标记复制</li>
+<li>标记整理</li>
+</ul>
+<h2 id="网络篇"><a href="#网络篇" class="headerlink" title="网络篇"></a>网络篇</h2><p>get和post的区别</p>
+<ul>
+<li>语义：get获取；post创建；幂等；缓存：get幂等有缓存；格式：get参数在URL，post在body里</li>
+</ul>
+<h2 id="操作系统篇"><a href="#操作系统篇" class="headerlink" title="操作系统篇"></a>操作系统篇</h2><h2 id="框架篇"><a href="#框架篇" class="headerlink" title="框架篇"></a>框架篇</h2><h3 id="IoC"><a href="#IoC" class="headerlink" title="IoC"></a>IoC</h3><p>IoC使用的设计模式</p>
+<ul>
+<li>工厂设计模式</li>
+<li>单例设计模式</li>
+</ul>
+<h3 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h3><p>AOP使用的设计模式</p>
+<ul>
+<li>代理设计模式</li>
+</ul>
+<p>动态代理和静态代理的区别</p>
+<ul>
+<li>静态代理的代理类在编译时就已经确定，代理对象的类型是固定的。动态代理的代理类是运行时动态生成的。</li>
+</ul>
+<h2 id="中间件篇"><a href="#中间件篇" class="headerlink" title="中间件篇"></a>中间件篇</h2><h3 id="ElasticSearch"><a href="#ElasticSearch" class="headerlink" title="ElasticSearch"></a>ElasticSearch</h3><p>数据怎么同步到ES？</p>
+<ul>
+<li>发布帖子时，先提交数据库再异步提交ES</li>
+<li>删除帖子时，先删除数据库再异步删除</li>
+</ul>
+<p>数据同步时写入不成功怎么办？</p>
+<ul>
+<li>延迟后重试，若仍失败，从数据库中删除帖子并返回错误信息，记录日志</li>
+</ul>
+<h3 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h3><p>kafka做通知是怎么通知到前端</p>
+<ul>
+<li>websocket</li>
+</ul>
+<h2 id="设计模式篇"><a href="#设计模式篇" class="headerlink" title="设计模式篇"></a>设计模式篇</h2>]]></content>
+      <categories>
+        <category>八股</category>
+      </categories>
+      <tags>
+        <tag>八股</tag>
       </tags>
   </entry>
 </search>
