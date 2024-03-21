@@ -215,7 +215,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-20 19:56:26" itemprop="dateModified" datetime="2024-03-20T19:56:26+08:00">2024-03-20</time>
+                <time title="修改时间：2024-03-21 11:33:41" itemprop="dateModified" datetime="2024-03-21T11:33:41+08:00">2024-03-21</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -240,107 +240,14 @@
       
           <h2 id="技术面"><a href="#技术面" class="headerlink" title="技术面"></a>技术面</h2><p>自我介绍</p>
 <p>两个项目哪个参与度高？</p>
-<p>缓存和数据库的双写一致性，具体怎么操作</p>
-<ul>
-<li><strong>先更新数据库再删除缓存</strong>。数据库操作比redis耗时，如果先删缓存，更新数据库时有新的访问，从数据库中读到数据后又更新了缓存，那就相当于没删除缓存。</li>
-</ul>
-<p>哪些数据放到redis 里(校园探店)</p>
-<ul>
-<li>手机号验证码</li>
-<li>用户信息</li>
-<li>商铺信息</li>
-<li>优惠券库存信息</li>
-</ul>
-<p>项目最大的收获</p>
-<ul>
-<li>学redis</li>
-<li>关注性能</li>
-</ul>
-<p>分布式锁用的是redis哪个命令</p>
-<ul>
-<li>setnx</li>
-</ul>
-<p>kafka做通知具体是怎么做的</p>
-<ul>
-<li>websocket实时返回</li>
-</ul>
-<p>数据是怎么同步到ES里去的</p>
-<ul>
-<li>发布帖子时，将帖子异步提交到ES</li>
-<li>删除帖子时，将帖子异步删除</li>
-</ul>
-<p>写入不成功怎么办</p>
-<ul>
-<li>延迟后重试，若仍失败，则从数据库删除新加入的帖子并返回错误信息，记录日志</li>
-</ul>
-<p>Stringbuilder和Stringbuffer底层</p>
-<ul>
-<li>char数组，加锁和不加锁</li>
-</ul>
-<p>Object类中有哪些方法</p>
-<ul>
-<li>equals</li>
-<li>clone</li>
-<li>hashcode</li>
-<li>toString</li>
-</ul>
-<p>深拷贝、浅拷贝、引用拷贝</p>
-<ul>
-<li>浅拷贝会在堆上创建一个新的对象（区别于引用拷贝的一点），不过，如果原对象内部的属性是引用类型的话，浅拷贝会直接复制内部对象的引用地址，也就是说拷贝对象和原对象共用同一个内部对象。</li>
-<li>深拷贝完全复制整个对象，包括这个对象包含的内部对象</li>
-<li>引用拷贝是两个不同的引用指向同一个对象</li>
-</ul>
-<p>get和post的区别</p>
-<ul>
-<li>语义：get用于获取；post用于创建</li>
-<li>幂等：get幂等；post不幂等</li>
-<li>格式：get请求参数在URL中，post在body里</li>
-<li>缓存：get可以缓存，post不可以</li>
-<li>安全：get比post更容易泄露敏感数据</li>
-</ul>
-<p>字面量定义和new定义字符串的区别</p>
-<ul>
-<li>存储位置不同：字符串常量池和堆区</li>
-<li>字符串常量池有共享</li>
-</ul>
-<p>sql优化的步骤</p>
-<ul>
-<li>避免使用SELECT *</li>
-<li>分页优化</li>
-<li>避免多表作join</li>
-<li>避免使用外键和级联操作</li>
-<li>选择合适的字段类型</li>
-<li>尽量⽤ UNION ALL 代替 UNION</li>
-<li>批量操作</li>
-<li>优化慢SQL查询</li>
-<li>正确使用索引</li>
-</ul>
-<p>where条件哪些写法用不到索引</p>
-<ul>
-<li>以%开头的LIKE模糊查询</li>
-<li>表达式计算</li>
-<li>隐式转换</li>
-</ul>
-<p>乐观锁的实现方式</p>
-<ul>
-<li>CAS</li>
-<li>版本号</li>
-</ul>
-<p>反问环节</p>
-<h2 id="HR面"><a href="#HR面" class="headerlink" title="HR面"></a>HR面</h2><p>对vivo的了解</p>
-<p>本科是保研还是考的？</p>
-<p>家庭情况</p>
-<p>实习做了什么</p>
-<p>期望工作地点</p>
-<p>期望薪资</p>
-<p>🌟想从实习中获得什么</p>
-<p>🌟未来规划</p>
-<p>🌟读研带来最大的提升</p>
-<p>做好这个岗位需要的核心能力</p>
-<p>实习时间</p>
-<p>倾向于什么类型的企业</p>
-<p>反问环节</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/03/19/11-00-37/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

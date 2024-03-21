@@ -16718,6 +16718,8 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
     <url>/2024/03/19/11-00-37/</url>
     <content><![CDATA[<h2 id="技术面"><a href="#技术面" class="headerlink" title="技术面"></a>技术面</h2><p>自我介绍</p>
 <p>两个项目哪个参与度高？</p>
+<span id="more"></span>
+
 <p>缓存和数据库的双写一致性，具体怎么操作</p>
 <ul>
 <li><strong>先更新数据库再删除缓存</strong>。数据库操作比redis耗时，如果先删缓存，更新数据库时有新的访问，从数据库中读到数据后又更新了缓存，那就相当于没删除缓存。</li>
