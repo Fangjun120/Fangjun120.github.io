@@ -13968,7 +13968,46 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 
 <figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> p.prod_name, tb.quant_sold</span><br><span class="line"><span class="keyword">FROM</span> (<span class="keyword">SELECT</span> prod_id, <span class="built_in">Sum</span>(quantity) <span class="keyword">AS</span> quant_sold</span><br><span class="line">    <span class="keyword">FROM</span> OrderItems</span><br><span class="line">    <span class="keyword">GROUP</span> <span class="keyword">BY</span> prod_id) <span class="keyword">AS</span> tb,</span><br><span class="line">  Products p</span><br><span class="line"><span class="keyword">WHERE</span> tb.prod_id <span class="operator">=</span> p.prod_id</span><br></pre></td></tr></table></figure>
 
-<h3 id="连接表"><a href="#连接表" class="headerlink" title="连接表"></a>连接表</h3><h2 id="慢查询"><a href="#慢查询" class="headerlink" title="慢查询"></a>慢查询</h2><p>表象：页面加载过慢、接口响应时间过长(超过1s)。</p>
+<h3 id="连接表"><a href="#连接表" class="headerlink" title="连接表"></a>连接表</h3><p>连接表时需要在每个表中选择一个字段，并对这些字段的值进行比较，值相同的两条记录将合并为一条。<strong>连接表的本质就是将不同表的记录合并起来，形成一张新表。当然，这张新表只是临时的，它仅存在于本次查询期间</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>连接类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>INNER JOIN 内连接</td>
+<td>（默认连接方式）只有当两个表都存在满足条件的记录时才会返回行。</td>
+</tr>
+<tr>
+<td>LEFT JOIN &#x2F; LEFT OUTER JOIN 左(外)连接</td>
+<td>返回左表中的所有行，即使右表中没有满足条件的行也是如此。</td>
+</tr>
+<tr>
+<td>RIGHT JOIN &#x2F; RIGHT OUTER JOIN 右(外)连接</td>
+<td>返回右表中的所有行，即使左表中没有满足条件的行也是如此。</td>
+</tr>
+<tr>
+<td>FULL JOIN &#x2F; FULL OUTER JOIN 全(外)连接</td>
+<td>只要其中有一个表存在满足条件的记录，就返回行。</td>
+</tr>
+<tr>
+<td>SELF JOIN</td>
+<td>将一个表连接到自身，就像该表是两个表一样。为了区分两个表，在 SQL 语句中需要至少重命名一个表。</td>
+</tr>
+<tr>
+<td>CROSS JOIN</td>
+<td>交叉连接，从两个或者多个连接表中返回记录集的笛卡尔积。</td>
+</tr>
+</tbody></table>
+<img src="/pic/sql连接.png" alt="image-20240322184933283" style="zoom:80%;" />
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">-- 隐式内连接</span><br><span class="line">SELECT c.cust_name, o.order_num</span><br><span class="line">FROM Customers c,Orders o</span><br><span class="line">WHERE c.cust_id = o.cust_id</span><br><span class="line">ORDER BY c.cust_name,o.order_num</span><br><span class="line"></span><br><span class="line">-- 显式内连接</span><br><span class="line">SELECT c.cust_name, o.order_num</span><br><span class="line">FROM Customers c</span><br><span class="line">INNER JOIN Orders o</span><br><span class="line">USING(cust_id)</span><br><span class="line">ORDER BY c.cust_name,o.order_num;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="慢查询"><a href="#慢查询" class="headerlink" title="慢查询"></a>慢查询</h2><p>表象：页面加载过慢、接口响应时间过长(超过1s)。</p>
 <h3 id="定位慢查询"><a href="#定位慢查询" class="headerlink" title="定位慢查询"></a>定位慢查询</h3><p>主要有两种方案</p>
 <h4 id="开源工具"><a href="#开源工具" class="headerlink" title="开源工具"></a>开源工具</h4><ul>
 <li>调试工具：Arthas</li>
@@ -16620,7 +16659,8 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <li>分区机制，broker端支持消息分区</li>
 <li>多副本，分为主从副本，</li>
 </ul>
-<h3 id="spring整合"><a href="#spring整合" class="headerlink" title="spring整合"></a>spring整合</h3><p>创建主题 (broker的名字) ，创建副本，创建分区</p>
+<p><strong>Kafka也可以配置集群，集群中每个服务器节点是broker，每个broker都是一个独立的kafka服务器，broker可以托管多个主题，主题可以划分为多个分区</strong>。</p>
+<h3 id="spring整合"><a href="#spring整合" class="headerlink" title="spring整合"></a>spring整合</h3><p>创建主题，创建副本，创建分区</p>
 <ul>
 <li>添加依赖</li>
 <li>添加配置</li>
@@ -16917,6 +16957,8 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <li>jdk是java开发工具，包含了jre和编译java源码的编译器javac等工具</li>
 <li>jre是java运行环境，包含java程序运行时所需的内容，包括jvm和基础类库</li>
 </ul>
+<span id="more"></span>
+
 <p>final、finalize和finally 的区别</p>
 <ul>
 <li>final用于修饰类、方法或变量，代表不可变</li>
@@ -16941,6 +16983,10 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <ul>
 <li>JDK1.7的ConcurrentHashMap底层采用分段数组+链表；分段锁</li>
 <li>JDK1.8是和HashMap一样的哈希表+红黑树；synchronized和CAS</li>
+</ul>
+<p>HashMap 1.7扩容时死循环的问题</p>
+<ul>
+<li>jdk7时链表是头插法，迁移元素时会交换位置，迁移元素时，e执行待迁移元素，next指向下一个迁移元素</li>
 </ul>
 <p>synchronized锁升级</p>
 <ul>
@@ -16968,6 +17014,13 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <ul>
 <li>新建、就绪、运行、等待、阻塞、超时等待、终止</li>
 <li>线程创建后进入新建态、调用start进入就绪态、分到时间片进入运行态、执行wait方法后进入等待态、未获取到锁进入阻塞态、执行完毕或异常退出进入终止态。 超时等待在等待基础上增加了超时限制。</li>
+</ul>
+<p>可重入锁的实现原理</p>
+<p>CAS的问题</p>
+<ul>
+<li>ABA</li>
+<li>循环时间长开销大</li>
+<li>只能保证一个共享变量的原子操作</li>
 </ul>
 <h3 id="JMM"><a href="#JMM" class="headerlink" title="JMM"></a>JMM</h3><p>介绍一下内存模型？</p>
 <ul>
@@ -17014,7 +17067,8 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <ul>
 <li>避免select*；避免外键和级联；避免多表联查；分页优化；选择合适的字段类型；用union all代替union(不去重)；批量操作；优化慢查询；</li>
 </ul>
-<h2 id="redis篇"><a href="#redis篇" class="headerlink" title="redis篇"></a>redis篇</h2><h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p>redis数据结构</p>
+<p>一张表里有大量记录，现在要加一个字段，怎么操作</p>
+<h2 id="redis篇"><a href="#redis篇" class="headerlink" title="redis篇"></a>redis篇</h2><p>redis数据结构</p>
 <ul>
 <li>String(简单动态字符串)、List(双向链表)、Hash(字典)、set(字典 整数集合)、zset(压缩表 跳表)</li>
 </ul>
@@ -17022,11 +17076,55 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <ul>
 <li>跳表。<code>ZRANGEBYSCORE myZset 5500 +inf LIMIT 0 1</code></li>
 </ul>
-<h3 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h3><h2 id="JVM篇"><a href="#JVM篇" class="headerlink" title="JVM篇"></a>JVM篇</h2><h3 id="内存模区域"><a href="#内存模区域" class="headerlink" title="内存模区域"></a>内存模区域</h3><p>JVM 内存是如何对应到操作系统内存的？</p>
+<p>如何实现高可用 (长时间稳定运行的能力)</p>
+<ul>
+<li>主从复制</li>
+<li><strong>哨兵</strong>模式</li>
+<li>集群模式</li>
+<li>持久化备份</li>
+<li>数据冗余和故障恢复</li>
+</ul>
+<p>如何做性能优化</p>
+<ul>
+<li>批量操作减少网络传输</li>
+<li>key设置随机过期时间</li>
+<li>处理大key<ul>
+<li>发现 –bigkeys</li>
+<li>分割</li>
+<li>手动清理</li>
+</ul>
+</li>
+<li>热点key<ul>
+<li>发现 –hotkeys</li>
+<li>读写分离</li>
+<li>将热点数据分散存储在多个redis节点</li>
+<li>二级缓存，将hotkey放一份到jvm本地内存</li>
+</ul>
+</li>
+<li>慢查询<ul>
+<li>定位  慢查询日志，slowlog-log-slower-than<code>和</code>slowlog-max-len在配置文件中改</li>
+</ul>
+</li>
+</ul>
+<h3 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h3><h2 id="JVM篇"><a href="#JVM篇" class="headerlink" title="JVM篇"></a>JVM篇</h2><h3 id="内存区域"><a href="#内存区域" class="headerlink" title="内存区域"></a>内存区域</h3><p>JVM内存区域</p>
+<ul>
+<li>私有：程序计数器、虚拟机栈、本地方法栈</li>
+<li>共享：堆、本地内存 (包含直接内存和元空间，方法区是元空间的实现)</li>
+</ul>
+<p>JVM 内存是如何对应到操作系统内存的？</p>
 <ul>
 <li>堆内存对应os的虚拟内存</li>
 <li>方法区对应os的堆内存</li>
 </ul>
+<p>线程不安全的问题是发生在哪块内存</p>
+<ul>
+<li>堆、本地内存</li>
+</ul>
+<p>堆内存怎么划分的</p>
+<ul>
+<li>新生代(伊甸区，两个s区)、老年代</li>
+</ul>
+<p>新生代</p>
 <h3 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h3><p>强引用、软引用、弱引用</p>
 <ul>
 <li>强引用的对象不会被gc，即使程序抛异常退出</li>
@@ -17048,7 +17146,12 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <ul>
 <li>语义：get获取；post创建；幂等；缓存：get幂等有缓存；格式：get参数在URL，post在body里</li>
 </ul>
-<h2 id="操作系统篇"><a href="#操作系统篇" class="headerlink" title="操作系统篇"></a>操作系统篇</h2><h2 id="框架篇"><a href="#框架篇" class="headerlink" title="框架篇"></a>框架篇</h2><h3 id="IoC"><a href="#IoC" class="headerlink" title="IoC"></a>IoC</h3><p>IoC使用的设计模式</p>
+<p>tcp三次握手四次挥手</p>
+<h2 id="操作系统篇"><a href="#操作系统篇" class="headerlink" title="操作系统篇"></a>操作系统篇</h2><h2 id="框架篇"><a href="#框架篇" class="headerlink" title="框架篇"></a>框架篇</h2><p>spring循环引用</p>
+<ul>
+<li>setter</li>
+</ul>
+<h3 id="IoC"><a href="#IoC" class="headerlink" title="IoC"></a>IoC</h3><p>IoC使用的设计模式</p>
 <ul>
 <li>工厂设计模式</li>
 <li>单例设计模式</li>
@@ -17073,6 +17176,65 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <h3 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h3><p>kafka做通知是怎么通知到前端</p>
 <ul>
 <li>websocket</li>
+</ul>
+<p>Kafka如何解决大量任务堆积的问题</p>
+<ul>
+<li>增加消费者数量，设置消费者组</li>
+</ul>
+<p>Kafka组件</p>
+<ul>
+<li>Kafka也可以配置集群，集群中每个服务器节点是broker，每个<strong>broker</strong>都是一个独立的kafka服务器，broker可以托管多个<strong>主题</strong>，主题可以划分为多个<strong>分区</strong>，分区是实际存储消息的地方，此外还有<strong>消费者</strong>和<strong>生产者</strong></li>
+</ul>
+<p>Kafka如何保证消息的先后顺序</p>
+<ul>
+<li>如果某个业务被存储到多个分区中，是不能保证多个分区之间的顺序性的，但同一个分区内由于offset，可以保证顺序性。因此在发送消息时可以指定分区号，保存到同一个分区 (或者相同业务指定相同的key，key相同hash后值一样，也会分到一个分区)</li>
+</ul>
+<p>Kafka如何保证消息不丢失</p>
+<ul>
+<li>生产者发送到brocker丢失 (一般采用异步发送)<ul>
+<li>kafka原生的send方法可以传递callback参数，当发送失败时，会触发callback，可以进行重发等补偿。KafkaTemplate并没有callback，可以使用ListenableFuture监听结果，失败后重试</li>
+<li>原生Kafka可以设置重试次数<code>prop.put(ProducerConfig.RETRIES_CONFIG, 10);</code></li>
+</ul>
+</li>
+<li>消息在brocker存储丢失 (一个主题可以设置多个分区，默认就一个，每个分区有多个副本，一个leader和多个follower，follower中保存副本，leader宕机后补上)<ul>
+<li>发送确认机制acks。acks&#x3D;0时，服务器不响应写入成功，速度最快；acks&#x3D;1(默认)，只要leader收到消息，就向生产者发起成功响应；acks&#x3D;all，只有全部分区都收到消息，才发成功响应。</li>
+</ul>
+</li>
+<li>消费者从brocker接受丢失<ul>
+<li>kafka实际存储数据的是分区，每个分区有offset，记录已经消费的消息偏移。默认是每5s提交一次offset。如果出现重平衡(负责消费某分区的线程挂了，派个新线程消费)，会<strong>重复消费</strong>。可以禁用自动提交，改为手动 (同步提交，异步提交)</li>
+</ul>
+</li>
+</ul>
+<p>kafka高可用机制</p>
+<ul>
+<li>集群<ul>
+<li>集群由多个broker组成，一个挂了别的顶上</li>
+</ul>
+</li>
+<li>分区备份机制<ul>
+<li><strong>每个分区有多个副本</strong>，一个leader，多个follow，leader故障，follow顶上</li>
+<li>在follow中还 分为ISR和普通，ISR是leader同步复制的，普通是异步的。这样普通顶ISR，ISR顶leader。</li>
+</ul>
+</li>
+</ul>
+<p>Kafka的存储机制</p>
+<ul>
+<li>Kafka把数据保存在磁盘上，每个分区对应一个文件夹，里面存储了数据文件，包括 索引和日志文件<code>.index</code> <code>.log</code> <code>.timeindex</code>，这些文件是分段存储的 (应该是每个分段存放了offset不同的数据)。分段存储的好处是：1️⃣删除无用文件方便 2️⃣查找数据方便，文件是以偏移量命名的。</li>
+</ul>
+<p><img src="/pic/kafka%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8.png" alt="image-20240322220856631"></p>
+<p>数据清理机制</p>
+<ul>
+<li>根据消息的保留时间，当超过指定时间就会触发清理</li>
+<li>根据topic存储的数据大小，大于一定阈值时，删除最久的消息</li>
+</ul>
+<p>kafka是磁盘存储，为什么性能还那么高</p>
+<ul>
+<li><strong>顺序读写</strong>：磁盘顺序读写 (文件存储以追加形式进行)</li>
+<li><h2 id="零拷贝：减少上下文切换和数据拷贝"><a href="#零拷贝：减少上下文切换和数据拷贝" class="headerlink" title="零拷贝：减少上下文切换和数据拷贝"></a><strong>零拷贝</strong>：减少上下文切换和数据拷贝</h2></li>
+<li>页缓存：磁盘中的数据缓存到内存，对磁盘的访问变成对内存的访问</li>
+<li>消息分区：存储不受单台服务器限制</li>
+<li>消息压缩：减少磁盘IO和网络IO</li>
+<li>分批发送：消息打包批量发送，减少网络开销</li>
 </ul>
 <h2 id="设计模式篇"><a href="#设计模式篇" class="headerlink" title="设计模式篇"></a>设计模式篇</h2>]]></content>
       <categories>
