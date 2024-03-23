@@ -17231,6 +17231,15 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <br>
 
 <p>MySQL的主从同步机制</p>
+<details>
+<summary>展开查看</summary>
+
+<ul>
+<li><code>binlog</code>文件记录了MySQL数据库中数据的所有变化，主库将数据的变化写入到<code>binlog</code>，从库将<code>binlog</code>写入到<code>relay log</code>，再从relay log同步数据到本地。</li>
+</ul>
+</details>
+<br>
+
 <h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p>查询语句执行过程</p>
 <details>
 <summary>展开查看</summary>
@@ -17381,10 +17390,63 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <br>
 
 <p>持久化方案RDB和AOF了解吗</p>
+<details>
+<summary>展开查看</summary>
+
+
+<ul>
+<li><p>RDB(默认)。快照</p>
+</li>
+<li><p>AOF。redis将命令写入aof缓冲区，再写入到aof文件(在系统内核缓冲区)，最后根据持久化方式(fsync策略)决定何时将系统内核缓冲区的数据同步到硬盘中。</p>
+<ul>
+<li>fsync策略：appendfsync always 立即写；appendfsync everysec 每秒同步一次；appendfsync no 操作系统决定</li>
+<li>AOF会在<strong>执行完命令后</strong>再记录日志。避免额外的检查开销；不会阻塞当前命令的执行但会阻塞后续其他命令的执行。</li>
+<li>AOF重写，重写期间redis命令会写到AOF<strong>重写缓冲区</strong>，当重写完成后，重写缓冲区中的所有内容被追加到新AOF文件的末尾，并替代旧的AOF文件。</li>
+</ul>
+</li>
+</ul>
+</details>
+<br>
+
 <p>为什么redis读写用单线程还这么快</p>
+<details>
+<summary>展开查看</summary>
+
+<ul>
+<li>基于内存</li>
+<li>基于reactor模式设计的高效事件处理模型 (单线程和IO多路复用)</li>
+<li>redis内置了多种优化的数据类型和结构实现</li>
+</ul>
+</details>
+<br>
+
 <p>redis线程模型</p>
-<p>过期机制和内存淘汰策略</p>
-<h3 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h3><h2 id="JVM篇"><a href="#JVM篇" class="headerlink" title="JVM篇"></a>JVM篇</h2><h3 id="内存区域"><a href="#内存区域" class="headerlink" title="内存区域"></a>内存区域</h3><p>JVM内存区域</p>
+<details>
+<summary>展开查看</summary>
+
+
+<ul>
+<li>redis读写使用单线程，基于reactor开发了事件处理模型，称为文本事件处理器。</li>
+<li>为了解决网络瓶颈引入多线程</li>
+</ul>
+</details>
+<br>
+
+<p>过期删除机制和内存淘汰策略</p>
+<details>
+<summary>展开查看</summary>
+
+
+<ul>
+<li>过期机制：惰性删除和定期删除</li>
+<li>内存淘汰机制：两大类，设置过期时间和不设置过期时间，分别有选择任意、最不常用、最近最少、即将过期</li>
+</ul>
+</details>
+<br>
+
+
+
+<h2 id="JVM篇"><a href="#JVM篇" class="headerlink" title="JVM篇"></a>JVM篇</h2><h3 id="内存区域"><a href="#内存区域" class="headerlink" title="内存区域"></a>内存区域</h3><p>JVM内存区域</p>
 <details>
 <summary>展开查看</summary>
 
@@ -17536,6 +17598,28 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <ul>
 <li>静态代理的代理类在编译时就已经确定，代理对象的类型是固定的。动态代理的代理类是运行时动态生成的。</li>
 <li>静态代理，定义一个真实类和一个代理类实现接口，将真实对象注入到代理类中；动态代理分为jdk动态代理和CGLIB动态代理，jdk动态代理只能代理实现了接口的类或直接代理接口，cglib可以代理未实现任何接口的类，它生成一个被代理类的子类来拦截被代理类的方法调用</li>
+</ul>
+</details>
+<br>
+
+<p>SSM是什么</p>
+<details>
+<summary>展开查看</summary>
+
+
+<ul>
+<li>SpringMVC、Spring Framework、Mybatis三块组成。基于传统的SSM框架进行整合开发项目会比较繁琐，而且效率也比较低，所以在现在的企业项目开发当中，基本上都是直接基于SpringBoot整合SSM进行项目开发的。</li>
+</ul>
+</details>
+<br>
+
+<p>spring mvc架构模式介绍一下</p>
+<details>
+<summary>展开查看</summary>
+
+<ul>
+<li>MVC是一种常见的软件设计模式，将应用程序的逻辑分离成三个独立组件：模型(数据和业务逻辑的表示)、视图(用户界面的呈现部分，负责展示数据给用户，并接收用户的输入)、控制器(模型和视图之间的协调者，负责接收用户的输入并根据输入调用相应的模型逻辑)</li>
+<li>spring mvc是mvc架构的一种实现，是spring框架的web开发模块。</li>
 </ul>
 </details>
 <br>
