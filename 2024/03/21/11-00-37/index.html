@@ -29,7 +29,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fangjun120.github.io/pic/kafka%E6%96%87%E4%BB%B6%E5%AD%98%E5%82%A8.png">
 <meta property="article:published_time" content="2024-03-21T03:00:37.000Z">
-<meta property="article:modified_time" content="2024-03-22T14:25:30.643Z">
+<meta property="article:modified_time" content="2024-03-23T02:05:51.413Z">
 <meta property="article:author" content="Fang Jun">
 <meta property="article:tag" content="八股">
 <meta name="twitter:card" content="summary">
@@ -222,7 +222,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-22 22:25:30" itemprop="dateModified" datetime="2024-03-22T22:25:30+08:00">2024-03-22</time>
+                <time title="修改时间：2024-03-23 10:05:51" itemprop="dateModified" datetime="2024-03-23T10:05:51+08:00">2024-03-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -310,11 +310,25 @@
 <li>线程创建后进入新建态、调用start进入就绪态、分到时间片进入运行态、执行wait方法后进入等待态、未获取到锁进入阻塞态、执行完毕或异常退出进入终止态。 超时等待在等待基础上增加了超时限制。</li>
 </ul>
 <p>可重入锁的实现原理</p>
+<p>Synchronized 关键字底层是如何实现的？它与 Lock 相比优缺点分别是什么？</p>
+<ul>
+<li>底层是通过同步代码块实现，1个monitorenter指令指向同步代码块的开始位置，两个monitorexit指向结束位置</li>
+<li>优点：使用简单；synchronized依赖于jvm，可以得到jvm层面的优化； 缺点：没有lock灵活，功能没有lock丰富。</li>
+</ul>
+<p>volatile 关键字解决了什么问题，它的实现原理是什么？</p>
+<ul>
+<li>保证了变量的可见性，每次修改volatile修饰的变量都需要进入主存中读取；可以防止JVM指令重排序（通过内存屏障实现）。</li>
+</ul>
 <p>CAS的问题</p>
 <ul>
 <li>ABA</li>
 <li>循环时间长开销大</li>
 <li>只能保证一个共享变量的原子操作</li>
+</ul>
+<p>线程池是如何实现的？简述线程池的任务策略</p>
+<ul>
+<li>通过ThreadPoolExecutor构造函数创建，参数：核心线程数、最大线程数、临时线程存活时间、时间单位、线程任务队列(<strong>ArrayBlockingQueue</strong>，LinkedBlockingQueue是无界队列)、线程工厂(Executors.defaultThreadFactory())、拒绝策略(<strong>丢弃抛异常</strong>、丢弃不抛异常、丢弃队列中等待最久的并加入新的、主线程直接执行)</li>
+<li>任务策略即饱和策略，默认策略是抛出异常拒绝新来的任务；或者使用调用该任务的线程来处理；或者丢弃掉最早未处理的任务</li>
 </ul>
 <h3 id="JMM"><a href="#JMM" class="headerlink" title="JMM"></a>JMM</h3><p>介绍一下内存模型？</p>
 <ul>
@@ -334,7 +348,46 @@
 <li>ThreadLocal有内存泄露的风险，key是弱引用，value是强引用，gc后可能会有空key的value，可能内存泄露，每次使用完threadlocal都调用它的remove方法</li>
 <li>为什么key不使用强引用？ 如果使用完不删除，就不会被gc，会内存泄露</li>
 </ul>
-<h2 id="MySQL篇"><a href="#MySQL篇" class="headerlink" title="MySQL篇"></a>MySQL篇</h2><h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p>查询语句执行过程</p>
+<h2 id="MySQL篇"><a href="#MySQL篇" class="headerlink" title="MySQL篇"></a>MySQL篇</h2><p>MySQL 有哪些常见的存储引擎？它们的区别是什么</p>
+<ul>
+<li><p>InnoDB：支持行级锁，事务型的存储引擎，支持数据库崩溃后的安全恢复，索引类型是聚簇索引</p>
+</li>
+<li><p>MyISAM：只支持表级锁，不支持事务，不支持数据库崩溃后的安全恢复，索引类型是非聚簇索引</p>
+</li>
+</ul>
+<h3 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h3><p>说说事务的四大特性(ACID)</p>
+<ul>
+<li><p>原子性：指令要么全部成功，要么全部失败；</p>
+</li>
+<li><p>隔离性：一个用户的事务不会被其他事务干扰；</p>
+</li>
+<li><p>持久性：数据的改变是持久的，即使数据库发生故障也能恢复；</p>
+</li>
+<li><p>一致性：执行事务前后，数据保持一致,例如转账业务中，无论事务是否成功，转账者和收款人的总额应该是不变的</p>
+</li>
+</ul>
+<p>数据库的事务隔离级别有哪些？各有哪些优缺点？</p>
+<ul>
+<li><p>读取未提交：可能会脏读、不可重复读、幻读</p>
+</li>
+<li><p>读取已提交：可能会不可重复读和幻读</p>
+</li>
+<li><p>可重复读：默认的事务隔离级别，幻读还有可能发生</p>
+</li>
+<li><p>可串行化：所有事务逐个执行</p>
+</li>
+</ul>
+<p>简述脏读和幻读的发生场景，InnoDB 是如何解决幻读的？</p>
+<ul>
+<li><p>脏读：一个事务对数据进行了修改，另一个事务读取了这个修改后的数据，然后前一个事务失败回滚了</p>
+</li>
+<li><p>幻读：一个事务在读取表中数据的过程中，又新插入了几行记录。</p>
+</li>
+<li><p>通过MVCC或者临键锁（记录锁+间隙锁）防止新数据插入。</p>
+</li>
+</ul>
+<p>MySQL的主从同步机制</p>
+<h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p>查询语句执行过程</p>
 <ul>
 <li>查询缓存(8.0之后删除) -&gt;分析器 -&gt; 优化器-&gt; 执行器操作引擎返回结果(存储引擎提供读写接口)</li>
 </ul>
@@ -347,15 +400,22 @@
 <h3 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h3><p>索引有几类？</p>
 <ul>
 <li>按应用维度分：主键索引、普通索引、唯一索引、覆盖索引、联合索引</li>
-<li>按底层存储方式分：聚集索引、非聚集索引</li>
+<li>按底层存储方式分：聚集索引(InnoDB)、非聚集索引(MyISAM)</li>
 </ul>
 <p>where条件索引失效</p>
 <ul>
-<li>%开头的like；表达式计算；字符串没加单引号，隐式转换</li>
+<li>%开头的like；表达式计算；隐式转换</li>
 </ul>
 <p>为什么索引可以更快</p>
 <ul>
 <li>减少数据访问量，提高数据定位效率</li>
+</ul>
+<p>MySQL 为什么使用 B+ 树来作索引，对比 B 树它的优点和缺点是什么？</p>
+<ul>
+<li><p>B+树相比于B树有几个显著的优点：B+树具备更少的IO次数（非叶子节点只存储索引），更稳定的查询效率（只搜索叶子节点），B+树的所有叶子节点构成一个双向链表，更适用于范围查找。  </p>
+</li>
+<li><p>缺点就是需要维护叶子节点之间的指针</p>
+</li>
 </ul>
 <h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>sql优化步骤</p>
 <ul>
@@ -372,11 +432,21 @@
 </ul>
 <p>如何实现高可用 (长时间稳定运行的能力)</p>
 <ul>
-<li>主从复制</li>
-<li><strong>哨兵</strong>模式</li>
-<li>集群模式</li>
-<li>持久化备份</li>
-<li>数据冗余和故障恢复</li>
+<li><p>主从复制</p>
+</li>
+<li><p><strong>哨兵</strong>模式</p>
+<ul>
+<li><p>用于监控 Redis 主从服务器的运行状态，自动完成故障转移（failover），并通过订阅和通知机制告知客户端关于 Redis 系统状态的变化。</p>
+<p><strong>选举过程</strong>：当哨兵发现主节点失效时，它会在哨兵系统中发起选举，选出一个哨兵作为领导者来执行自动故障转移的操作。</p>
+</li>
+</ul>
+</li>
+<li><p>集群模式</p>
+</li>
+<li><p>持久化备份</p>
+</li>
+<li><p>数据冗余和故障恢复</p>
+</li>
 </ul>
 <p>如何做性能优化</p>
 <ul>
@@ -400,6 +470,10 @@
 </ul>
 </li>
 </ul>
+<p>持久化方案RDB和AOF了解吗</p>
+<p>为什么redis读写用单线程还这么快</p>
+<p>redis线程模型</p>
+<p>过期机制和内存淘汰策略</p>
 <h3 id="持久化"><a href="#持久化" class="headerlink" title="持久化"></a>持久化</h3><h2 id="JVM篇"><a href="#JVM篇" class="headerlink" title="JVM篇"></a>JVM篇</h2><h3 id="内存区域"><a href="#内存区域" class="headerlink" title="内存区域"></a>内存区域</h3><p>JVM内存区域</p>
 <ul>
 <li>私有：程序计数器、虚拟机栈、本地方法栈</li>
@@ -418,7 +492,21 @@
 <ul>
 <li>新生代(伊甸区，两个s区)、老年代</li>
 </ul>
-<p>新生代</p>
+<p>新生代分成哪几个区，对象的生命流程，新生代两个s区之间有什么关系</p>
+<details>
+<summary>展开查看</summary>
+
+<ul>
+<li><p>强引用的对象不会被gc，即使程序抛异常退出</p>
+</li>
+<li><p>软引用的对象第一次不会gc，后面内存还不够就会gc</p>
+</li>
+<li><p>弱引用直接gc</p>
+</li>
+</ul>
+</details>
+
+
 <h3 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h3><p>强引用、软引用、弱引用</p>
 <ul>
 <li>强引用的对象不会被gc，即使程序抛异常退出</li>
@@ -445,6 +533,10 @@
 <ul>
 <li>setter</li>
 </ul>
+<p>反射机制</p>
+<ul>
+<li>通过运行时动态地获取类的信息，并进行相应的操作</li>
+</ul>
 <h3 id="IoC"><a href="#IoC" class="headerlink" title="IoC"></a>IoC</h3><p>IoC使用的设计模式</p>
 <ul>
 <li>工厂设计模式</li>
@@ -457,6 +549,7 @@
 <p>动态代理和静态代理的区别</p>
 <ul>
 <li>静态代理的代理类在编译时就已经确定，代理对象的类型是固定的。动态代理的代理类是运行时动态生成的。</li>
+<li>静态代理，定义一个真实类和一个代理类实现接口，将真实对象注入到代理类中；动态代理分为jdk动态代理和CGLIB动态代理，jdk动态代理只能代理实现了接口的类或直接代理接口，cglib可以代理未实现任何接口的类，它生成一个被代理类的子类来拦截被代理类的方法调用</li>
 </ul>
 <h2 id="中间件篇"><a href="#中间件篇" class="headerlink" title="中间件篇"></a>中间件篇</h2><h3 id="ElasticSearch"><a href="#ElasticSearch" class="headerlink" title="ElasticSearch"></a>ElasticSearch</h3><p>数据怎么同步到ES？</p>
 <ul>
@@ -610,7 +703,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#java%E5%9F%BA%E7%A1%80%E7%AF%87"><span class="nav-number">1.</span> <span class="nav-text">java基础篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%AF%87"><span class="nav-number">2.</span> <span class="nav-text">并发编程篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81"><span class="nav-number">2.1.</span> <span class="nav-text">锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JMM"><span class="nav-number">2.2.</span> <span class="nav-text">JMM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">2.3.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E7%AF%87"><span class="nav-number">3.</span> <span class="nav-text">MySQL篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2"><span class="nav-number">3.1.</span> <span class="nav-text">查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">3.2.</span> <span class="nav-text">索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96"><span class="nav-number">3.3.</span> <span class="nav-text">优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redis%E7%AF%87"><span class="nav-number">4.</span> <span class="nav-text">redis篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-number">4.1.</span> <span class="nav-text">持久化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM%E7%AF%87"><span class="nav-number">5.</span> <span class="nav-text">JVM篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F"><span class="nav-number">5.1.</span> <span class="nav-text">内存区域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">5.2.</span> <span class="nav-text">垃圾回收</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%AF%87"><span class="nav-number">6.</span> <span class="nav-text">网络篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AF%87"><span class="nav-number">7.</span> <span class="nav-text">操作系统篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%86%E6%9E%B6%E7%AF%87"><span class="nav-number">8.</span> <span class="nav-text">框架篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IoC"><span class="nav-number">8.1.</span> <span class="nav-text">IoC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AOP"><span class="nav-number">8.2.</span> <span class="nav-text">AOP</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6%E7%AF%87"><span class="nav-number">9.</span> <span class="nav-text">中间件篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ElasticSearch"><span class="nav-number">9.1.</span> <span class="nav-text">ElasticSearch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka"><span class="nav-number">9.2.</span> <span class="nav-text">Kafka</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%B6%E6%8B%B7%E8%B4%9D%EF%BC%9A%E5%87%8F%E5%B0%91%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2%E5%92%8C%E6%95%B0%E6%8D%AE%E6%8B%B7%E8%B4%9D"><span class="nav-number">10.</span> <span class="nav-text">零拷贝：减少上下文切换和数据拷贝</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%AF%87"><span class="nav-number">11.</span> <span class="nav-text">设计模式篇</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#java%E5%9F%BA%E7%A1%80%E7%AF%87"><span class="nav-number">1.</span> <span class="nav-text">java基础篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%AF%87"><span class="nav-number">2.</span> <span class="nav-text">并发编程篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81"><span class="nav-number">2.1.</span> <span class="nav-text">锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JMM"><span class="nav-number">2.2.</span> <span class="nav-text">JMM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">2.3.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E7%AF%87"><span class="nav-number">3.</span> <span class="nav-text">MySQL篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1"><span class="nav-number">3.1.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2"><span class="nav-number">3.2.</span> <span class="nav-text">查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">3.3.</span> <span class="nav-text">索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96"><span class="nav-number">3.4.</span> <span class="nav-text">优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redis%E7%AF%87"><span class="nav-number">4.</span> <span class="nav-text">redis篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-number">4.1.</span> <span class="nav-text">持久化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM%E7%AF%87"><span class="nav-number">5.</span> <span class="nav-text">JVM篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F"><span class="nav-number">5.1.</span> <span class="nav-text">内存区域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">5.2.</span> <span class="nav-text">垃圾回收</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%AF%87"><span class="nav-number">6.</span> <span class="nav-text">网络篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AF%87"><span class="nav-number">7.</span> <span class="nav-text">操作系统篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%86%E6%9E%B6%E7%AF%87"><span class="nav-number">8.</span> <span class="nav-text">框架篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IoC"><span class="nav-number">8.1.</span> <span class="nav-text">IoC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AOP"><span class="nav-number">8.2.</span> <span class="nav-text">AOP</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6%E7%AF%87"><span class="nav-number">9.</span> <span class="nav-text">中间件篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ElasticSearch"><span class="nav-number">9.1.</span> <span class="nav-text">ElasticSearch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka"><span class="nav-number">9.2.</span> <span class="nav-text">Kafka</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%B6%E6%8B%B7%E8%B4%9D%EF%BC%9A%E5%87%8F%E5%B0%91%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2%E5%92%8C%E6%95%B0%E6%8D%AE%E6%8B%B7%E8%B4%9D"><span class="nav-number">10.</span> <span class="nav-text">零拷贝：减少上下文切换和数据拷贝</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%AF%87"><span class="nav-number">11.</span> <span class="nav-text">设计模式篇</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
