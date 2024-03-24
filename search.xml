@@ -16951,7 +16951,28 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
   <entry>
     <title>问题大全</title>
     <url>/2024/03/21/11-00-37/</url>
-    <content><![CDATA[<h2 id="java基础篇"><a href="#java基础篇" class="headerlink" title="java基础篇"></a>java基础篇</h2><p>jvm、jdk、jre的区别</p>
+    <content><![CDATA[<h2 id="java基础篇"><a href="#java基础篇" class="headerlink" title="java基础篇"></a>java基础篇</h2><p><code>String str = &quot;ab&quot; 和 String str = new String(&quot;ab&quot;);</code> 的区别</p>
+<details>
+<summary>展开查看</summary>
+
+
+<ul>
+<li>前者先检查字符串常量池中是否存在相同值的字符串，存在就直接返回对象，不存在就新创建一个对象保存在字符串常量池</li>
+<li>后者在堆区创建新的字符串对象，即使字符串常量池中有相同值的对象。</li>
+</ul>
+</details>
+<br>
+
+<p>transient关键字的作用</p>
+<details>
+<summary>展开查看</summary>
+- 被修饰的对象不参与序列化
+- 在ArrayList源码中有，元素存放在elementData变量，这个变量被transient修饰，elementData是一个缓存数组，它通常会预留一些容量，等容量不足时再扩充容量，那么有些空间可能就没有实际存储元素，采用上诉的方式来实现序列化时，就可以保证只序列化实际存储的那些元素，而不是整个数组，从而节省空间和时间。
+
+</details>
+<br>
+
+<p>jvm、jdk、jre的区别</p>
 <details>
 <summary>展开查看</summary>
 
@@ -17045,7 +17066,9 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <p>BIO、NIO和AIO的区别</p>
 <details>
 <summary>展开查看</summary>
+IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷贝到缓冲区，再拷贝到内核缓冲区，再写到设备如网卡。
 
+<p><img src="/pic/IO%E6%A8%A1%E5%9E%8B.png" alt="image-20240324161731549"></p>
 <ul>
 <li>同步阻塞BIO会一直阻塞等待数据、同步非阻塞NIO在等待时间内轮询、异步非阻塞AIO</li>
 <li>BIO：用户进程发起IO后必须等待完成</li>
@@ -17088,6 +17111,24 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <br>
 
 <p>可重入锁的实现原理</p>
+<details>
+<summary>展开查看</summary>
+
+<p>为每个锁维护一个拥有者线程标识和计数器，在加锁和解锁操作时对计数器进行递增和递减，并通过并发控制确保线程对锁状态的访问是安全的。</p>
+<p>如ReentrantLock，在内部维护了一个锁状态变量和一个等待队列，等待队列会阻塞等待获取锁的线程。在获取锁的时候，会判断当前锁状态变量是否为0，如果为0，则获取到锁，且锁状态变量+1，这时其他锁线程无法获取到锁，当获取锁的同一个线程再次获取锁时，则锁状态变量会再加一。当锁状态变量变为0才会真正释放锁。</p>
+</details>
+<br>
+
+<p>什么是AQS？</p>
+<details>
+<summary>展开查看</summary>
+
+<p>抽象队列同步器，AQS是一个抽象类，用于构建锁和同步器，提供了一些需要实现的通用功能。AQS的实现类有ReentrantLock等。</p>
+<p>AQS 使用 <strong>int 成员变量 <code>state</code> 表示同步状态</strong>(CAS保证原子性)，通过内置的 <strong>线程等待队列</strong> 来完成获取资源线程的排队工作。<code>state</code> 变量由 <code>volatile</code> 修饰，用于展示当前临界资源的获锁情况。</p>
+<p>AQS可以实现公平锁和非公平锁，就看新来的线程是直接竞争锁还是直接去队列排队。</p>
+</details>
+<br>
+
 <p>Synchronized 关键字底层是如何实现的？它与 ReentrantLock相比优缺点分别是什么？</p>
 <details>
 <summary>展开查看</summary>
@@ -17144,6 +17185,8 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 </details>
 <br>
 
+
+
 <h3 id="JMM"><a href="#JMM" class="headerlink" title="JMM"></a>JMM</h3><p>介绍一下内存模型？</p>
 <details>
 <summary>展开查看</summary>
@@ -17173,7 +17216,7 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 
 <ul>
 <li>ThreadLocal是线程独立的，多个线程之间互不干扰</li>
-<li>ThreadLocal中实际存放值的是ThreadLocalMap，key存放了threadlocal，value是代码中放入的值</li>
+<li>ThreadLocal中实际存放值的是ThreadLocalMap，key存放了threadlocal自己，value是代码中放入的值</li>
 <li>ThreadLocal有内存泄露的风险，key是弱引用，value是强引用，gc后可能会有空key的value，可能内存泄露，每次使用完threadlocal都调用它的remove方法</li>
 <li>为什么key不使用强引用？ 如果使用完不删除，就不会被gc，会内存泄露</li>
 </ul>
@@ -17205,6 +17248,14 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 </details>
 <br>
 
+<p>单表最多可以存多少记录</p>
+<details>
+<summary>展开查看</summary>
+
+<p>没有硬性指标，当超过500万就要考虑分库分表，超过2000万性能急剧下降。</p>
+</details>
+<br>
+
 <h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><p>char和varchar 的区别，varchar最多存多大？</p>
 <details>
 <summary>展开查看</summary>
@@ -17219,15 +17270,12 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <summary>展开查看</summary>
 
 <ul>
-<li><p>原子性：指令要么全部成功，要么全部失败；</p>
-</li>
-<li><p>隔离性：一个用户的事务不会被其他事务干扰；</p>
-</li>
-<li><p>持久性：数据的改变是持久的，即使数据库发生故障也能恢复；</p>
-</li>
-<li><p>一致性：执行事务前后，数据保持一致,例如转账业务中，无论事务是否成功，转账者和收款人的总额应该是不变的</p>
-</li>
+<li>原子性：指令要么全部成功，要么全部失败；</li>
+<li>隔离性：一个用户的事务不会被其他事务干扰；</li>
+<li>持久性：数据的改变是持久的，即使数据库发生故障也能恢复；</li>
+<li>一致性：执行事务前后，数据保持一致,例如转账业务中，无论事务是否成功，转账者和收款人的总额应该是不变的</li>
 </ul>
+<p>其中redo log保证了持久性，undo log保证原子性和一致性，隔离性由锁和MVCC共同保证。</p>
 </details>
 <br>
 
@@ -17237,7 +17285,8 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 
 
 <ul>
-<li>锁和MVCC(<strong>多版本</strong>并发控制可以看作是乐观控制的模式)</li>
+<li>锁，如排他锁，一个事务获取到数据行的排他锁，其他事务就不能获取该行的锁</li>
+<li>MVCC(<strong>多版本</strong>并发控制可以看作是乐观控制的模式)</li>
 </ul>
 </details>
 <br>
@@ -17396,12 +17445,39 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 </details>
 <br>
 
+<p>缓存读写策略</p>
+<details>
+<summary>展开查看</summary>
+
+<ul>
+<li>Cache Aside Pattern（旁路缓存模式）</li>
+<li>Read&#x2F;Write Through Pattern（读写穿透）</li>
+<li>Write Behind Pattern（异步缓存写入）</li>
+</ul>
+</details>
+<br>
+
+<p>如何保证双写一致性</p>
+<details>
+<summary>展开查看</summary>
+
+<p>对于读数据而言，就是先读缓存，未命中就读数据库并更新缓存。对写数据有两种方法：</p>
+<p>和业务挂钩，如果需要<strong>强一致性</strong>，比如秒杀抢券，加读写锁。如果不加锁，无论是先删缓存还是先操作数据库(缓存过期，A线程读数据库拿到数据后时间片结束，B线程修改数据库后删除缓存，A线程拿着旧数据更新缓存)都会有并发问题。</p>
+<p>读写锁分为读锁和写锁，读锁是共享锁，支持其他线程的共享读；写锁是独占锁，阻塞其他线程的读写。</p>
+<p><img src="/pic/%E5%8F%8C%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7.png" alt="image-20240324141849504"></p>
+<p>第二种方法是异步，适合对数据一致性要求不高的场景，比如缓存帖子内容。更新数据库后，利用<strong>消息队列</strong>，把更新缓存的操作让消息队列通知消费。</p>
+</details>
+<br>
+
 <p>如何实现高可用 (长时间稳定运行的能力)</p>
 <details>
 <summary>展开查看</summary>
 
 <ul>
-<li><p>主从复制</p>
+<li><p>主从复制、读写分离</p>
+<ul>
+<li>第一次同步是全量同步，后面是增量同步</li>
+</ul>
 </li>
 <li><p><strong>哨兵</strong>模式</p>
 <ul>
@@ -17452,6 +17528,7 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <details>
 <summary>展开查看</summary>
 - RDB(默认)。快照
+  - 手动有两条命令，save是阻塞方式；bgsave会fork子线程，只有fork时阻塞
 - AOF。**追加文件方式**，写命令追加到aof缓冲区，再写入到aof文件(在系统内核缓冲区)，最后根据持久化方式(fsync策略)决定何时将系统内核缓冲区的数据同步到硬盘中。
 
 <ul>
@@ -17492,11 +17569,20 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <p>redis线程模型</p>
 <details>
 <summary>展开查看</summary>
-
+redis读写使用单线程，基于reactor开发了事件处理模型，结合IO多路复用。
 
 <ul>
-<li>redis读写使用单线程，基于reactor开发了事件处理模型，称为文本事件处理器。</li>
-<li>为了解决网络瓶颈引入多线程</li>
+<li>利用单个线程同时<strong>监听</strong>多个socket(客户端连接) ，并在某个socket可读或可写时<strong>得到通知</strong>，避免无效等待，充分利用cpu资源。(普通的阻塞IO或非阻塞IO 只能一个个处理，前面处理完了才能处理后一个)</li>
+</ul>
+<p><img src="/pic/IO%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8.png" alt="image-20240324162152630"></p>
+<ul>
+<li>监听的方法有select、poll和epoll。select和poll只会通知用户有socket就绪，但不会通知是哪一个，需要用户进程逐个遍历确认；epoll会在通知用户进程就绪的同时把已就绪的socket写入用户空间</li>
+</ul>
+<p>为了解决网络瓶颈，在处理器引入多线程</p>
+<ul>
+<li>连接应答处理器</li>
+<li>命令回复处理器，多线程回复事件</li>
+<li>命令请求处理器，命令转换使用了多线程</li>
 </ul>
 </details>
 <br>
@@ -17504,12 +17590,9 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <p>过期删除机制和内存淘汰策略</p>
 <details>
 <summary>展开查看</summary>
+- 过期机制：惰性删除和定期删除
+- 内存淘汰机制：两大类，设置过期时间和不设置过期时间，分别有选择任意、最不常用、最近最少、即将过期
 
-
-<ul>
-<li>过期机制：惰性删除和定期删除</li>
-<li>内存淘汰机制：两大类，设置过期时间和不设置过期时间，分别有选择任意、最不常用、最近最少、即将过期</li>
-</ul>
 </details>
 <br>
 
@@ -17547,17 +17630,18 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 </details>
 <br>
 
-<p>堆内存怎么划分的</p>
+<p>堆内存怎么划分的，为什么要两个s区？一个不行吗</p>
 <details>
 <summary>展开查看</summary>
 
 <ul>
-<li>新生代(伊甸区，两个s区)、老年代</li>
+<li>新生代(伊甸区，两个s区，比例是8:1:1)、老年代</li>
+<li>两个s区的作业：伊甸区的对象在gc后会先放到s0，在s区的对象也会死亡，这会造成内存碎片，多一个s1区可以在整理的时候把碎片清除，参考标记复制法</li>
 </ul>
 </details>
 <br>
 
-<p>新生代分成哪几个区，对象的生命流程，新生代两个s区之间有什么关系</p>
+<p>新生代分成哪几个区，对象的生命流程</p>
 <details>
 <summary>展开查看</summary>
 
@@ -17572,8 +17656,28 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 </details>
 <br>
 
+<p>遇到过OOM吗？</p>
+<details>
+<summary>展开查看</summary>
 
-<h3 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h3><p>强引用、软引用、弱引用</p>
+
+<ul>
+<li>数组开的太大（创建了太大的对象）  堆空间不足</li>
+<li>创建了大量的对象  堆空间不足</li>
+<li>创建大量字符串常量   堆空间不足</li>
+</ul>
+</details>
+<br>
+
+<h3 id="垃圾回收"><a href="#垃圾回收" class="headerlink" title="垃圾回收"></a>垃圾回收</h3><p>怎么判断一个对象是不是垃圾？</p>
+<details>
+<summary>展开查看</summary>
+
+<p>没有引用。标记计数、可达性分析</p>
+</details>
+<br>
+
+<p>强引用、软引用、弱引用</p>
 <details>
 <summary>展开查看</summary>
 
@@ -17619,12 +17723,17 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <br>
 
 <p>tcp三次握手四次挥手</p>
-<h2 id="操作系统篇"><a href="#操作系统篇" class="headerlink" title="操作系统篇"></a>操作系统篇</h2><h2 id="框架篇"><a href="#框架篇" class="headerlink" title="框架篇"></a>框架篇</h2><p>spring循环引用</p>
+<h2 id="操作系统篇"><a href="#操作系统篇" class="headerlink" title="操作系统篇"></a>操作系统篇</h2><h2 id="框架篇"><a href="#框架篇" class="headerlink" title="框架篇"></a>框架篇</h2><p>spring如何解决循环依赖 (循环引用) 问题</p>
 <details>
 <summary>展开查看</summary>
 
+<p>循环依赖是指A的成员变量有B，B的成员变量有A。在实例化A时，要先初始化，这就涉及B的实例化，同样要实例化B，必须先实例化A。</p>
+<p>循环引用分两种，set方法和构造器</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">private</span> B b;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">B</span>&#123;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">private</span> A a;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 构造器方法</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">A</span>&#123;</span><br><span class="line">	<span class="keyword">private</span> B b;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">A</span><span class="params">(B b)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.b = b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">B</span>&#123;</span><br><span class="line">	<span class="keyword">private</span> A a;</span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">B</span><span class="params">(A a)</span>&#123;</span><br><span class="line">        <span class="built_in">this</span>.a = a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Spring已经一定程度上通过三级缓存解决了这个问题</p>
 <ul>
-<li>setter</li>
+<li>三级缓存。一级缓存缓存那些已经经历了完整的生命周期，已经初始化完的bean对象；二级缓存缓存早期的bean对象(生命周期还没走完)；三级缓存缓存的是对象工厂。</li>
 </ul>
 </details>
 <br>
@@ -17674,11 +17783,8 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <p>SSM是什么</p>
 <details>
 <summary>展开查看</summary>
+- SpringMVC、Spring Framework、Mybatis三块组成。基于传统的SSM框架进行整合开发项目会比较繁琐，而且效率也比较低，所以在现在的企业项目开发当中，基本上都是直接基于SpringBoot整合SSM进行项目开发的。
 
-
-<ul>
-<li>SpringMVC、Spring Framework、Mybatis三块组成。基于传统的SSM框架进行整合开发项目会比较繁琐，而且效率也比较低，所以在现在的企业项目开发当中，基本上都是直接基于SpringBoot整合SSM进行项目开发的。</li>
-</ul>
 </details>
 <br>
 
@@ -17690,6 +17796,14 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <li>MVC是一种常见的软件设计模式，将应用程序的逻辑分离成三个独立组件：模型(数据和业务逻辑的表示)、视图(用户界面的呈现部分，负责展示数据给用户，并接收用户的输入)、控制器(模型和视图之间的协调者，负责接收用户的输入并根据输入调用相应的模型逻辑)</li>
 <li>spring mvc是mvc架构的一种实现，是spring框架的web开发模块。</li>
 </ul>
+</details>
+<br>
+
+<p>MyBatis中$和#的区别</p>
+<details>
+<summary>展开查看</summary>
+- 
+
 </details>
 <br>
 
@@ -17831,7 +17945,22 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 </details>
 <br>
 
-<h2 id="设计模式篇"><a href="#设计模式篇" class="headerlink" title="设计模式篇"></a>设计模式篇</h2>]]></content>
+<h2 id="设计模式篇"><a href="#设计模式篇" class="headerlink" title="设计模式篇"></a>设计模式篇</h2><h2 id="其他-1"><a href="#其他-1" class="headerlink" title="其他"></a>其他</h2><p>Linux下如何搜索日志内容</p>
+<details>
+<summary>展开查看</summary>
+
+<ul>
+<li><p>grep</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">grep &quot;content&quot; /path/to/logfile</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>vim</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /path/to/logfile</span><br></pre></td></tr></table></figure>
+
+<p>然后用’&#x2F;‘键，输入内容回车查询   vim只能查询本行最近的内容，并不是查找所有的</p>
+</li>
+</ul>
+</details>
+<br>]]></content>
       <categories>
         <category>八股</category>
       </categories>
