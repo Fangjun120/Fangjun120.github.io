@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"fangjun120.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="java基础篇String str &#x3D; &quot;ab&quot; 和 String str &#x3D; new String(&quot;ab&quot;); 的区别  展开查看    前者先检查字符串常量池中是否存在相同值的字符串，存在就直接返回对象，不存在就新创建一个对象保存在字符串常量池 后者在堆区创建新的字符串对象，即使字符串常量池中有相同值的对象。     transient关键字的作用">
+  <meta name="description" content="java基础篇String str &#x3D; &quot;ab&quot; 和 String str &#x3D; new String(&quot;ab&quot;); 的区别  展开查看    前者先检查字符串常量池中是否存在相同值的字符串，存在就直接返回对象，不存在就新创建一个对象保存在字符串常量池 后者在堆区创建新的字符串对象，即使字符串常量池中有相同值的对象。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="问题大全">
 <meta property="og:url" content="https://fangjun120.github.io/2024/03/21/11-00-37/index.html">
 <meta property="og:site_name" content="eidolon的小窝">
-<meta property="og:description" content="java基础篇String str &#x3D; &quot;ab&quot; 和 String str &#x3D; new String(&quot;ab&quot;); 的区别  展开查看    前者先检查字符串常量池中是否存在相同值的字符串，存在就直接返回对象，不存在就新创建一个对象保存在字符串常量池 后者在堆区创建新的字符串对象，即使字符串常量池中有相同值的对象。     transient关键字的作用">
+<meta property="og:description" content="java基础篇String str &#x3D; &quot;ab&quot; 和 String str &#x3D; new String(&quot;ab&quot;); 的区别  展开查看    前者先检查字符串常量池中是否存在相同值的字符串，存在就直接返回对象，不存在就新创建一个对象保存在字符串常量池 后者在堆区创建新的字符串对象，即使字符串常量池中有相同值的对象。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fangjun120.github.io/pic/IO%E6%A8%A1%E5%9E%8B.png">
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E5%8F%8C%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7.png">
@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.png">
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png">
 <meta property="article:published_time" content="2024-03-21T03:00:37.000Z">
-<meta property="article:modified_time" content="2024-03-25T03:34:24.872Z">
+<meta property="article:modified_time" content="2024-03-25T06:25:30.440Z">
 <meta property="article:author" content="Fang Jun">
 <meta property="article:tag" content="八股">
 <meta name="twitter:card" content="summary">
@@ -227,7 +227,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-25 11:34:24" itemprop="dateModified" datetime="2024-03-25T11:34:24+08:00">2024-03-25</time>
+                <time title="修改时间：2024-03-25 14:25:30" itemprop="dateModified" datetime="2024-03-25T14:25:30+08:00">2024-03-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -262,6 +262,8 @@
 </details>
 <br>
 
+<span id="more"></span>
+
 <p>transient关键字的作用</p>
 <details>
 <summary>展开查看</summary>
@@ -283,7 +285,7 @@
 </details>
 <br>
 
-<span id="more"></span>
+
 
 <p>final、finalize和finally 的区别</p>
 <details>
@@ -382,8 +384,23 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 <summary>展开查看</summary>
 
 <ul>
-<li>加载—链接 (验证—准备—解析) —初始化</li>
-<li>类加载器 双亲委派机制</li>
+<li><p>加载—链接 (验证—准备—解析) —初始化</p>
+</li>
+<li><p>类加载器 双亲委派机制</p>
+<ul>
+<li><p>启动类加载器</p>
+<p>该类并不继承ClassLoader类，其是由C++编写实现。用于加载<strong>JAVA_HOME&#x2F;jre&#x2F;lib</strong>目录下的类库。</p>
+</li>
+<li><p>扩展类加载器</p>
+<p>该类是ClassLoader的子类，主要加载<strong>JAVA_HOME&#x2F;jre&#x2F;lib&#x2F;ext</strong>目录中的类库。</p>
+</li>
+<li><p>应用类加载器(AppClassLoader)</p>
+<p>该类是ClassLoader的子类，主要用于加载<strong>classPath</strong>下的类，也就是加载开发者自己编写的Java类。</p>
+</li>
+<li><p>自定义类加载器</p>
+</li>
+</ul>
+</li>
 </ul>
 </details>
 <br>
@@ -535,7 +552,7 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
-<p>说说mysql的数据存储形式</p>
+<p>🌟说说mysql的数据存储形式</p>
 <details>
 <summary>展开查看</summary>
 
@@ -723,6 +740,10 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
+<p>mysql批量操作时，如果发生了错误，如何快速定位是哪条数据的错误？</p>
+<ul>
+<li>数据库错误日志</li>
+</ul>
 <p>一张表里有大量记录，现在要加一个字段，怎么操作</p>
 <h2 id="redis篇"><a href="#redis篇" class="headerlink" title="redis篇"></a>redis篇</h2><p>redis数据结构</p>
 <details>
@@ -795,7 +816,7 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
-<p>如何做性能优化</p>
+<p>🌟如何做性能优化</p>
 <details>
 <summary>展开查看</summary>
 
@@ -940,31 +961,13 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<p>新生代分成哪几个区，对象的生命流程</p>
-<details>
-<summary>展开查看</summary>
-
-<ul>
-<li><p>强引用的对象不会被gc，即使程序抛异常退出</p>
-</li>
-<li><p>软引用的对象第一次不会gc，后面内存还不够就会gc</p>
-</li>
-<li><p>弱引用直接gc</p>
-</li>
-</ul>
-</details>
-<br>
-
 <p>遇到过OOM吗？</p>
 <details>
 <summary>展开查看</summary>
+- 数组开的太大（创建了太大的对象）  堆空间不足
+- 创建了大量的对象  堆空间不足
+- 创建大量字符串常量   堆空间不足
 
-
-<ul>
-<li>数组开的太大（创建了太大的对象）  堆空间不足</li>
-<li>创建了大量的对象  堆空间不足</li>
-<li>创建大量字符串常量   堆空间不足</li>
-</ul>
 </details>
 <br>
 
@@ -988,7 +991,7 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<p>CMS和G1回收器的区别</p>
+<p>🌟CMS和G1回收器的区别</p>
 <details>
 <summary>展开查看</summary>
 
@@ -1011,7 +1014,7 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<h2 id="操作系统篇"><a href="#操作系统篇" class="headerlink" title="操作系统篇"></a>操作系统篇</h2><h2 id="框架篇"><a href="#框架篇" class="headerlink" title="框架篇"></a>框架篇</h2><p>spring如何解决循环依赖 (循环引用) 问题</p>
+<h2 id="操作系统篇"><a href="#操作系统篇" class="headerlink" title="操作系统篇"></a>操作系统篇</h2><h2 id="框架篇"><a href="#框架篇" class="headerlink" title="框架篇"></a>框架篇</h2><p>🌟spring如何解决循环依赖 (循环引用) 问题</p>
 <details>
 <summary>展开查看</summary>
 
@@ -1185,7 +1188,7 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<p>Kafka如何保证消息不丢失</p>
+<p>🌟Kafka如何保证消息不丢失</p>
 <details>
 <summary>展开查看</summary>
 
@@ -1265,25 +1268,21 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 <h2 id="设计模式篇"><a href="#设计模式篇" class="headerlink" title="设计模式篇"></a>设计模式篇</h2><h2 id="网络篇"><a href="#网络篇" class="headerlink" title="网络篇"></a>网络篇</h2><p>get和post的区别</p>
 <details>
 <summary>展开查看</summary>
+- 语义：get获取；post创建；幂等；缓存：get幂等有缓存；格式：get参数在URL，post在body里
 
-
-<ul>
-<li>语义：get获取；post创建；幂等；缓存：get幂等有缓存；格式：get参数在URL，post在body里</li>
-</ul>
 </details>
 <br>
 
-<p>从输入URL到页面展示发生了什么？</p>
+<p>🌟从输入URL到页面展示发生了什么？</p>
 <details>
 <summary>展开查看</summary>
+- 根据域名查找ip。**DNS**协议
 
-
-<ul>
-<li><p>根据域名查找ip。DNS协议</p>
 <ul>
 <li>根服务器(.)，顶级域 DNS 服务器(.com)，权威 DNS 服务器(server.com) ，本地域名服务器有缓存就直接返回，没缓存就去找根服务器</li>
-</ul>
-</li>
+<li>根据ip和端口号，向目标服务器发起<strong>tcp连接</strong>请求，建立连接</li>
+<li>浏览器发起<strong>http请求</strong>，获取网页内容</li>
+<li>浏览器不需要通信时，可以主动关闭tcp连接。</li>
 </ul>
 </details>
 <br>
@@ -1345,7 +1344,7 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<p>TCP拥塞控制了解吗</p>
+<p>🌟TCP拥塞控制了解吗</p>
 <details>
 <summary>展开查看</summary>
 

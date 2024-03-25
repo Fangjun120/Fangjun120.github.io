@@ -215,7 +215,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-25 11:34:24" itemprop="dateModified" datetime="2024-03-25T11:34:24+08:00">2024-03-25</time>
+                <time title="修改时间：2024-03-25 14:25:30" itemprop="dateModified" datetime="2024-03-25T14:25:30+08:00">2024-03-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -246,27 +246,6 @@
 <ul>
 <li>前者先检查字符串常量池中是否存在相同值的字符串，存在就直接返回对象，不存在就新创建一个对象保存在字符串常量池</li>
 <li>后者在堆区创建新的字符串对象，即使字符串常量池中有相同值的对象。</li>
-</ul>
-</details>
-<br>
-
-<p>transient关键字的作用</p>
-<details>
-<summary>展开查看</summary>
-- 被修饰的对象不参与序列化
-- 在ArrayList源码中有，元素存放在elementData变量，这个变量被transient修饰，elementData是一个缓存数组，它通常会预留一些容量，等容量不足时再扩充容量，那么有些空间可能就没有实际存储元素，采用上诉的方式来实现序列化时，就可以保证只序列化实际存储的那些元素，而不是整个数组，从而节省空间和时间。
-
-</details>
-<br>
-
-<p>jvm、jdk、jre的区别</p>
-<details>
-<summary>展开查看</summary>
-
-<ul>
-<li>jvm是java虚拟机，是java程序运行的地方</li>
-<li>jdk是java开发工具，包含了jre和编译java源码的编译器javac等工具</li>
-<li>jre是java运行环境，包含java程序运行时所需的内容，包括jvm和基础类库</li>
 </ul>
 </details>
 <br>
