@@ -16825,6 +16825,9 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <h2 id="介绍校园探店"><a href="#介绍校园探店" class="headerlink" title="介绍校园探店"></a>介绍校园探店</h2><h3 id="总体介绍-1"><a href="#总体介绍-1" class="headerlink" title="总体介绍"></a>总体介绍</h3><p>校园探店是我仿照大众点评开发的练手项目，主要是想学习redis的相关知识，因为之前使用redis只是用来做缓存，后来做MTR课表发现redis有很多其他功能，比如分布式锁等。</p>
 <p>因为是个练手项目，所以对比大众点评不是十分完整，主要有登录注册、店铺查询、秒杀优惠、UV统计等功能。</p>
 <p>主要技术栈有springboot、mybatis-plus、redis、mysql、redission</p>
+<p><a href="https://boardmix.cn/app/editor/0Q6gMeM-aALgUkuroNKKvg">https://boardmix.cn/app/editor/0Q6gMeM-aALgUkuroNKKvg</a></p>
+<h2 id="横项"><a href="#横项" class="headerlink" title="横项"></a>横项</h2><h3 id="难点"><a href="#难点" class="headerlink" title="难点"></a>难点</h3><p>当时我们视频编码用的编码库是和瑞星微芯片配套的，但是那个库在开发板上本地编译一直不成功，在github库上也咨询了作者，他也没有什么好的方案。</p>
+<p>后来用了交叉编译，在自己的计算机x86系统里配置了arm的交叉编译链，编译通过后上传到开发板上使用</p>
 ]]></content>
       <categories>
         <category>面试</category>
@@ -17715,7 +17718,51 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<h2 id="操作系统篇"><a href="#操作系统篇" class="headerlink" title="操作系统篇"></a>操作系统篇</h2><h2 id="框架篇"><a href="#框架篇" class="headerlink" title="框架篇"></a>框架篇</h2><p>🌟spring如何解决循环依赖 (循环引用) 问题</p>
+<h2 id="操作系统篇"><a href="#操作系统篇" class="headerlink" title="操作系统篇"></a>操作系统篇</h2><p>什么是僵尸进程和孤儿进程</p>
+<details>
+<summary>展开查看</summary>
+
+
+<ul>
+<li>僵尸进程：子进程终止了，但是父进程没有释放子进程占用的资源，导致子进程的PCB仍存在，但无法被使用。父进程需要及时调用 wait()</li>
+<li>孤儿进程：父进程死了，子进程仍在运行。操作系统会将孤儿进程的父进程设置为 init 进程（进程号为 1），由 init 进程来回收孤儿进程的资源。</li>
+</ul>
+</details>
+<br>
+
+<p>Linux下如何搜索日志内容</p>
+<details>
+<summary>展开查看</summary>
+
+
+<ul>
+<li><p>grep</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">grep &quot;content&quot; /path/to/logfile</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>vim</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /path/to/logfile</span><br></pre></td></tr></table></figure>
+
+<p>然后用’&#x2F;‘键，输入内容回车查询   vim只能查询本行最近的内容，并不是查找所有的</p>
+</li>
+</ul>
+</details>
+<br>
+
+<p>常用命令</p>
+<details>
+<summary>展开查看</summary>
+
+
+<ul>
+<li>scp</li>
+<li>top</li>
+<li>ipcs，ipcrm</li>
+<li>ps查看进程。ps -o pid,ppid 查看进程父子关系</li>
+</ul>
+</details>
+<br>
+
+<h2 id="框架篇"><a href="#框架篇" class="headerlink" title="框架篇"></a>框架篇</h2><p>🌟spring如何解决循环依赖 (循环引用) 问题</p>
 <details>
 <summary>展开查看</summary>
 
@@ -17743,7 +17790,7 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<h3 id="IoC"><a href="#IoC" class="headerlink" title="IoC"></a>IoC</h3><p>IoC使用的设计模式</p>
+<p>IoC使用的设计模式</p>
 <details>
 <summary>展开查看</summary>
 
@@ -17754,13 +17801,23 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<h3 id="AOP"><a href="#AOP" class="headerlink" title="AOP"></a>AOP</h3><p>AOP使用的设计模式</p>
+<p>AOP使用的设计模式</p>
 <details>
 <summary>展开查看</summary>
+AOP：Spring在运行期间会为目标对象生成一个代理对象，并在代理对象中实现对目标对象的增强。
+
 
 <ul>
 <li>代理设计模式</li>
 </ul>
+</details>
+<br>
+
+<p>spring事务是怎么实现的</p>
+<details>
+<summary>展开查看</summary>
+
+<p>Spring事务的实现基于AOP技术，通过在方法调用前后插入事务管理的逻辑来实现事务的管理。当在方法上标记了@Transactional注解时，Spring会使用AOP技术生成一个代理对象，这个代理对象负责管理事务的开启、提交、回滚等操作。具体来说，Spring将@Transactional注解标记的方法封装成一个事务切面，并在方法执行前后分别执行事务的开启和提交&#x2F;回滚等逻辑。</p>
 </details>
 <br>
 
@@ -18073,24 +18130,6 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-
-
-<h2 id="其他-1"><a href="#其他-1" class="headerlink" title="其他"></a>其他</h2><p>Linux下如何搜索日志内容</p>
-<details>
-<summary>展开查看</summary>
-
-<ul>
-<li><p>grep</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">grep &quot;content&quot; /path/to/logfile</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>vim</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /path/to/logfile</span><br></pre></td></tr></table></figure>
-
-<p>然后用’&#x2F;‘键，输入内容回车查询   vim只能查询本行最近的内容，并不是查找所有的</p>
-</li>
-</ul>
-</details>
-<br>
 
 ]]></content>
       <categories>
