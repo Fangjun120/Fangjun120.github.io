@@ -20,12 +20,12 @@
     var CONFIG = {"hostname":"fangjun120.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="java基础篇String str &#x3D; &quot;ab&quot; 和 String str &#x3D; new String(&quot;ab&quot;); 的区别  展开查看    前者先检查字符串常量池中是否存在相同值的字符串，存在就直接返回对象，不存在就新创建一个对象保存在字符串常量池 后者在堆区创建新的字符串对象，即使字符串常量池中有相同值的对象。">
+  <meta name="description" content="java基础篇String str &#x3D; &quot;ab&quot; 和 String str &#x3D; new String(&quot;ab&quot;); 的区别  展开查看   前者先检查字符串常量池中是否存在相同值的字符串，存在就直接返回对象，不存在就新创建一个对象保存在字符串常量池 后者在堆区创建新的字符串对象，即使字符串常量池中有相同值的对象。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="问题大全">
 <meta property="og:url" content="https://fangjun120.github.io/2024/03/21/11-00-37/index.html">
 <meta property="og:site_name" content="eidolon的小窝">
-<meta property="og:description" content="java基础篇String str &#x3D; &quot;ab&quot; 和 String str &#x3D; new String(&quot;ab&quot;); 的区别  展开查看    前者先检查字符串常量池中是否存在相同值的字符串，存在就直接返回对象，不存在就新创建一个对象保存在字符串常量池 后者在堆区创建新的字符串对象，即使字符串常量池中有相同值的对象。">
+<meta property="og:description" content="java基础篇String str &#x3D; &quot;ab&quot; 和 String str &#x3D; new String(&quot;ab&quot;); 的区别  展开查看   前者先检查字符串常量池中是否存在相同值的字符串，存在就直接返回对象，不存在就新创建一个对象保存在字符串常量池 后者在堆区创建新的字符串对象，即使字符串常量池中有相同值的对象。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://fangjun120.github.io/pic/IO%E6%A8%A1%E5%9E%8B.png">
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E5%8F%8C%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7.png">
@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.png">
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png">
 <meta property="article:published_time" content="2024-03-21T03:00:37.000Z">
-<meta property="article:modified_time" content="2024-03-26T03:12:43.212Z">
+<meta property="article:modified_time" content="2024-03-26T08:21:09.570Z">
 <meta property="article:author" content="Fang Jun">
 <meta property="article:tag" content="八股">
 <meta name="twitter:card" content="summary">
@@ -229,7 +229,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-26 11:12:43" itemprop="dateModified" datetime="2024-03-26T11:12:43+08:00">2024-03-26</time>
+                <time title="修改时间：2024-03-26 16:21:09" itemprop="dateModified" datetime="2024-03-26T16:21:09+08:00">2024-03-26</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -255,7 +255,6 @@
         <h2 id="java基础篇"><a href="#java基础篇" class="headerlink" title="java基础篇"></a>java基础篇</h2><p><code>String str = &quot;ab&quot; 和 String str = new String(&quot;ab&quot;);</code> 的区别</p>
 <details>
 <summary>展开查看</summary>
-
 
 <ul>
 <li>前者先检查字符串常量池中是否存在相同值的字符串，存在就直接返回对象，不存在就新创建一个对象保存在字符串常量池</li>
@@ -551,26 +550,12 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
-<p>父子线程的threadlocal能共享吗？</p>
+<p>🆕父子线程的threadlocal能共享吗？</p>
 <details>
 <summary>展开查看</summary>
 
 <p>使用<code>ThreadLocal</code>的时候，在异步场景下是无法给<strong>子线程共享父线程</strong>中创建的线程副本数据的。</p>
 <p>JDK提供了<code>InheritableThreadLocal</code>类，可以让子线程共享父线程的数据</p>
-</details>
-<br>
-
-<p>如何理解TheadLocal</p>
-<details>
-<summary>展开查看</summary>
-
-
-<ul>
-<li>ThreadLocal是线程独立的，多个线程之间互不干扰</li>
-<li>ThreadLocal中实际存放值的是ThreadLocalMap，key存放了threadlocal自己，value是代码中放入的值</li>
-<li>ThreadLocal有内存泄露的风险，key是弱引用，value是强引用，gc后可能会有空key的value，可能内存泄露，每次使用完threadlocal都调用它的remove方法</li>
-<li>为什么key不使用强引用？ 如果使用完不删除，就不会被gc，会内存泄露</li>
-</ul>
 </details>
 <br>
 
@@ -776,10 +761,18 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 <br>
 
 <p>mysql批量操作时，如果发生了错误，如何快速定位是哪条数据的错误？</p>
+<details>
+<summary>展开查看</summary>
+
+
 <ul>
 <li>数据库错误日志</li>
 </ul>
-<p>一张表里有大量记录，现在要加一个字段，怎么操作</p>
+</details>
+<br>
+
+
+
 <h2 id="redis篇"><a href="#redis篇" class="headerlink" title="redis篇"></a>redis篇</h2><p>redis数据结构</p>
 <details>
 <summary>展开查看</summary>
@@ -902,7 +895,7 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
-<p>RDB和AOF的使用场景，如何切换</p>
+<p>🌟RDB和AOF的使用场景，如何切换</p>
 <details>
 <summary>展开查看</summary>
 
@@ -1003,7 +996,7 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<p>老年代如果满了怎么办？</p>
+<p>🆕老年代如果满了怎么办？</p>
 <details>
 <summary>展开查看</summary>
 
@@ -1015,7 +1008,7 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<p>Minor GC、Major GC、Full GC的区别</p>
+<p>🆕Minor GC、Major GC、Full GC的区别</p>
 <details>
 <summary>展开查看</summary>
 
@@ -1197,22 +1190,47 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </details>
 <br>
 
-<p>AOP使用的设计模式</p>
+<p>🆕AOP使用的设计模式，AOP的应用场景</p>
 <details>
 <summary>展开查看</summary>
-AOP：Spring在运行期间会为目标对象生成一个代理对象，并在代理对象中实现对目标对象的增强。
-- 动态代理设计模式
 
+<p>AOP：Spring在运行期间会为目标对象生成一个代理对象，并在代理对象中实现对目标对象的增强。</p>
+<ul>
+<li>动态代理设计模式</li>
+<li>具体是：如果目标对象实现了接口，则默认采用 JDK 动态代理，否则采用 CGLIB 动态代理。</li>
+</ul>
+<p>应用场景：Spring声明式事务</p>
 </details>
 <br>
 
-<p>spring事务是怎么实现的</p>
+<p>🌟spring事务是怎么实现的</p>
 <details>
 <summary>展开查看</summary>
 
 <p>Spring事务的实现基于AOP技术，通过在方法调用前后插入事务管理的逻辑来实现事务的管理。当在方法上标记了@Transactional注解时，Spring会使用AOP技术生成一个代理对象，这个代理对象负责管理事务的开启、提交、回滚等操作。具体来说，Spring将@Transactional注解标记的方法封装成一个事务切面，并在方法执行前后分别执行事务的开启和提交&#x2F;回滚等逻辑。</p>
 </details>
 <br>
+
+<p>🆕事务失效的场景</p>
+<details>
+<summary>展开查看</summary>
+
+<p>异常捕获处理</p>
+<ul>
+<li>如果事务中的代码出问题了，就需要回滚，但事务只有捕捉到目标抛出的异常，才能进行后续的回滚处理，如果自己处理掉异常，事务就无法知悉了。</li>
+<li>解决办法是把异常抛出去</li>
+</ul>
+<p>抛出检查异常(编译时异常)</p>
+<ul>
+<li>Spring默认只会回滚非检查异常(运行时异常)</li>
+<li>解决：配置rollbackFor属性 <code>@Transactional(rollbackFor = Exception.class)</code></li>
+</ul>
+<p>非public方法</p>
+<ul>
+<li>Spring为方法创建代理、添加事务通知，前提条件是该方法是public的</li>
+<li>改为public</li>
+</ul>
+</details>
 
 <p>🌟动态代理和静态代理的区别</p>
 <details>
@@ -1225,12 +1243,20 @@ AOP：Spring在运行期间会为目标对象生成一个代理对象，并在�
 </details>
 <br>
 
-<p>动态代理的两种实现方式</p>
+<p>🆕动态代理的两种实现方式</p>
 <details>
 <summary>展开查看</summary>
 
+<h4 id="基于接口实现-jdk"><a href="#基于接口实现-jdk" class="headerlink" title="基于接口实现(jdk)"></a>基于接口实现(jdk)</h4><p>需要先定义接口及其实现类，然后自定义InvocationHandler的子类，重写invoke方法，在invoke方法中调用原生方法(被代理类的方法)，并自定义一些处理逻辑。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义接口及实现类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title class_">UserManager</span> &#123;    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(String id, String password)</span>;      </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserManagerImpl</span> <span class="keyword">implements</span> <span class="title class_">UserManager</span> &#123;    </span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addUser</span><span class="params">(String id, String password)</span> &#123;    </span><br><span class="line">        System.out.println(<span class="string">&quot;调用了UserManagerImpl.addUser()方法！&quot;</span>);</span><br><span class="line">    &#125;   </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// JDK动态代理类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">JDKProxy</span> <span class="keyword">implements</span> <span class="title class_">InvocationHandler</span> &#123;   </span><br><span class="line">    <span class="comment">// 需要代理的目标对象</span></span><br><span class="line">    <span class="keyword">private</span> Object targetObject;    </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">newProxy</span><span class="params">(Object targetObject)</span> &#123;</span><br><span class="line">        <span class="comment">// 将目标对象传入进行代理    </span></span><br><span class="line">        <span class="built_in">this</span>.targetObject = targetObject;</span><br><span class="line">        <span class="comment">// 返回代理对象 </span></span><br><span class="line">        <span class="keyword">return</span> Proxy.newProxyInstance(targetObject.getClass().getClassLoader(), targetObject.getClass().getInterfaces(), <span class="built_in">this</span>);</span><br><span class="line">    &#125;    </span><br><span class="line">    </span><br><span class="line">    <span class="comment">// invoke方法</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">         <span class="comment">//调用方法之前，我们可以添加自己的操作</span></span><br><span class="line">        System.out.println(<span class="string">&quot;before method &quot;</span> + method.getName());</span><br><span class="line">        <span class="comment">// 调用invoke方法</span></span><br><span class="line">        ret = method.invoke(targetObject, args);</span><br><span class="line">        <span class="comment">//调用方法之后，我们同样可以添加自己的操作</span></span><br><span class="line">        System.out.println(<span class="string">&quot;after method &quot;</span> + method.getName());</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;  </span><br><span class="line">&#125; </span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 测试类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ProxyTest</span> &#123;    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">JDKProxy</span> <span class="variable">jdkProxy</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JDKProxy</span>();</span><br><span class="line">        <span class="type">UserManager</span> <span class="variable">userManagerJDK</span> <span class="operator">=</span> (UserManager)jdkProxy.newProxy(<span class="keyword">new</span> <span class="title class_">UserManagerImpl</span>());</span><br><span class="line">        userManagerJDK.addUser(<span class="string">&quot;tom&quot;</span>, <span class="string">&quot;root&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
+<p><strong>JDK 动态代理有一个最致命的问题是其只能代理实现了接口的类。</strong></p>
+<h4 id="基于类的动态代理-CGLIB"><a href="#基于类的动态代理-CGLIB" class="headerlink" title="基于类的动态代理(CGLIB)"></a>基于类的动态代理(CGLIB)</h4><p>定义一个类；</p>
+<p>自定义 <code>MethodInterceptor</code> 并重写 <code>intercept</code> 方法，<code>intercept</code> 用于拦截增强被代理类的方法，和 JDK 动态代理中的 <code>invoke</code> 方法类似；</p>
+<p>通过 <code>Enhancer</code> 类的 <code>create()</code>创建代理类；</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 被代理类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AliSmsService</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">send</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;send message:&quot;</span> + message);</span><br><span class="line">        <span class="keyword">return</span> message;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 自定义MethodInterceptor</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">DebugMethodInterceptor</span> <span class="keyword">implements</span> <span class="title class_">MethodInterceptor</span> &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> o           被代理的对象（需要增强的对象）</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> method      被拦截的方法（需要增强的方法）</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> args        方法入参</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> methodProxy 用于调用原始方法</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Object <span class="title function_">intercept</span><span class="params">(Object o, Method method, Object[] args, MethodProxy methodProxy)</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">        <span class="comment">//调用方法之前，我们可以添加自己的操作</span></span><br><span class="line">        System.out.println(<span class="string">&quot;before method &quot;</span> + method.getName());</span><br><span class="line">        <span class="type">Object</span> <span class="variable">object</span> <span class="operator">=</span> methodProxy.invokeSuper(o, args);</span><br><span class="line">        <span class="comment">//调用方法之后，我们同样可以添加自己的操作</span></span><br><span class="line">        System.out.println(<span class="string">&quot;after method &quot;</span> + method.getName());</span><br><span class="line">        <span class="keyword">return</span> object;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 通过 Enhancer 类的 create()创建代理类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CglibProxyFactory</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">getProxy</span><span class="params">(Class&lt;?&gt; clazz)</span> &#123;</span><br><span class="line">        <span class="comment">// 创建动态代理增强类</span></span><br><span class="line">        <span class="type">Enhancer</span> <span class="variable">enhancer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Enhancer</span>();</span><br><span class="line">        <span class="comment">// 设置类加载器</span></span><br><span class="line">        enhancer.setClassLoader(clazz.getClassLoader());</span><br><span class="line">        <span class="comment">// 设置被代理类</span></span><br><span class="line">        enhancer.setSuperclass(clazz);</span><br><span class="line">        <span class="comment">// 设置方法拦截器</span></span><br><span class="line">        enhancer.setCallback(<span class="keyword">new</span> <span class="title class_">DebugMethodInterceptor</span>());</span><br><span class="line">        <span class="comment">// 创建代理类</span></span><br><span class="line">        <span class="keyword">return</span> enhancer.create();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p><strong>CGLIB 可以代理未实现任何接口的类</strong>，CGLIB 动态代理是通过生成一个被代理类的子类来拦截被代理类的方法调用，因此不能代理声明为 final 类型的类和方法。但是，jdk动态代理效率更高。</p>
 </details>
 <br>
 
@@ -1261,6 +1287,19 @@ AOP：Spring在运行期间会为目标对象生成一个代理对象，并在�
 <li>用户请求到达前端控制器servlet</li>
 <li>前端控制器收到请求调用处理器映射器，找到具体的处理器，生成处理器对象，servlet调用处理器适配器，调用具体的处理器(controller)，将返回结果转换为json并响应。</li>
 </ul>
+</details>
+<br>
+
+<p>🆕Spring中的bean是<strong>线程安全</strong>的吗？</p>
+<details>
+<summary>展开查看</summary>
+
+<p>首先，bean默认是单例的，但可以通过<code>@Scope(&quot;singleton&quot;)和@Scope(&quot;prototype&quot;)</code>来设置单例和多例。</p>
+<p><strong>不是线程安全的</strong>，可以用锁和多例解决</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">UserController</span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> count; <span class="comment">// 可修改的成员变量需要考虑线程安全，可以使用多例或加锁解决</span></span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> UserService userService; <span class="comment">//Spring bean如果是无状态的(不能被修改)，就没有线程安全问题</span></span><br><span class="line">    </span><br><span class="line">    <span class="meta">@GetMapping(&quot;/getById/&#123;id&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> User <span class="title function_">get</span><span class="params">(Integer id)</span>&#123;</span><br><span class="line">        count++;</span><br><span class="line">        <span class="keyword">return</span> ...;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
 </details>
 <br>
 
@@ -1541,7 +1580,7 @@ AOP：Spring在运行期间会为目标对象生成一个代理对象，并在�
 </details>
 <br>
 
-
+<h2 id="场景题"><a href="#场景题" class="headerlink" title="场景题"></a>场景题</h2><p>一张表里有大量记录，现在要加一个字段，怎么操作</p>
 
     </div>
 
@@ -1622,7 +1661,7 @@ AOP：Spring在运行期间会为目标对象生成一个代理对象，并在�
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#java%E5%9F%BA%E7%A1%80%E7%AF%87"><span class="nav-number">1.</span> <span class="nav-text">java基础篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%AF%87"><span class="nav-number">2.</span> <span class="nav-text">并发编程篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81"><span class="nav-number">2.1.</span> <span class="nav-text">锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JMM"><span class="nav-number">2.2.</span> <span class="nav-text">JMM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">2.3.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E7%AF%87"><span class="nav-number">3.</span> <span class="nav-text">MySQL篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.1.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1"><span class="nav-number">3.2.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2"><span class="nav-number">3.3.</span> <span class="nav-text">查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">3.4.</span> <span class="nav-text">索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96"><span class="nav-number">3.5.</span> <span class="nav-text">优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redis%E7%AF%87"><span class="nav-number">4.</span> <span class="nav-text">redis篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM%E7%AF%87"><span class="nav-number">5.</span> <span class="nav-text">JVM篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F"><span class="nav-number">5.1.</span> <span class="nav-text">内存区域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">5.2.</span> <span class="nav-text">垃圾回收</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AF%87"><span class="nav-number">6.</span> <span class="nav-text">操作系统篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%86%E6%9E%B6%E7%AF%87"><span class="nav-number">7.</span> <span class="nav-text">框架篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6%E7%AF%87"><span class="nav-number">8.</span> <span class="nav-text">中间件篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ElasticSearch"><span class="nav-number">8.1.</span> <span class="nav-text">ElasticSearch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka"><span class="nav-number">8.2.</span> <span class="nav-text">Kafka</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%AF%87"><span class="nav-number">9.</span> <span class="nav-text">设计模式篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%AF%87"><span class="nav-number">10.</span> <span class="nav-text">网络篇</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#java%E5%9F%BA%E7%A1%80%E7%AF%87"><span class="nav-number">1.</span> <span class="nav-text">java基础篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%AF%87"><span class="nav-number">2.</span> <span class="nav-text">并发编程篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81"><span class="nav-number">2.1.</span> <span class="nav-text">锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JMM"><span class="nav-number">2.2.</span> <span class="nav-text">JMM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">2.3.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E7%AF%87"><span class="nav-number">3.</span> <span class="nav-text">MySQL篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.1.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1"><span class="nav-number">3.2.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2"><span class="nav-number">3.3.</span> <span class="nav-text">查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">3.4.</span> <span class="nav-text">索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96"><span class="nav-number">3.5.</span> <span class="nav-text">优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redis%E7%AF%87"><span class="nav-number">4.</span> <span class="nav-text">redis篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM%E7%AF%87"><span class="nav-number">5.</span> <span class="nav-text">JVM篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F"><span class="nav-number">5.1.</span> <span class="nav-text">内存区域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">5.2.</span> <span class="nav-text">垃圾回收</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AF%87"><span class="nav-number">6.</span> <span class="nav-text">操作系统篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%86%E6%9E%B6%E7%AF%87"><span class="nav-number">7.</span> <span class="nav-text">框架篇</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%8E%A5%E5%8F%A3%E5%AE%9E%E7%8E%B0-jdk"><span class="nav-number">7.0.1.</span> <span class="nav-text">基于接口实现(jdk)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%B1%BB%E7%9A%84%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86-CGLIB"><span class="nav-number">7.0.2.</span> <span class="nav-text">基于类的动态代理(CGLIB)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6%E7%AF%87"><span class="nav-number">8.</span> <span class="nav-text">中间件篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ElasticSearch"><span class="nav-number">8.1.</span> <span class="nav-text">ElasticSearch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka"><span class="nav-number">8.2.</span> <span class="nav-text">Kafka</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%AF%87"><span class="nav-number">9.</span> <span class="nav-text">设计模式篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%AF%87"><span class="nav-number">10.</span> <span class="nav-text">网络篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF%E9%A2%98"><span class="nav-number">11.</span> <span class="nav-text">场景题</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
