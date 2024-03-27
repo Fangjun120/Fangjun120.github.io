@@ -17186,8 +17186,9 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 <summary>展开查看</summary>
 
 <ul>
-<li>volatile只能修饰变量，可以保证可见性，不保证原子性</li>
+<li>volatile只能修饰变量，不保证原子性，volatile是线程同步的轻量级实现，性能较好</li>
 <li>synchronized可以修饰方法和代码快，两者都能保证</li>
+<li>volatile主要用于解决变量在多个线程之间的可见性，synchronized解决多个线程之间访问资源的同步性</li>
 </ul>
 </details>
 <br>
@@ -17301,6 +17302,26 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 
 <p>char是定长类型，char(4)最多存4个字符，不满4个尾部用空格填满；varchar是变长类型，varchar(4)最多存4个字符，实际有多少存多少，最后有一个字节的长度标识</p>
 <p>MySQL默认的行存储最大是65535字节，所有<strong>列共享</strong>。因此varchar最大存65535字节，但是对于包含一个varchar的记录和包含多个varchar的记录，其上限是会变的。</p>
+</details>
+<br>
+
+<p>🆕varchar(10)和varchar(100)的区别</p>
+<details>
+<summary>展开查看</summary>
+
+<p>在存储上没有区别，即对磁盘来说没有区别。但是对于<strong>内存</strong>来说是有区别的，varchar在内存中操作时，会分配<strong>固定大小</strong>的内存块来保存值，对于排序或临时表这些需要通过内存实现的任务会有较大影响</p>
+</details>
+<br>
+
+<p>🆕mysql哪些语句会产生临时表</p>
+<details>
+<summary>展开查看</summary>
+
+<ul>
+<li>排序。<code>order by</code> 和 <code>group by</code></li>
+<li>连接。</li>
+<li>子查询。</li>
+</ul>
 </details>
 <br>
 
@@ -17463,7 +17484,7 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
-<p>mysql批量操作时，如果发生了错误，如何快速定位是哪条数据的错误？</p>
+<p>🆕mysql批量操作时，如果发生了错误，如何快速定位是哪条数据的错误？</p>
 <details>
 <summary>展开查看</summary>
 
@@ -17792,14 +17813,14 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </details>
 <br>
 
-<p>垃圾回收算法</p>
+<p>垃圾回收算法，标记清除法的问题和解决</p>
 <details>
 <summary>展开查看</summary>
 
 <ul>
 <li><p>标记清除。</p>
 <ul>
-<li>内存碎片，有个参数-XX：CMSFullGCsBefore-Compaction（此参数从JDK 9开始废弃），这个参数的作用是要求CMS收集器在执行过若干次（数量由参数值决定）不整理空间的Full GC之后，下一次进入Full GC前会先进行碎片整理（默认值为0，表示每次进入Full GC时都进行碎片整理）。</li>
+<li>内存碎片，有个参数-XX：CMSFullGCsBefore-Compaction（此参数从JDK 9开始废弃），这个参数的作用是要求CMS收集器在执行过若干次（数量由参数值决定）<strong>不整理空间的Full GC</strong>之后，<strong>下一次进入Full GC前会先进行碎片整理</strong>（默认值为0，表示每次进入Full GC时都进行碎片整理）。</li>
 </ul>
 </li>
 <li><p>标记复制。</p>
@@ -17934,6 +17955,8 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <li>改为public</li>
 </ul>
 </details>
+
+<br>
 
 <p>🌟动态代理和静态代理的区别</p>
 <details>
