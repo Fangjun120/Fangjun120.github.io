@@ -17891,7 +17891,7 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </details>
 <br>
 
-<p>🆕事务失效的场景</p>
+<p>🌟事务失效的场景</p>
 <details>
 <summary>展开查看</summary>
 
@@ -18084,7 +18084,7 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </ul>
 </li>
 <li>消费者从brocker接受丢失<ul>
-<li>kafka实际存储数据的是分区，每个分区有offset，记录已经消费的消息偏移。默认是每5s提交一次offset。如果出现重平衡(负责消费某分区的线程挂了，派个新线程消费)，会<strong>重复消费</strong>。可以禁用自动提交，改为手动 (同步提交，异步提交)</li>
+<li>kafka实际存储数据的是分区，每个分区有offset，记录已经消费的消息偏移。默认是每5s提交一次offset。如果出现重平衡(负责消费某分区的线程挂了，派个新线程消费)，会<strong>重复消费</strong>或<strong>丢失信息</strong>(offset设置好了，消息还没处理就挂了)。可以禁用自动提交，改为手动 (同步提交，异步提交)</li>
 </ul>
 </li>
 </ul>
@@ -18136,12 +18136,21 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <summary>展开查看</summary>
 
 <ul>
-<li><strong>顺序读写</strong>：磁盘顺序读写 (文件存储以追加形式进行)</li>
-<li><strong>零拷贝</strong>：减少上下文切换和数据拷贝</li>
-<li>页缓存：磁盘中的数据缓存到内存，对磁盘的访问变成对内存的访问</li>
-<li>消息分区：存储不受单台服务器限制</li>
-<li>消息压缩：减少磁盘IO和网络IO</li>
-<li>分批发送：消息打包批量发送，减少网络开销</li>
+<li><p><strong>顺序读写</strong>：磁盘顺序读写 (文件存储以追加形式进行)</p>
+</li>
+<li><p><strong>零拷贝</strong>：减少上下文切换和数据拷贝</p>
+<ul>
+<li>文件内存映射 和 sendfile系统调用，文件内存映射把磁盘文件映射到<strong>内存</strong>，节省了用户态的拷贝；sendfile 在内核空间中直接将文件内容发送到网络套接字，节省了内核态的拷贝。</li>
+</ul>
+</li>
+<li><p>页缓存：磁盘中的数据缓存到内存，对磁盘的访问变成对内存的访问</p>
+</li>
+<li><p>消息分区：存储不受单台服务器限制</p>
+</li>
+<li><p>消息压缩：减少磁盘IO和网络IO</p>
+</li>
+<li><p>分批发送：消息打包批量发送，减少网络开销</p>
+</li>
 </ul>
 </details>
 <br>
@@ -18395,10 +18404,12 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
       </tags>
   </entry>
   <entry>
-    <title>vivo</title>
+    <title>美团</title>
     <url>/2024/03/19/11-00-37/</url>
-    <content><![CDATA[<p>自我介绍</p>
+    <content><![CDATA[<h2 id="一面"><a href="#一面" class="headerlink" title="一面"></a>一面</h2><p>自我介绍</p>
 <p>介绍一下mtr课表</p>
+<span id="more"></span>
+
 <p>为什么要用分布式锁，不用java内置的锁</p>
 <p>介绍threadlocal</p>
 <p>父子线程的threadlocal能共享吗 InheritableThreadLocal</p>
@@ -18441,7 +18452,7 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <p>Java 虚拟机提供的是不是有个参数可以去配合的使用，然后去解决标记清除法内存碎片的问题。</p>
 <p>动态代理设计模式实现的两种方式，jdk和cglib有啥区别</p>
 <p>rpc</p>
-]]></content>
+<h2 id="二面"><a href="#二面" class="headerlink" title="二面"></a>二面</h2>]]></content>
       <categories>
         <category>面试</category>
       </categories>
