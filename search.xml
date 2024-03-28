@@ -17831,50 +17831,6 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </details>
 <br>
 
-<h2 id="操作系统篇"><a href="#操作系统篇" class="headerlink" title="操作系统篇"></a>操作系统篇</h2><p>什么是僵尸进程和孤儿进程</p>
-<details>
-<summary>展开查看</summary>
-
-
-<ul>
-<li>僵尸进程：子进程终止了，但是父进程没有释放子进程占用的资源，导致子进程的PCB仍存在，但无法被使用。父进程需要及时调用 wait()</li>
-<li>孤儿进程：父进程死了，子进程仍在运行。操作系统会将孤儿进程的父进程设置为 init 进程（进程号为 1），由 init 进程来回收孤儿进程的资源。</li>
-</ul>
-</details>
-<br>
-
-<p>Linux下如何搜索日志内容</p>
-<details>
-<summary>展开查看</summary>
-
-
-<ul>
-<li><p>grep</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">grep &quot;content&quot; /path/to/logfile</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>vim</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /path/to/logfile</span><br></pre></td></tr></table></figure>
-
-<p>然后用’&#x2F;‘键，输入内容回车查询   vim只能查询本行最近的内容，并不是查找所有的</p>
-</li>
-</ul>
-</details>
-<br>
-
-<p>常用命令</p>
-<details>
-<summary>展开查看</summary>
-
-
-<ul>
-<li>scp</li>
-<li>top</li>
-<li>ipcs，ipcrm</li>
-<li>ps查看进程。ps -o pid,ppid 查看进程父子关系</li>
-</ul>
-</details>
-<br>
-
 <h2 id="框架篇"><a href="#框架篇" class="headerlink" title="框架篇"></a>框架篇</h2><p>🌟spring如何解决循环依赖 (循环引用) 问题</p>
 <details>
 <summary>展开查看</summary>
@@ -18199,6 +18155,121 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </details>
 <br>
 
+<h2 id="操作系统篇"><a href="#操作系统篇" class="headerlink" title="操作系统篇"></a>操作系统篇</h2><p>什么是僵尸进程和孤儿进程</p>
+<details>
+<summary>展开查看</summary>
+
+<ul>
+<li>僵尸进程：子进程终止了，但是父进程没有释放子进程占用的资源，导致子进程的PCB仍存在，但无法被使用。父进程需要及时调用 wait()</li>
+<li>孤儿进程：父进程死了，子进程仍在运行。操作系统会将孤儿进程的父进程设置为 init 进程（进程号为 1），由 init 进程来回收孤儿进程的资源。</li>
+</ul>
+</details>
+<br>
+
+<p>Linux下如何搜索日志内容</p>
+<details>
+<summary>展开查看</summary>
+
+<ul>
+<li><p>grep</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">grep &quot;content&quot; /path/to/logfile</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>vim</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">vim /path/to/logfile</span><br></pre></td></tr></table></figure>
+
+<p>然后用’&#x2F;‘键，输入内容回车查询   vim只能查询本行最近的内容，并不是查找所有的</p>
+</li>
+</ul>
+</details>
+<br>
+
+<p>常用命令</p>
+<details>
+<summary>展开查看</summary>
+
+<ul>
+<li>scp</li>
+<li>top</li>
+<li>ipcs，ipcrm</li>
+<li>ps查看进程。ps -o pid,ppid 查看进程父子关系</li>
+</ul>
+</details>
+<br>
+
+<p>死锁的条件</p>
+<details>
+<summary>展开查看</summary>
+
+
+<ul>
+<li>互斥</li>
+<li>请求和保持</li>
+<li>不可剥夺</li>
+<li>循环等待</li>
+</ul>
+</details>
+<br>
+
+<p>如何解决死锁问题</p>
+<details>
+<summary>展开查看</summary>
+
+<p>预防</p>
+<ul>
+<li>静态分配，直接分配全部资源 (请求和保持)</li>
+<li>层次分配 (循环等待)</li>
+</ul>
+<p>避免</p>
+<ul>
+<li>银行家算法，先<strong>试探</strong>分配给该进程，通过<strong>安全性算法</strong>判断分配后系统是否安全，若安全则真正分配</li>
+</ul>
+<p>检测</p>
+<ul>
+<li><strong>资源分配图</strong>，进程用圆圈、资源用方框(方框中一个点代表一份资源)。资源指向进程代表占用，进程指向资源代表申请。需要<strong>注意</strong>的是，形成环路不一定是死锁。还要看资源是否够用</li>
+</ul>
+<img src="/pic/资源分配图.png" alt="image-20240328123434212" style="zoom: 80%;" />
+
+<p>解除</p>
+<ul>
+<li>重启操作系统，结束所有进程</li>
+<li>撤销涉及死锁的所有进程</li>
+<li>逐个撤销死锁进程，直到死锁解除</li>
+<li>抢占资源，从涉及死锁的一个或几个进程中抢占资源，把夺得的资源再分配给涉及死锁的进程直至死锁解除。</li>
+</ul>
+</details>
+<br>
+
+<p>🆕进程间的通信方式</p>
+<details>
+<summary>展开查看</summary>
+
+
+<ul>
+<li>信号</li>
+<li>共享内存</li>
+<li>管道</li>
+<li>信号量</li>
+</ul>
+</details>
+<br>
+
+<p>🆕进程调度算法</p>
+<details>
+<summary>展开查看</summary>
+
+
+<ul>
+<li>先来先服务</li>
+<li>短作业优先</li>
+<li>时间片轮转</li>
+<li>优先级调度</li>
+<li>多级反馈队列</li>
+</ul>
+</details>
+<br>
+
+
+
 <h2 id="网络篇"><a href="#网络篇" class="headerlink" title="网络篇"></a>网络篇</h2><p>get和post的区别</p>
 <details>
 <summary>展开查看</summary>
@@ -18307,6 +18378,14 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <br>
 
 <h2 id="场景题"><a href="#场景题" class="headerlink" title="场景题"></a>场景题</h2><p>一张表里有大量记录，现在要加一个字段，怎么操作</p>
+<ul>
+<li>构建新表，添加字段，用新表查询，并做数据迁移</li>
+</ul>
+<p>一个IP地址，如何用一个数值去存储表示？</p>
+<ul>
+<li>字符串存储，<code>varchar(15)</code></li>
+<li><strong>无符号</strong>整数，4个字节 (每个字节可表示0~255) 即可存储，比如192.168.0.1，先把四段分别用二进制表示，拼接后形成32位的二进制，转换为十进制</li>
+</ul>
 ]]></content>
       <categories>
         <category>八股</category>
