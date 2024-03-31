@@ -16996,7 +16996,7 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 
 <ul>
 <li>final用于修饰类、方法或变量，代表不可变</li>
-<li><strong>finalize</strong>是object类中的一个方法，用于在对象被<strong>垃圾回收前</strong>执行清理操作</li>
+<li><strong>finalize</strong>是object类中的一个方法，在对象被<strong>垃圾回收前</strong>会被调用，finalize()方法中一般用于释放非Java 资源（如打开的文件资源、数据库连接等）。但是一般不用，因为java中垃圾对象的回收时机具有不确定性，不能保证finalize方法会被及时执行，可能出现的情况是在我们耗尽资源之前，gc却仍未触发。</li>
 <li>finally定义在异常处理代码块中的语句，无论是否发生异常，finally中的代码都会执行</li>
 </ul>
 </details>
@@ -17633,12 +17633,13 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
-<p>为什么redis读写用单线程还这么快</p>
+<p>为什么redis这么快</p>
 <details>
 <summary>展开查看</summary>
 
 <ul>
 <li>基于内存</li>
+<li>单线程读写，避免切换时的性能浪费</li>
 <li>基于reactor模式设计的高效事件处理模型 (单线程和IO多路复用)</li>
 <li>redis内置了多种优化的数据类型和结构实现</li>
 </ul>
