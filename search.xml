@@ -17007,7 +17007,7 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <summary>展开查看</summary>
 
 <ul>
-<li>equals，clone，toString，hashcode，wait</li>
+<li>equals，clone，toString，hashcode，wait，notify</li>
 </ul>
 </details>
 <br>
@@ -17072,9 +17072,17 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <summary>展开查看</summary>
 
 <ul>
-<li>锁主要有四种状态，无锁、偏向锁、轻量锁、重量锁，随着竞争的激烈逐渐升级，不可降级。</li>
-<li>共享资源首次被访问时，加偏向锁，程序间串行访问代码；出现竞争时，JVM先尝试轻量级锁，以CAS自旋方式获取锁，成功则状态为轻量锁，失败就升级到重量锁；</li>
-<li>如果共享资源锁已经被某个线程持有，此时是偏向锁状态，未释放锁前，再有其他线程来竞争时，则会升级到重量级锁，另外轻量级锁状态多线程竞争锁时，也会升级到重量级锁</li>
+<li><p>锁主要有四种状态，无锁、偏向锁、轻量锁、重量锁，随着竞争的激烈<strong>逐渐升级，不可降级</strong>。</p>
+<ul>
+<li>偏向锁，会记录获取锁的线程ID，在没有别的线程竞争的时候，一直偏向当前线程，当前线程就可以一直进入synchronized修饰的代码块一直运行。</li>
+<li>轻量锁，其他线程以自旋方式尝试获取锁</li>
+<li>重量锁，<strong>赖操作系统底层的Muptex Lock</strong>，其他线程不会自旋 (cpu效率下降)，而是阻塞。</li>
+</ul>
+</li>
+<li><p>共享资源首次被访问时，加偏向锁，程序间串行访问代码；出现竞争时，JVM先尝试轻量级锁，以CAS自旋方式获取锁，成功则状态为轻量锁，失败就升级到重量锁；</p>
+</li>
+<li><p>如果共享资源锁已经被某个线程持有，此时是偏向锁状态，未释放锁前，再有其他线程来竞争时，则会升级到重量级锁，另外轻量级锁状态多线程竞争锁时，也会升级到重量级锁</p>
+</li>
 </ul>
 </details>
 <br>
@@ -17254,7 +17262,7 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
-<p>🆕父子线程的threadlocal能共享吗？</p>
+<p>父子线程的threadlocal能共享吗？</p>
 <details>
 <summary>展开查看</summary>
 
@@ -17305,7 +17313,7 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
-<p>🆕varchar(10)和varchar(100)的区别</p>
+<p>varchar(10)和varchar(100)的区别</p>
 <details>
 <summary>展开查看</summary>
 
