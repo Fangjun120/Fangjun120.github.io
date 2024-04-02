@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"fangjun120.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="测试基本理论黑盒测试又叫功能测试，功能测试在测试工作中占有比例最大。 测试人员不需要了解软件的内部结构，只关心输入和输出之间的关系是否符合预期。 无法保证软件代码内各主要路径都被覆盖到，导致测试不完全。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="测开">
+<meta property="og:url" content="https://fangjun120.github.io/2024/04/02/11-00-37/index.html">
+<meta property="og:site_name" content="eidolon的小窝">
+<meta property="og:description" content="测试基本理论黑盒测试又叫功能测试，功能测试在测试工作中占有比例最大。 测试人员不需要了解软件的内部结构，只关心输入和输出之间的关系是否符合预期。 无法保证软件代码内各主要路径都被覆盖到，导致测试不完全。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-04-02T03:00:37.000Z">
+<meta property="article:modified_time" content="2024-04-02T14:08:14.789Z">
+<meta property="article:author" content="Fang Jun">
+<meta property="article:tag" content="八股">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://fangjun120.github.io/2024/04/02/11-00-37/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>测开 | eidolon的小窝</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">eidolon的小窝</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">做有趣的人</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://fangjun120.github.io/2024/04/02/11-00-37/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Fang Jun">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="eidolon的小窝">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          测开
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-04-02 11:00:37 / 修改时间：22:08:14" itemprop="dateCreated datePublished" datetime="2024-04-02T11:00:37+08:00">2024-04-02</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%85%AB%E8%82%A1/" itemprop="url" rel="index"><span itemprop="name">八股</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="测试基本理论"><a href="#测试基本理论" class="headerlink" title="测试基本理论"></a>测试基本理论</h2><h3 id="黑盒测试"><a href="#黑盒测试" class="headerlink" title="黑盒测试"></a>黑盒测试</h3><p>又叫<strong>功能测试</strong>，功能测试在测试工作中占有比例最大。</p>
+<p>测试人员不需要了解软件的内部结构，<strong>只关心输入和输出</strong>之间的关系是否符合预期。</p>
+<p>无法保证软件代码内各主要路径都被覆盖到，导致<strong>测试不完全</strong>。</p>
+<span id="more"></span>
+
+<h3 id="白盒测试"><a href="#白盒测试" class="headerlink" title="白盒测试"></a>白盒测试</h3><p>又叫<strong>结构测试</strong></p>
+<p>测试人员对软件的<strong>内部结构和工作原理</strong>有深入的了解，针对软件代码和路径进行测试。</p>
+<p>软件代码改变，测试用例也需要改变。</p>
+<h3 id="测试开发中的开发指什么"><a href="#测试开发中的开发指什么" class="headerlink" title="测试开发中的开发指什么"></a>测试开发中的开发指什么</h3><p><strong>编写测试用例</strong></p>
+<ul>
+<li>编写测试用例来验证软件系统的不同功能。这些测试用例可以是单元测试、集成测试、端到端测试等，覆盖不同层次和方面的功能和行为。</li>
+</ul>
+<p><strong>编写自动化测试脚本</strong></p>
+<ul>
+<li>使用编程语言（如Java、Python、JavaScript等）编写自动化测试脚本，用于执行测试用例并检查系统的响应和行为。这些脚本通常使用测试框架（如JUnit、TestNG、Selenium等）来组织和运行测试。</li>
+</ul>
+<p><strong>开发测试工具和框架</strong></p>
+<ul>
+<li>开发测试工具和框架，用于简化测试过程、提高测试效率和覆盖率。这些工具和框架可以包括测试数据生成工具、模拟器、Mock对象、测试管理系统等。</li>
+</ul>
+<p><strong>维护测试代码</strong></p>
+<ul>
+<li>随着软件系统的演变和变化，测试代码也需要不断更新和维护。测试开发人员负责确保测试代码的可靠性、稳定性和可维护性，以及及时更新测试代码以反映系统的变化。</li>
+</ul>
+<p><strong>参与持续集成和持续部署</strong></p>
+<ul>
+<li>随着软件系统的演变和变化，测试代码也需要不断更新和维护。测试开发人员负责确保测试代码的可靠性、稳定性和可维护性，以及及时更新测试代码以反映系统的变化。</li>
+</ul>
+<h3 id="测试工具"><a href="#测试工具" class="headerlink" title="测试工具"></a>测试工具</h3><ol>
+<li><strong>JUnit</strong>：JUnit是Java中最流行的单元测试框架之一，用于编写和运行单元测试。它提供了一组<strong>注解和断言</strong>方法，使得编写测试用例变得简单易懂。</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 被测试类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Count</span> &#123;</span><br><span class="line">    <span class="comment">// 计算并返回两个参数的和</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">add</span><span class="params">(<span class="type">int</span> x ,<span class="type">int</span> y)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> x + y;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 测试类</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CountTest</span> &#123;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">//验证超时</span></span><br><span class="line">    <span class="meta">@Test(timeout=100)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testAdd</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        Thread.sleep(<span class="number">101</span>);</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Count</span>().add(<span class="number">1</span>, <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">//验证抛出异常</span></span><br><span class="line">    <span class="meta">@Test(expected=ArithmeticException.class)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testDivision</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Count</span>().division(<span class="number">8</span>, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// 跳过该条用例</span></span><br><span class="line">    <span class="meta">@Ignore</span></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">testAdd2</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">Count</span> <span class="variable">count</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Count</span>();</span><br><span class="line">        <span class="type">int</span> <span class="variable">result</span> <span class="operator">=</span> count.add(<span class="number">2</span>,<span class="number">2</span>);</span><br><span class="line">        assertEquals(result, <span class="number">5</span>); <span class="comment">// 使用断言判断结果是否正确</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="center">方法</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">assertArrayEquals(expecteds, actuals)</td>
+<td align="center">查看两个数组是否相等。</td>
+</tr>
+<tr>
+<td align="center">assertEquals(expected, actual)</td>
+<td align="center">查看两个对象是否相等。类似于字符串比较使用的equals()方法。</td>
+</tr>
+<tr>
+<td align="center">assertNotEquals(first, second)</td>
+<td align="center">查看两个对象是否不相等。</td>
+</tr>
+<tr>
+<td align="center">assertNull(object)</td>
+<td align="center">查看对象是否为空。</td>
+</tr>
+<tr>
+<td align="center">assertNotNull(object)</td>
+<td align="center">查看对象是否不为空。</td>
+</tr>
+<tr>
+<td align="center">assertSame(expected, actual)</td>
+<td align="center">查看两个对象的引用是否相等。类似于使用“&#x3D;&#x3D;”比较两个对象。</td>
+</tr>
+<tr>
+<td align="center">assertNotSame(unexpected, actual)</td>
+<td align="center">查看两个对象的引用是否不相等。类似于使用“!&#x3D;”比较两个对象。</td>
+</tr>
+<tr>
+<td align="center">assertTrue(condition)</td>
+<td align="center">查看运行结果是否为true。</td>
+</tr>
+<tr>
+<td align="center">assertFalse(condition)</td>
+<td align="center">查看运行结果是否为false。</td>
+</tr>
+<tr>
+<td align="center">assertThat(actual, matcher)</td>
+<td align="center">查看实际值是否满足指定的条件。</td>
+</tr>
+<tr>
+<td align="center">fail()</td>
+<td align="center">让测试失败。</td>
+</tr>
+</tbody></table>
+<ol>
+<li><strong>JMeter</strong>：JMeter是一个用于性能测试的工具，它可以模拟大量用户并测量应用程序的性能和稳定性。JMeter也可以用于功能测试和接口测试。</li>
+<li><strong>TestNG</strong>：TestNG是另一个流行的Java测试框架，提供了比JUnit更丰富的功能，例如参数化测试、测试组、依赖测试等。它也可以用于编写单元测试和集成测试。</li>
+<li><strong>Selenium</strong>：Selenium是用于自动化Web应用程序测试的工具，它支持多种浏览器，并提供了Java API，使得测试脚本的编写和执行变得简单。Selenium可以用于执行功能测试、回归测试等。</li>
+</ol>
+<h2 id="测试流程"><a href="#测试流程" class="headerlink" title="测试流程"></a>测试流程</h2><h3 id="测试java项目"><a href="#测试java项目" class="headerlink" title="测试java项目"></a>测试java项目</h3><ol>
+<li><strong>单元测试：</strong> 编写单元测试来测试项目中的各个模块、类和方法。使用 JUnit 或 TestNG 等单元测试框架来编写测试用例，并确保覆盖尽可能多的代码路径和边界情况。</li>
+<li><strong>集成测试：</strong> 编写集成测试来测试项目中不同模块之间的交互。这可以包括测试数据库访问、外部 API 调用、消息队列等。使用 JUnit、Mockito 等工具来模拟外部依赖，并编写集成测试用例。</li>
+<li><strong>性能测试：</strong> 对项目进行性能测试，评估其在不同负载下的性能表现。使用 JMeter、Gatling 等性能测试工具来模拟大量用户请求，并监控系统的响应时间、吞吐量等指标。</li>
+<li><strong>持续集成和持续部署：</strong> 将测试集成到持续集成和持续部署流程中，确保每次代码提交或部署后都运行测试，并及时发现和修复问题。</li>
+</ol>
+<h3 id="测试接口"><a href="#测试接口" class="headerlink" title="测试接口"></a>测试接口</h3><ol>
+<li><strong>功能测试：</strong> 确保接口按照预期工作。这包括发送各种有效和无效的输入数据，并验证接口的响应是否符合预期。例如，如果接口是一个登录接口，你可以测试使用正确的用户名和密码进行登录是否成功，以及使用错误的凭据时是否会得到适当的错误消息。</li>
+<li><strong>性能测试：</strong> 检查接口的性能，包括响应时间、吞吐量等指标。确保接口在负载增加时仍然能够正常工作，并且性能不会严重下降。</li>
+<li><strong>安全测试：</strong> 确保接口受到适当的安全保护，例如输入验证、防止SQL注入、XSS攻击等。</li>
+<li><strong>兼容性测试：</strong> 确保接口在不同的浏览器、操作系统和设备上都能正常工作。</li>
+</ol>
+<h3 id="构造无用测试用例"><a href="#构造无用测试用例" class="headerlink" title="构造无用测试用例"></a>构造无用测试用例</h3><ol>
+<li><strong>随机数据：</strong> 使用随机生成的数据作为输入。这些数据可能不符合业务逻辑或实际情况，从而导致测试用例的无用性。</li>
+<li><strong>非法输入：</strong> 提供完全不合法的输入数据。例如，如果一个字段要求输入数字，你可以提供字母字符或特殊字符。</li>
+<li><strong>重复数据：</strong> 重复使用相同的数据进行测试，而不关注不同数据情况下的行为。这样做可能会错过一些潜在的问题。</li>
+</ol>
+<h3 id="如何感知线上项目出现问题"><a href="#如何感知线上项目出现问题" class="headerlink" title="如何感知线上项目出现问题"></a>如何感知线上项目出现问题</h3><ol>
+<li><strong>日志监控：</strong> 实时监控系统的日志以捕获异常情况和错误信息。通过设置适当的日志级别和使用日志聚合工具，可以帮助发现潜在的问题。</li>
+<li><strong>性能监控：</strong> 监控系统的性能指标，如响应时间、吞吐量、CPU 使用率、内存使用率等。突然的性能下降可能是系统出现问题的迹象。</li>
+<li><strong>自动化测试：</strong> 编写自动化测试用例，定期运行以确保系统的功能和性能符合预期。自动化测试可以在每次部署后运行，帮助发现新的问题。</li>
+</ol>
+<h3 id="设计登录测试样例"><a href="#设计登录测试样例" class="headerlink" title="设计登录测试样例"></a>设计登录测试样例</h3><ol>
+<li><strong>测试用例名称：输入有效的用户名和密码登录</strong><ul>
+<li>输入：有效的用户名和密码。</li>
+<li>操作：在登录页面输入用户名和密码，点击登录按钮。</li>
+<li>预期结果：成功登录，跳转到用户的个人资料页面或首页。</li>
+</ul>
+</li>
+<li><strong>测试用例名称：输入无效的用户名和密码登录</strong><ul>
+<li>输入：无效的用户名和密码。</li>
+<li>操作：在登录页面输入错误的用户名和密码，点击登录按钮。</li>
+<li>预期结果：登录失败，提示用户名或密码错误的错误信息。</li>
+</ul>
+</li>
+<li><strong>测试用例名称：输入不存在的用户名登录</strong><ul>
+<li>输入：不存在的用户名和有效密码。</li>
+<li>操作：在登录页面输入不存在的用户名和有效密码，点击登录按钮。</li>
+<li>预期结果：登录失败，提示用户名不存在的错误信息。</li>
+</ul>
+</li>
+<li><strong>测试用例名称：输入正确的用户名和空密码登录</strong><ul>
+<li>输入：有效的用户名和空密码。</li>
+<li>操作：在登录页面输入正确的用户名和空密码，点击登录按钮。</li>
+<li>预期结果：登录失败，提示密码不能为空的错误信息。</li>
+</ul>
+</li>
+<li><strong>测试用例名称：输入空用户名和正确密码登录</strong><ul>
+<li>输入：空用户名和有效的密码。</li>
+<li>操作：在登录页面输入空用户名和正确的密码，点击登录按钮。</li>
+<li>预期结果：登录失败，提示用户名不能为空的错误信息。</li>
+</ul>
+</li>
+<li><strong>测试用例名称：输入特殊字符的用户名和密码登录</strong><ul>
+<li>输入：包含特殊字符的用户名和密码。</li>
+<li>操作：在登录页面输入包含特殊字符的用户名和密码，点击登录按钮。</li>
+<li>预期结果：登录失败，提示用户名或密码格式不正确的错误信息。</li>
+</ul>
+</li>
+<li><strong>测试用例名称：记住登录状态</strong><ul>
+<li>输入：有效的用户名和密码。</li>
+<li>操作：在登录页面勾选“记住我”选项后登录。</li>
+<li>预期结果：成功登录后，关闭浏览器再次打开时，应自动保持登录状态，无需重新输入用户名和密码。</li>
+</ul>
+</li>
+<li><strong>测试用例名称：登录页链接验证</strong><ul>
+<li>输入：无。</li>
+<li>操作：检查登录页面上的链接。</li>
+<li>预期结果：登录页面应包含“忘记密码”、“注册账号”等相关链接，确保用户可以方便地进行其他操作。</li>
+</ul>
+</li>
+<li><strong>测试用例名称：跳转到登录页面</strong><ul>
+<li>输入：未登录状态。</li>
+<li>操作：尝试访问需要登录权限的页面。</li>
+<li>预期结果：跳转到登录页面，并在登录成功后自动跳回原页面。</li>
+</ul>
+</li>
+<li><strong>测试用例名称：登录界面的响应速度</strong><ul>
+<li>输入：无。</li>
+<li>操作：在不同网络环境下打开登录页面。</li>
+<li>预期结果：登录页面应该在合理的时间内加载完成，不应该出现过长的加载时间。</li>
+</ul>
+</li>
+</ol>
+<h3 id="设计购物搜索框测试用例"><a href="#设计购物搜索框测试用例" class="headerlink" title="设计购物搜索框测试用例"></a>设计购物搜索框测试用例</h3><p><strong>测试用例名称：搜索框输入有效关键词</strong></p>
+<ul>
+<li>输入：在搜索框中输入有效的商品关键词，例如“连衣裙”。</li>
+<li>操作：点击搜索按钮或按下回车键。</li>
+<li>预期结果：搜索结果页面显示与输入关键词相关的商品列表。</li>
+</ul>
+<p><strong>测试用例名称：搜索框输入无效关键词</strong></p>
+<ul>
+<li>输入：在搜索框中输入无效的商品关键词，例如“@@@”。</li>
+<li>操作：点击搜索按钮或按下回车键。</li>
+<li>预期结果：搜索结果页面提示“未找到相关商品”。</li>
+</ul>
+<p><strong>测试用例名称：搜索框输入空关键词</strong></p>
+<ul>
+<li>输入：在搜索框中不输入任何内容。</li>
+<li>操作：点击搜索按钮或按下回车键。</li>
+<li>预期结果：搜索结果页面显示全部商品列表。</li>
+</ul>
+<p><strong>测试用例名称：搜索框联想功能</strong></p>
+<ul>
+<li>输入：在搜索框中输入部分关键词，例如“连衣”。</li>
+<li>操作：等待几秒钟，观察搜索框下方是否出现联想词。</li>
+<li>预期结果：搜索框下方显示与输入关键词相关的联想词列表。</li>
+</ul>
+<p><strong>测试用例名称：搜索框输入并选择联想词</strong></p>
+<ul>
+<li>输入：在搜索框中输入部分关键词，例如“连衣”。</li>
+<li>操作：从联想词列表中选择一个词，例如“连衣裙”。</li>
+<li>预期结果：搜索框中显示选择的联想词，并跳转到与该词相关的搜索结果页面。</li>
+</ul>
+<p><strong>测试用例名称：搜索框清空功能</strong></p>
+<ul>
+<li>输入：在搜索框中输入关键词，例如“连衣裙”。</li>
+<li>操作：点击搜索框右侧的清空按钮。</li>
+<li>预期结果：搜索框中的文本被清空，搜索框恢复为空状态。</li>
+</ul>
+<h2 id="问题汇总"><a href="#问题汇总" class="headerlink" title="问题汇总"></a>问题汇总</h2><p>Linux中出现网络问题，如何排查</p>
+<details>
+<summary>展开查看</summary>
+
+<p><strong>检查网络连接状态</strong></p>
+<ul>
+<li>ping</li>
+<li>ifconfig</li>
+</ul>
+<p><strong>检查网络配置</strong></p>
+<ul>
+<li><code>/etc/network/interfaces</code>查看配置(ip、子网掩码、网关和DNS)</li>
+</ul>
+<p><strong>检查路由</strong></p>
+<ul>
+<li><code>route -n</code></li>
+</ul>
+<p><strong>检查防火墙</strong></p>
+<ul>
+<li>使用<code>ufw status</code>查看防火墙规则，确保没有阻止你的网络连接。</li>
+</ul>
+<p><strong>查看日志</strong></p>
+<ul>
+<li>检查系统日志，看是否有和网络相关的错误信息，例如<code>/var/log/syslog</code></li>
+</ul>
+<p><strong>检查硬件问题</strong></p>
+</details>
+<br>
+
+
+
+<p>客户端访问服务端出现网络问题，如何排查</p>
+<details>
+<summary>展开查看</summary>
+
+<p>确认网络连接状态、检查服务端的可访问性</p>
+<ul>
+<li>ping</li>
+</ul>
+<p>检查双方的网络配置</p>
+<p>检查防火墙和安全策略</p>
+</details>
+<br>
+
+
+
+<p>微信发送消息，如何设计测试用例</p>
+<details>
+<summary>展开查看</summary>
+
+<p>正常发送消息</p>
+<ul>
+<li>消息包括文本、符号表情、链接、图片等</li>
+<li>发送空消息</li>
+<li>超长消息</li>
+<li>同时收发多条消息，接收速度</li>
+<li>多个设备发送消息</li>
+</ul>
+<p>发送时状态异常</p>
+<ul>
+<li>网络不稳定</li>
+<li>发送时应用崩溃</li>
+<li>发送给不存在的用户或群组</li>
+</ul>
+</details>
+<br>
+
+
+
+<p>抢红包的测试用例</p>
+<details>
+<summary>展开查看</summary>
+
+<p>正常情况</p>
+<ul>
+<li>红包金额、数量、领取时间等信息是否正确</li>
+<li>抢到红包以后，双方的通知和反馈是否正确</li>
+<li>过期红包是否允许抢，能否正常显示过期</li>
+<li>同一个红包，用户能否重复抢</li>
+<li>红包发完以后，其他用户还能否获取到金额</li>
+</ul>
+<p>空红包</p>
+<ul>
+<li>红包金额、数量是否做了限制</li>
+</ul>
+</details>
+<br>
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%85%AB%E8%82%A1/" rel="tag"># 八股</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/03/21/11-00-37/" rel="prev" title="问题大全">
+      <i class="fa fa-chevron-left"></i> 问题大全
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%9F%BA%E6%9C%AC%E7%90%86%E8%AE%BA"><span class="nav-number">1.</span> <span class="nav-text">测试基本理论</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BB%91%E7%9B%92%E6%B5%8B%E8%AF%95"><span class="nav-number">1.1.</span> <span class="nav-text">黑盒测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%99%BD%E7%9B%92%E6%B5%8B%E8%AF%95"><span class="nav-number">1.2.</span> <span class="nav-text">白盒测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%BC%80%E5%8F%91%E4%B8%AD%E7%9A%84%E5%BC%80%E5%8F%91%E6%8C%87%E4%BB%80%E4%B9%88"><span class="nav-number">1.3.</span> <span class="nav-text">测试开发中的开发指什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7"><span class="nav-number">1.4.</span> <span class="nav-text">测试工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E6%B5%81%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">测试流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95java%E9%A1%B9%E7%9B%AE"><span class="nav-number">2.1.</span> <span class="nav-text">测试java项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E6%8E%A5%E5%8F%A3"><span class="nav-number">2.2.</span> <span class="nav-text">测试接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E9%80%A0%E6%97%A0%E7%94%A8%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B"><span class="nav-number">2.3.</span> <span class="nav-text">构造无用测试用例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%84%9F%E7%9F%A5%E7%BA%BF%E4%B8%8A%E9%A1%B9%E7%9B%AE%E5%87%BA%E7%8E%B0%E9%97%AE%E9%A2%98"><span class="nav-number">2.4.</span> <span class="nav-text">如何感知线上项目出现问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E7%99%BB%E5%BD%95%E6%B5%8B%E8%AF%95%E6%A0%B7%E4%BE%8B"><span class="nav-number">2.5.</span> <span class="nav-text">设计登录测试样例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E8%B4%AD%E7%89%A9%E6%90%9C%E7%B4%A2%E6%A1%86%E6%B5%8B%E8%AF%95%E7%94%A8%E4%BE%8B"><span class="nav-number">2.6.</span> <span class="nav-text">设计购物搜索框测试用例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB"><span class="nav-number">3.</span> <span class="nav-text">问题汇总</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Fang Jun</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">103</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Fang Jun</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"right","width":200,"height":300},"mobile":{"show":false},"rect":"opacity:0.7","log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

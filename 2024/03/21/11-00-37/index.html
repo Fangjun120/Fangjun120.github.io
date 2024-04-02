@@ -37,7 +37,7 @@
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.png">
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png">
 <meta property="article:published_time" content="2024-03-21T03:00:37.000Z">
-<meta property="article:modified_time" content="2024-03-31T02:45:30.992Z">
+<meta property="article:modified_time" content="2024-04-02T14:03:07.428Z">
 <meta property="article:author" content="Fang Jun">
 <meta property="article:tag" content="八股">
 <meta name="twitter:card" content="summary">
@@ -230,7 +230,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-03-31 10:45:30" itemprop="dateModified" datetime="2024-03-31T10:45:30+08:00">2024-03-31</time>
+                <time title="修改时间：2024-04-02 22:03:07" itemprop="dateModified" datetime="2024-04-02T22:03:07+08:00">2024-04-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1590,7 +1590,33 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <details>
 <summary>展开查看</summary>
 - 语义：get获取；post创建；幂等；缓存：get幂等有缓存；格式：get参数在URL，post在body里
+</details>
+<br>
 
+<p>🆕HTTP1.0、1.1、2.0、3.0版本差别</p>
+<details>
+<summary>展开查看</summary>
+- 根据域名查找ip。**DNS**协议
+
+<ul>
+<li>1.1 加入<strong>长连接</strong>，支持管道</li>
+<li>2.0 头部压缩、二进制格式、并发传输、服务器主动推送</li>
+<li>3.0 为解决对头阻塞，改TCP为UDP，但基于 UDP 的 <strong>QUIC 协议</strong> 可以实现类似 TCP 的可靠性传输</li>
+</ul>
+</details>
+<br>
+
+<p>🆕HTTPS 和 HTTP对比</p>
+<details>
+<summary>展开查看</summary>
+- 根据域名查找ip。**DNS**协议
+
+<ul>
+<li>HTTP是明文传输，存在安全风险问题，HTTPS加入了SSL&#x2F;TLS安全协议，报文加密传输。</li>
+<li>HTTPS连接建立相对复杂，在tcp三次握手后，还要进行SSL&#x2F;TLS的握手过程。</li>
+<li>默认端口不同，HTTP：80；HTTPS：443</li>
+<li>HTTPS需要向CA申请数字证书，保证服务器的身份是可信的。</li>
+</ul>
 </details>
 <br>
 
@@ -1608,11 +1634,44 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </details>
 <br>
 
-<p>tcp三次握手四次挥手</p>
+<p>🆕TCP和UDP的区别</p>
 <details>
 <summary>展开查看</summary>
 
-<p>三次握手目的是<strong>保证双方都有发送和接收的能力</strong>，如果只有两次握手，客户端知道自己和服务器的收发没问题，但是服务器只知道客户端的发送和自己的接收没问题。</p>
+<ul>
+<li>是否面向连接</li>
+<li>是否可靠传输</li>
+<li>是否有状态，TCP需要维护<strong>连接状态</strong>表；UDP是无状态服务</li>
+<li>传输效率</li>
+<li>传输形式。TCP面向字节流；UDP面向报文</li>
+<li>首部开销。TCP首部开销(20 ~ 60字节)；UDP(8字节)</li>
+<li>是否提供广播和多播服务。TCP只支持点对点通信，UDP支持多种通信模式。</li>
+</ul>
+</details>
+<br>
+
+<p>🆕TCP和UDP的使用场景</p>
+<details>
+<summary>展开查看</summary>
+- 根据域名查找ip。**DNS**协议
+
+<ul>
+<li>UDP用于即使通信，对传输数据的准确性要求不是很高。</li>
+<li>TCP用于对传输准确性要求特别高的场景</li>
+</ul>
+</details>
+<br>
+
+<p>tcp三次握手四次挥手</p>
+<details>
+<summary>展开查看</summary>
+三次握手目的是**保证双方都有发送和接收的能力**，如果只有两次握手，客户端知道自己和服务器的收发没问题，但是服务器只知道客户端的发送和自己的接收没问题。
+
+<ul>
+<li>客户端发送带有序列号标志的 SYN（SEQ&#x3D;x）标志的数据包 -&gt; 服务端，然后客户端进入 <strong>SYN_SEND</strong> 状态，等待服务器的确认；</li>
+<li>服务端发送带有 SYN+ACK(SEQ&#x3D;y,ACK&#x3D;x+1) 标志的数据包 –&gt; 客户端,然后服务端进入 <strong>SYN_RECV</strong> 状态。</li>
+<li>客户端发送带有 ACK(ACK&#x3D;y+1) 标志的数据包 –&gt; 服务端，然后客户端和服务器端都进入<strong>ESTABLISHED</strong> 状态，完成 TCP 三次握手。</li>
+</ul>
 <p>TCP 的连接状态查看，在 Linux 可以通过 <code>netstat -napt</code> 命令查看。</p>
 <img src="/pic/三次握手.png" alt="image-20240325102154040" style="zoom: 50%;" />
 
@@ -1679,6 +1738,18 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </details>
 <br>
 
+<p>TCP沾包和拆包</p>
+<details>
+<summary>展开查看</summary>
+
+<p>TCP传输的是字节流，所谓流，就是发送的是<strong>一连串的数据</strong>，没有界限。TCP底层不会解析具体的数据内容，它会根据缓冲区的实际情况进行包的划分（发送和接收），由此会导致上层业务的一个完整的包被拆分成多个包进行发送（“拆包”），或者多个小包被封装成一个大的数据包进行发送（“粘包”），这就是所谓的TCP的拆包和粘包问题。</p>
+<ul>
+<li>沾包：多个小包被封装为一个大包发送</li>
+<li>拆包：一个完整的包被拆分为多个包发送</li>
+</ul>
+</details>
+<br>
+
 <p>http常见状态码</p>
 <details>
 <summary>展开查看</summary>
@@ -1702,6 +1773,15 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <li>字符串存储，<code>varchar(15)</code></li>
 <li><strong>无符号</strong>整数，4个字节 (每个字节可表示0~255) 即可存储，比如192.168.0.1，先把四段分别用二进制表示，拼接后形成32位的二进制，转换为十进制</li>
 </ul>
+<h2 id="Linux篇"><a href="#Linux篇" class="headerlink" title="Linux篇"></a>Linux篇</h2><p>查磁盘的使用率</p>
+<ul>
+<li><code>df -h</code></li>
+<li><code>du -sh /path/to/directory</code></li>
+</ul>
+<p>查看进程的端口</p>
+<ul>
+<li><code>netstat -p</code></li>
+</ul>
 
     </div>
 
@@ -1723,7 +1803,10 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
     <a href="/2024/03/19/11-00-37/" rel="prev" title="vivo">
       <i class="fa fa-chevron-left"></i> vivo
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2024/04/02/11-00-37/" rel="next" title="测开">
+      测开 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -1782,7 +1865,7 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#java%E5%9F%BA%E7%A1%80%E7%AF%87"><span class="nav-number">1.</span> <span class="nav-text">java基础篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%AF%87"><span class="nav-number">2.</span> <span class="nav-text">并发编程篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81"><span class="nav-number">2.1.</span> <span class="nav-text">锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JMM"><span class="nav-number">2.2.</span> <span class="nav-text">JMM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">2.3.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E7%AF%87"><span class="nav-number">3.</span> <span class="nav-text">MySQL篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.1.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1"><span class="nav-number">3.2.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2"><span class="nav-number">3.3.</span> <span class="nav-text">查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">3.4.</span> <span class="nav-text">索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96"><span class="nav-number">3.5.</span> <span class="nav-text">优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redis%E7%AF%87"><span class="nav-number">4.</span> <span class="nav-text">redis篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM%E7%AF%87"><span class="nav-number">5.</span> <span class="nav-text">JVM篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F"><span class="nav-number">5.1.</span> <span class="nav-text">内存区域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">5.2.</span> <span class="nav-text">垃圾回收</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%86%E6%9E%B6%E7%AF%87"><span class="nav-number">6.</span> <span class="nav-text">框架篇</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%8E%A5%E5%8F%A3%E5%AE%9E%E7%8E%B0-jdk"><span class="nav-number">6.0.1.</span> <span class="nav-text">基于接口实现(jdk)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%B1%BB%E7%9A%84%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86-CGLIB"><span class="nav-number">6.0.2.</span> <span class="nav-text">基于类的动态代理(CGLIB)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6%E7%AF%87"><span class="nav-number">7.</span> <span class="nav-text">中间件篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ElasticSearch"><span class="nav-number">7.1.</span> <span class="nav-text">ElasticSearch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka"><span class="nav-number">7.2.</span> <span class="nav-text">Kafka</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%AF%87"><span class="nav-number">8.</span> <span class="nav-text">设计模式篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AF%87"><span class="nav-number">9.</span> <span class="nav-text">操作系统篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%AF%87"><span class="nav-number">10.</span> <span class="nav-text">网络篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF%E9%A2%98"><span class="nav-number">11.</span> <span class="nav-text">场景题</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#java%E5%9F%BA%E7%A1%80%E7%AF%87"><span class="nav-number">1.</span> <span class="nav-text">java基础篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%AF%87"><span class="nav-number">2.</span> <span class="nav-text">并发编程篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81"><span class="nav-number">2.1.</span> <span class="nav-text">锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JMM"><span class="nav-number">2.2.</span> <span class="nav-text">JMM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">2.3.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E7%AF%87"><span class="nav-number">3.</span> <span class="nav-text">MySQL篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.1.</span> <span class="nav-text">数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1"><span class="nav-number">3.2.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2"><span class="nav-number">3.3.</span> <span class="nav-text">查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">3.4.</span> <span class="nav-text">索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96"><span class="nav-number">3.5.</span> <span class="nav-text">优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#redis%E7%AF%87"><span class="nav-number">4.</span> <span class="nav-text">redis篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM%E7%AF%87"><span class="nav-number">5.</span> <span class="nav-text">JVM篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F"><span class="nav-number">5.1.</span> <span class="nav-text">内存区域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6"><span class="nav-number">5.2.</span> <span class="nav-text">垃圾回收</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%86%E6%9E%B6%E7%AF%87"><span class="nav-number">6.</span> <span class="nav-text">框架篇</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%8E%A5%E5%8F%A3%E5%AE%9E%E7%8E%B0-jdk"><span class="nav-number">6.0.1.</span> <span class="nav-text">基于接口实现(jdk)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%B1%BB%E7%9A%84%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86-CGLIB"><span class="nav-number">6.0.2.</span> <span class="nav-text">基于类的动态代理(CGLIB)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E4%BB%B6%E7%AF%87"><span class="nav-number">7.</span> <span class="nav-text">中间件篇</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ElasticSearch"><span class="nav-number">7.1.</span> <span class="nav-text">ElasticSearch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka"><span class="nav-number">7.2.</span> <span class="nav-text">Kafka</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%AF%87"><span class="nav-number">8.</span> <span class="nav-text">设计模式篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%AF%87"><span class="nav-number">9.</span> <span class="nav-text">操作系统篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%AF%87"><span class="nav-number">10.</span> <span class="nav-text">网络篇</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF%E9%A2%98"><span class="nav-number">11.</span> <span class="nav-text">场景题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux%E7%AF%87"><span class="nav-number">12.</span> <span class="nav-text">Linux篇</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -1796,7 +1879,7 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">102</span>
+          <span class="site-state-item-count">103</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
