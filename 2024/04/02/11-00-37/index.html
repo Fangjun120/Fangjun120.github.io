@@ -28,7 +28,7 @@
 <meta property="og:description" content="测试基本理论黑盒测试又叫功能测试，功能测试在测试工作中占有比例最大。 测试人员不需要了解软件的内部结构，只关心输入和输出之间的关系是否符合预期。 无法保证软件代码内各主要路径都被覆盖到，导致测试不完全。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-04-02T03:00:37.000Z">
-<meta property="article:modified_time" content="2024-04-02T14:08:14.789Z">
+<meta property="article:modified_time" content="2024-04-03T01:54:49.092Z">
 <meta property="article:author" content="Fang Jun">
 <meta property="article:tag" content="八股">
 <meta name="twitter:card" content="summary">
@@ -212,10 +212,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2024-04-02 11:00:37 / 修改时间：22:08:14" itemprop="dateCreated datePublished" datetime="2024-04-02T11:00:37+08:00">2024-04-02</time>
+              <time title="创建时间：2024-04-02 11:00:37" itemprop="dateCreated datePublished" datetime="2024-04-02T11:00:37+08:00">2024-04-02</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-03 09:54:49" itemprop="dateModified" datetime="2024-04-03T09:54:49+08:00">2024-04-03</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -326,6 +332,7 @@
 </tbody></table>
 <ol>
 <li><strong>JMeter</strong>：JMeter是一个用于性能测试的工具，它可以模拟大量用户并测量应用程序的性能和稳定性。JMeter也可以用于功能测试和接口测试。</li>
+<li><strong>Postman</strong>、<strong>APIfox</strong>。APIfox集成了文档、接口测试、mock数据、自动化测试。</li>
 <li><strong>TestNG</strong>：TestNG是另一个流行的Java测试框架，提供了比JUnit更丰富的功能，例如参数化测试、测试组、依赖测试等。它也可以用于编写单元测试和集成测试。</li>
 <li><strong>Selenium</strong>：Selenium是用于自动化Web应用程序测试的工具，它支持多种浏览器，并提供了Java API，使得测试脚本的编写和执行变得简单。Selenium可以用于执行功能测试、回归测试等。</li>
 </ol>
@@ -469,6 +476,10 @@
 <p><strong>检查防火墙</strong></p>
 <ul>
 <li>使用<code>ufw status</code>查看防火墙规则，确保没有阻止你的网络连接。</li>
+</ul>
+<p><strong>检查网络服务</strong></p>
+<ul>
+<li><code>systemctl status network</code>。</li>
 </ul>
 <p><strong>查看日志</strong></p>
 <ul>
