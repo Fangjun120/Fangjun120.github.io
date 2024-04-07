@@ -37,7 +37,7 @@
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B.png">
 <meta property="og:image" content="https://fangjun120.github.io/pic/%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B.png">
 <meta property="article:published_time" content="2024-03-21T03:00:37.000Z">
-<meta property="article:modified_time" content="2024-04-03T02:03:26.339Z">
+<meta property="article:modified_time" content="2024-04-07T07:48:39.967Z">
 <meta property="article:author" content="Fang Jun">
 <meta property="article:tag" content="八股">
 <meta name="twitter:card" content="summary">
@@ -230,7 +230,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-04-03 10:03:26" itemprop="dateModified" datetime="2024-04-03T10:03:26+08:00">2024-04-03</time>
+                <time title="修改时间：2024-04-07 15:48:39" itemprop="dateModified" datetime="2024-04-07T15:48:39+08:00">2024-04-07</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -552,11 +552,26 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 <summary>展开查看</summary>
 
 <ul>
-<li>ThreadLocal是线程独立的，多个线程之间互不干扰</li>
-<li>ThreadLocal中实际存放值的是ThreadLocalMap，key存放了threadlocal自己，value是代码中放入的值</li>
-<li>ThreadLocal有内存泄露的风险，key是弱引用，value是强引用，gc后可能会有空key的value，可能内存泄露，每次使用完threadlocal都调用它的remove方法</li>
-<li>为什么key不使用强引用？ 如果使用完不删除，就不会被gc，会内存泄露</li>
+<li><p>ThreadLocal是线程独立的，多个线程之间互不干扰</p>
+</li>
+<li><p>ThreadLocal中实际存放值的是ThreadLocalMap，key存放了threadlocal自己，value是代码中放入的值</p>
+<ul>
+<li><code>private Entry[] table;</code></li>
 </ul>
+</li>
+<li><p>ThreadLocal有内存泄露的风险，key是弱引用，value是强引用，gc后可能会有空key的value，可能内存泄露，每次使用完threadlocal都调用它的remove方法</p>
+</li>
+<li><p>为什么key不使用强引用？ 如果使用完不删除，就不会被gc，会内存泄露</p>
+</li>
+</ul>
+</details>
+<br>
+
+<p>🆕如果在ThreadLocal中存信息，经过一次垃圾回收以后，信息就获取不到了吗</p>
+<details>
+<summary>展开查看</summary>
+
+<p>当且仅当ThreadLocal只有弱引用时触发GC时ThreadLocal会被回收，因此信息仍能获取到。</p>
 </details>
 <br>
 
@@ -1198,6 +1213,16 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </details>
 <br>
 
+<p>🆕spring事务内部多个sql用的是同一个连接吗，不同事务呢，怎么实现的</p>
+<details>
+<summary>展开查看</summary>
+
+<p>每个<strong>事务都会使用自己的数据库连接</strong>，以确保事务的隔离性和并发性。</p>
+<p><strong>不同事务使用不同的连接</strong></p>
+<p>通过AOP实现，在注解前建立连接</p>
+</details>
+<br>
+
 <p>🌟事务失效的场景</p>
 <details>
 <summary>展开查看</summary>
@@ -1466,7 +1491,25 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 
 
 
-<h2 id="设计模式篇"><a href="#设计模式篇" class="headerlink" title="设计模式篇"></a>设计模式篇</h2><p>实现一下单例模式</p>
+<h2 id="设计模式篇"><a href="#设计模式篇" class="headerlink" title="设计模式篇"></a>设计模式篇</h2><p>🆕单例模式的优缺点</p>
+<details>
+<summary>展开查看</summary>
+
+<p><strong>优点</strong></p>
+<ul>
+<li>提供了对唯一实例的受控访问</li>
+<li>由于在系统内存中只存在一个对象，因此可以节约系统资源，对于一些需要频繁创建和销毁的对象单例模式无疑可以提高系统的性能。</li>
+</ul>
+<p><strong>缺点</strong></p>
+<ul>
+<li>单利模式中没有抽象层，因此单例类的扩展有很大的困难。</li>
+<li>职责过重，在一定程度上违背了“单一职责原则”。</li>
+<li>滥用单例将带来一些负面问题，如为了节省资源将数据库连接池对象设计为单例类，可能会导致共享连接池对象的程序过多而出现连接池溢出；如果实例化的对象长时间不被利用，系统会认为是垃圾而被回收，这将导致对象状态的丢失。</li>
+</ul>
+</details>
+<br>
+
+<p>实现一下单例模式</p>
 <details>
 <summary>展开查看</summary>
 
@@ -1595,9 +1638,35 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <h2 id="网络篇"><a href="#网络篇" class="headerlink" title="网络篇"></a>网络篇</h2><p>get和post的区别</p>
 <details>
 <summary>展开查看</summary>
-- 语义：get获取；post创建；幂等；缓存：get幂等有缓存；格式：get参数在URL，post在body里
+
+<ul>
+<li>语义：get获取；post创建；幂等；缓存：get幂等有缓存；格式：get参数在URL，post在body里</li>
+</ul>
 </details>
 <br>
+
+<p>🆕如何保证接口的幂等性？</p>
+<details>
+<summary>展开查看</summary>
+接口幂等性是指用户使用相同参数请求同一个接口，无论次数如何，结果都应该一样。
+
+<p><strong>什么情况下会出现接口幂等性问题？</strong></p>
+<ol>
+<li>网络波动引起重复请求、</li>
+<li>页面重复刷新时用了之前的表单进行提交数据到接口</li>
+<li>用户多次点击</li>
+<li>业务代码种有超时重试机制</li>
+<li>定时任务和业务请求重合</li>
+</ol>
+<p>因此，方法如下：</p>
+<ul>
+<li>加锁</li>
+<li>加唯一索引，生成code码，当参数相同时，code码也相同，在插入更新新数据的时候，如果code相同，会在sql层面进行报错，保证插入数据的唯一性</li>
+<li><strong>请求状态记录</strong>：服务端在接收到请求后，记录请求的处理状态，包括请求是否已经处理、处理结果等信息。在处理完请求后，服务端将请求状态保存，以防止重复处理相同的请求。</li>
+</ul>
+</details>
+<br>
+
 
 <p>🆕HTTP1.0、1.1、2.0、3.0版本差别</p>
 <details>
@@ -1744,7 +1813,7 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </details>
 <br>
 
-<p>TCP沾包和拆包</p>
+<p>🆕TCP沾包和拆包</p>
 <details>
 <summary>展开查看</summary>
 
@@ -1752,6 +1821,17 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <ul>
 <li>沾包：多个小包被封装为一个大包发送</li>
 <li>拆包：一个完整的包被拆分为多个包发送</li>
+</ul>
+</details>
+<br>
+
+<p>🆕设计应用层的协议的时候，怎么规避粘包和拆包问题</p>
+<details>
+<summary>展开查看</summary>
+
+<ul>
+<li>添加消息长度</li>
+<li>添加消息边界符</li>
 </ul>
 </details>
 <br>
@@ -1887,7 +1967,7 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">103</span>
+          <span class="site-state-item-count">105</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

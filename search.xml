@@ -16827,8 +16827,32 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <p>因为是个练手项目，所以对比大众点评不是十分完整，主要有登录注册、店铺查询、秒杀优惠、UV统计等功能。</p>
 <p>主要技术栈有springboot、mybatis-plus、redis、mysql、redission</p>
 <p><a href="https://boardmix.cn/app/editor/0Q6gMeM-aALgUkuroNKKvg">https://boardmix.cn/app/editor/0Q6gMeM-aALgUkuroNKKvg</a></p>
-<h2 id="横项"><a href="#横项" class="headerlink" title="横项"></a>横项</h2><h3 id="难点"><a href="#难点" class="headerlink" title="难点"></a>难点</h3><p>当时我们视频编码用的编码库是和瑞星微芯片配套的，但是那个库在开发板上本地编译一直不成功，在github库上也咨询了作者，他也没有什么好的方案。</p>
+<h2 id="横项"><a href="#横项" class="headerlink" title="横项"></a>横项</h2><h3 id="难点"><a href="#难点" class="headerlink" title="难点"></a>难点</h3><p><strong>交叉编译</strong></p>
+<p>当时我们视频编码用的编码库是和瑞星微芯片配套的，但是那个库在开发板上本地编译一直不成功，在github库上也咨询了作者，他也没有什么好的方案。</p>
 <p>后来用了交叉编译，在自己的计算机x86系统里配置了arm的交叉编译链，编译通过后上传到开发板上使用</p>
+<p><strong>MO周期心跳包阻塞</strong></p>
+<p>现象：定时100ms的周期心跳包阻塞到700ms</p>
+<p>排查：</p>
+<ul>
+<li><p>先排查网络问题，把无线换成有线</p>
+</li>
+<li><p>数据包问题(中间跳过了几个包)，接收数据排查，校验和错误或长度错误</p>
+</li>
+<li><p>依次删除代码中其他模块，问题仍未解决</p>
+</li>
+<li><p>只剩udp后还存在问题，考虑是udp底层问题，写日志，看日志是否阻塞</p>
+</li>
+<li><p>top 查看cpu，是否异常占用</p>
+</li>
+<li><p>发现Linux日志管理systemd-journald，每次阻塞时cpu占用都很高(80以上)</p>
+</li>
+<li><p>查看内核日志，发现有频繁的写日志行为(微妙级)，日志文件很大</p>
+</li>
+<li><p>后来联系厂家，发现是有一个硬件接口有问题，导致系统日志频繁读写，导致的阻塞</p>
+</li>
+<li><p>禁用systemd-journald服务后解决。</p>
+</li>
+</ul>
 ]]></content>
       <categories>
         <category>面试</category>
@@ -17254,11 +17278,26 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 <summary>展开查看</summary>
 
 <ul>
-<li>ThreadLocal是线程独立的，多个线程之间互不干扰</li>
-<li>ThreadLocal中实际存放值的是ThreadLocalMap，key存放了threadlocal自己，value是代码中放入的值</li>
-<li>ThreadLocal有内存泄露的风险，key是弱引用，value是强引用，gc后可能会有空key的value，可能内存泄露，每次使用完threadlocal都调用它的remove方法</li>
-<li>为什么key不使用强引用？ 如果使用完不删除，就不会被gc，会内存泄露</li>
+<li><p>ThreadLocal是线程独立的，多个线程之间互不干扰</p>
+</li>
+<li><p>ThreadLocal中实际存放值的是ThreadLocalMap，key存放了threadlocal自己，value是代码中放入的值</p>
+<ul>
+<li><code>private Entry[] table;</code></li>
 </ul>
+</li>
+<li><p>ThreadLocal有内存泄露的风险，key是弱引用，value是强引用，gc后可能会有空key的value，可能内存泄露，每次使用完threadlocal都调用它的remove方法</p>
+</li>
+<li><p>为什么key不使用强引用？ 如果使用完不删除，就不会被gc，会内存泄露</p>
+</li>
+</ul>
+</details>
+<br>
+
+<p>🆕如果在ThreadLocal中存信息，经过一次垃圾回收以后，信息就获取不到了吗</p>
+<details>
+<summary>展开查看</summary>
+
+<p>当且仅当ThreadLocal只有弱引用时触发GC时ThreadLocal会被回收，因此信息仍能获取到。</p>
 </details>
 <br>
 
@@ -17900,6 +17939,16 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </details>
 <br>
 
+<p>🆕spring事务内部多个sql用的是同一个连接吗，不同事务呢，怎么实现的</p>
+<details>
+<summary>展开查看</summary>
+
+<p>每个<strong>事务都会使用自己的数据库连接</strong>，以确保事务的隔离性和并发性。</p>
+<p><strong>不同事务使用不同的连接</strong></p>
+<p>通过AOP实现，在注解前建立连接</p>
+</details>
+<br>
+
 <p>🌟事务失效的场景</p>
 <details>
 <summary>展开查看</summary>
@@ -18168,7 +18217,25 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 
 
 
-<h2 id="设计模式篇"><a href="#设计模式篇" class="headerlink" title="设计模式篇"></a>设计模式篇</h2><p>实现一下单例模式</p>
+<h2 id="设计模式篇"><a href="#设计模式篇" class="headerlink" title="设计模式篇"></a>设计模式篇</h2><p>🆕单例模式的优缺点</p>
+<details>
+<summary>展开查看</summary>
+
+<p><strong>优点</strong></p>
+<ul>
+<li>提供了对唯一实例的受控访问</li>
+<li>由于在系统内存中只存在一个对象，因此可以节约系统资源，对于一些需要频繁创建和销毁的对象单例模式无疑可以提高系统的性能。</li>
+</ul>
+<p><strong>缺点</strong></p>
+<ul>
+<li>单利模式中没有抽象层，因此单例类的扩展有很大的困难。</li>
+<li>职责过重，在一定程度上违背了“单一职责原则”。</li>
+<li>滥用单例将带来一些负面问题，如为了节省资源将数据库连接池对象设计为单例类，可能会导致共享连接池对象的程序过多而出现连接池溢出；如果实例化的对象长时间不被利用，系统会认为是垃圾而被回收，这将导致对象状态的丢失。</li>
+</ul>
+</details>
+<br>
+
+<p>实现一下单例模式</p>
 <details>
 <summary>展开查看</summary>
 
@@ -18297,9 +18364,35 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <h2 id="网络篇"><a href="#网络篇" class="headerlink" title="网络篇"></a>网络篇</h2><p>get和post的区别</p>
 <details>
 <summary>展开查看</summary>
-- 语义：get获取；post创建；幂等；缓存：get幂等有缓存；格式：get参数在URL，post在body里
+
+<ul>
+<li>语义：get获取；post创建；幂等；缓存：get幂等有缓存；格式：get参数在URL，post在body里</li>
+</ul>
 </details>
 <br>
+
+<p>🆕如何保证接口的幂等性？</p>
+<details>
+<summary>展开查看</summary>
+接口幂等性是指用户使用相同参数请求同一个接口，无论次数如何，结果都应该一样。
+
+<p><strong>什么情况下会出现接口幂等性问题？</strong></p>
+<ol>
+<li>网络波动引起重复请求、</li>
+<li>页面重复刷新时用了之前的表单进行提交数据到接口</li>
+<li>用户多次点击</li>
+<li>业务代码种有超时重试机制</li>
+<li>定时任务和业务请求重合</li>
+</ol>
+<p>因此，方法如下：</p>
+<ul>
+<li>加锁</li>
+<li>加唯一索引，生成code码，当参数相同时，code码也相同，在插入更新新数据的时候，如果code相同，会在sql层面进行报错，保证插入数据的唯一性</li>
+<li><strong>请求状态记录</strong>：服务端在接收到请求后，记录请求的处理状态，包括请求是否已经处理、处理结果等信息。在处理完请求后，服务端将请求状态保存，以防止重复处理相同的请求。</li>
+</ul>
+</details>
+<br>
+
 
 <p>🆕HTTP1.0、1.1、2.0、3.0版本差别</p>
 <details>
@@ -18446,7 +18539,7 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </details>
 <br>
 
-<p>TCP沾包和拆包</p>
+<p>🆕TCP沾包和拆包</p>
 <details>
 <summary>展开查看</summary>
 
@@ -18454,6 +18547,17 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <ul>
 <li>沾包：多个小包被封装为一个大包发送</li>
 <li>拆包：一个完整的包被拆分为多个包发送</li>
+</ul>
+</details>
+<br>
+
+<p>🆕设计应用层的协议的时候，怎么规避粘包和拆包问题</p>
+<details>
+<summary>展开查看</summary>
+
+<ul>
+<li>添加消息长度</li>
+<li>添加消息边界符</li>
 </ul>
 </details>
 <br>
@@ -18869,6 +18973,75 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
       </categories>
       <tags>
         <tag>八股</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>阿里</title>
+    <url>/2024/04/03/11-00-37/</url>
+    <content><![CDATA[<h2 id="智能信息"><a href="#智能信息" class="headerlink" title="智能信息"></a>智能信息</h2><p>登录模块是怎么设计的</p>
+<p>JWT token 里边存的是什么信息</p>
+<p>token 的有效期是多久</p>
+<p> JW token 的好处、坏处、格式，这样设计格式有什么好处</p>
+<p>能不能换成一个随机的串，可以实现jwt token的功能，有没有安全问题</p>
+<p>threadlocal 主要是解决什么什么场景下使用，内部是怎么实现的这个特性</p>
+<p>threadlocalmap里哪个字段是具体存储值的</p>
+<p>threadlocal使用上有什么要注意的吗，如果经历了一次垃圾回收，里面存的值会被清理吗</p>
+<p>多线程里边能使用这个类吗</p>
+<p>比方说我现在，嗯定义了一个线程池，定义了一个线程池，然后我在线程池里边就 set 了一下这个值，但是我没有 remove 掉，会触发，会有什么问题吗？这样这种写法。</p>
+<p>缓存的击透、击穿和雪崩这几个大概是什么意思？一般都是怎么解决</p>
+<p>设置逻辑过期时间有什么弊端吗</p>
+<p>穿透的场景</p>
+<p>布隆过滤器的原理</p>
+<p>一致性哈希了解吗</p>
+<p>本地缓存了解吗</p>
+<p>分布式锁，能说一下具体的使用场景吗</p>
+<p>lua脚本是在哪里使用的</p>
+<p>横向使用udp的，为什么不用tcp</p>
+<p>了解哪些设计模式</p>
+<p>单例模式的好处和缺点，抛开spring</p>
+<p>动态代理主要是解决什么问题啊？一般是解决什么问题比较方便的。</p>
+<p>一个事务中，要执行多个sql，这些sql用的是一个连接还是不同的连接</p>
+<p>不加事务的时候它也是一个连接吗？还是多个连接。(那它是怎么实现的？这种加上去就变成一个连接，不加就变成多个连接了。)</p>
+<p>工厂模式的使用场景</p>
+<p>http的结构</p>
+<p>post和get区别</p>
+<p>操作接口一般都有哪些手段能保证这个接口的幂等？</p>
+<p>tcp协议可靠传输怎么保证</p>
+<p>流量控制怎么进行的</p>
+<p>拥塞控制的原理</p>
+<p>设计应用层的协议的时候，怎么来规避这个 TTP 的一个粘包和拆包的问题呢</p>
+<p>IO 多路复用主要是来解决什么问题的呢</p>
+<p>说一下mvcc</p>
+<p>比方说有两个线程操作同一条记录，一个进行 update 操作，一个进行 select 操作，都是where，都是根据主键，这两个线程能同时执行吗？</p>
+]]></content>
+      <categories>
+        <category>面试</category>
+      </categories>
+      <tags>
+        <tag>面试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>测开</title>
+    <url>/2024/04/03/12-00-37/</url>
+    <content><![CDATA[<h2 id="腾讯"><a href="#腾讯" class="headerlink" title="腾讯"></a>腾讯</h2><p>开发过程或者说发布测试过程里遇到没遇到过什么bug？或者包括功能上的，或者是性能上的？这个有过吗。</p>
+<p>有测试相关的一些经历吗，因为我看简历里都是一些开发。</p>
+<p>那就拿你这个项目来举例，那你这边具体测试会测哪些维度？或者说根据哪些方向去做这种测试？</p>
+<p>具体怎么测的呢？是手动录代码去后台去跑的，还是用什么工具类的去辅助的？</p>
+<p>做过 Web 相关那些开发和测试吗？</p>
+<p>url输入到显示的链路</p>
+<p>Linux 相关的一些搜索系统。</p>
+<p>Linux 上一个后台日志，这个后台日志里有没有一些 error 报错信息？然后用怎么去看？</p>
+<p>夜里跑一个服务，那第二天发现服务挂掉了，那你现在去肯定是看不到，怎么去看</p>
+<p>手撕</p>
+<p>除了学过Java，还有学过什么其他语言吗</p>
+<p>这边目前在招的主要还是系统测试的这种同学，那你这边看有什么嗯，诉求吗？或者说是对这种开发会比较执着吗？</p>
+]]></content>
+      <categories>
+        <category>面试</category>
+      </categories>
+      <tags>
+        <tag>面试</tag>
       </tags>
   </entry>
 </search>
