@@ -16765,7 +16765,7 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
       </tags>
   </entry>
   <entry>
-    <title>项目介绍</title>
+    <title>项目介绍🌟</title>
     <url>/2024/03/15/11-00-37/</url>
     <content><![CDATA[<h2 id="自我介绍"><a href="#自我介绍" class="headerlink" title="自我介绍"></a>自我介绍</h2><span id="more"></span>
 
@@ -16787,7 +16787,8 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <p>评论表：评论id、帖子id、评论用户id、评论时间、内容、回复用户id</p>
 <p>评论图片表：帖子id、图片链接</p>
 <h4 id="评论实现方式"><a href="#评论实现方式" class="headerlink" title="评论实现方式"></a>评论实现方式</h4><p>把评论和回复都当做评论，按时间排序。因为我们回复评论的情况较少，实现起来也比较简单。</p>
-<h4 id="多线程评论数量不同步"><a href="#多线程评论数量不同步" class="headerlink" title="多线程评论数量不同步"></a>多线程评论数量不同步</h4><p>一开始使用sycronized锁实现，不同管锁的获取和释放，挺方便的。后来因为使用了多个服务器，单机锁不适用了（集群环境下由于JVM不同，内部的锁监视器也不同）。</p>
+<h4 id="多线程评论数量不同步"><a href="#多线程评论数量不同步" class="headerlink" title="多线程评论数量不同步"></a>多线程评论数量不同步</h4><p>tomcat是多线程的，所以单机也可能会出现同步问题。一开始使用sycronized锁实现，不同管锁的获取和释放，挺方便的。后来因为使用了多个服务器，单机锁不适用了（集群环境下由于JVM不同，内部的锁监视器也不同）。</p>
+<p>后来想着使用乐观锁的方式来实现也可以，利用mysql自己的行锁写锁，在更新操作的时候在where上多加一个条件 (更新之前先查询，记录下查询到的值，在where比较，不同说明中间被修改过)，如果更新失败，就睡一下，然后重试。这种实现方式在高并发的时候效率并不高，因为如果出现同步问题的时候，锁是在数据库的，相当于在磁盘上，效率并不高。</p>
 <p>后来抱着学习的心态使用了redis的<strong>分布式锁</strong>，原本打算用<strong>setnx</strong>做一个简单的分布式锁。考虑到可能出现客户端宕机，没有释放锁，导致死锁。于是加了<strong>过期时间</strong>。</p>
 <p>但是如果过期时间到了，程序还没执行完呢？万一把别人的锁释放了，可以使用uuid标识，防止释放别人的锁。没有超时续约，使用redission，watchDog机制优雅续期。</p>
 <p>为什么不直接用redis统计评论数？</p>
@@ -16827,7 +16828,8 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <p>因为是个练手项目，所以对比大众点评不是十分完整，主要有登录注册、店铺查询、秒杀优惠、UV统计等功能。</p>
 <p>主要技术栈有springboot、mybatis-plus、redis、mysql、redission</p>
 <p><a href="https://boardmix.cn/app/editor/0Q6gMeM-aALgUkuroNKKvg">https://boardmix.cn/app/editor/0Q6gMeM-aALgUkuroNKKvg</a></p>
-<h2 id="横项"><a href="#横项" class="headerlink" title="横项"></a>横项</h2><h3 id="难点"><a href="#难点" class="headerlink" title="难点"></a>难点</h3><p><strong>交叉编译</strong></p>
+<h2 id="横项"><a href="#横项" class="headerlink" title="横项"></a>横项</h2><h3 id="技术选型"><a href="#技术选型" class="headerlink" title="技术选型"></a>技术选型</h3><p>图像帧如何传输，一开始考虑ros，延时问题</p>
+<h3 id="难点"><a href="#难点" class="headerlink" title="难点"></a>难点</h3><p><strong>交叉编译</strong></p>
 <p>当时我们视频编码用的编码库是和瑞星微芯片配套的，但是那个库在开发板上本地编译一直不成功，在github库上也咨询了作者，他也没有什么好的方案。</p>
 <p>后来用了交叉编译，在自己的计算机x86系统里配置了arm的交叉编译链，编译通过后上传到开发板上使用</p>
 <p><strong>MO周期心跳包阻塞</strong></p>
@@ -18032,6 +18034,31 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </details>
 <br>
 
+<p>bean 的初始化流程</p>
+<details>
+<summary>展开查看</summary>
+
+<ul>
+<li><p>如果 Bean 实现了 <code>BeanNameAware</code> 接口，调用 <code>setBeanName()</code>方法，传入 Bean 的名字。</p>
+</li>
+<li><p>如果 Bean 实现了 <code>BeanClassLoaderAware</code> 接口，调用 <code>setBeanClassLoader()</code>方法，传入 <code>ClassLoader</code>对象的实例。</p>
+</li>
+<li><p>如果 Bean 实现了 <code>BeanFactoryAware</code> 接口，调用 <code>setBeanFactory()</code>方法，传入 <code>BeanFactory</code>对象的实例。</p>
+</li>
+<li><p>与上面的类似，如果实现了其他 <code>*.Aware</code>接口，就调用相应的方法。</p>
+</li>
+<li><p>如果有和加载这个 Bean 的 Spring 容器相关的 <code>BeanPostProcessor</code> 对象，执行<code>postProcessBeforeInitialization()</code> 方法</p>
+</li>
+<li><p>如果 Bean 实现了<code>InitializingBean</code>接口，执行<code>afterPropertiesSet()</code>方法。</p>
+</li>
+<li><p>如果 Bean 在配置文件中的定义包含 <code>init-method</code> 属性，执行指定的方法。</p>
+</li>
+<li><p>如果有和加载这个 Bean 的 Spring 容器相关的 <code>BeanPostProcessor</code> 对象，执行<code>postProcessAfterInitialization()</code> 方法。</p>
+</li>
+</ul>
+</details>
+<br>
+
 <p>🆕Spring中的bean是<strong>线程安全</strong>的吗？</p>
 <details>
 <summary>展开查看</summary>
@@ -19026,6 +19053,7 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <p>ros底层是怎么存消息的，用了什么实体</p>
 <p>这个项目比较复杂的地方在哪里</p>
 <p>开源代码看过哪些</p>
+<p>反问</p>
 ]]></content>
       <categories>
         <category>面试</category>
@@ -19051,6 +19079,31 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <p>手撕</p>
 <p>除了学过Java，还有学过什么其他语言吗</p>
 <p>这边目前在招的主要还是系统测试的这种同学，那你这边看有什么嗯，诉求吗？或者说是对这种开发会比较执着吗？</p>
+]]></content>
+      <categories>
+        <category>面试</category>
+      </categories>
+      <tags>
+        <tag>面试</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>面试技巧</title>
+    <url>/2024/04/12/11-00-37/</url>
+    <content><![CDATA[<h3 id="总体"><a href="#总体" class="headerlink" title="总体"></a>总体</h3><p>一定要<strong>自信</strong>！且语气一定要稳，不要声音小或者害怕，轻松点，就当跟朋友聊天那种语气。因为一紧张说的话少或者打顿卡，很影响第一印象。大家都喜欢带<strong>松弛感</strong>的人。</p>
+<h3 id="STAR法则"><a href="#STAR法则" class="headerlink" title="STAR法则"></a>STAR法则</h3><p>在什么环境下（S），你的具体任务是什么（T），你如何行动（A），最后达成了什么结果（R）。这里面可扩展的很多，hr很可能追问你遇到的困难，准备一下。</p>
+<h3 id="未来职业规划"><a href="#未来职业规划" class="headerlink" title="未来职业规划"></a>未来职业规划</h3><p>容易出错，考察的是对未来从事行业的选择以及看你的稳定性。一般是职业规划+价值认同+未来个人发展。</p>
+<h3 id="反问"><a href="#反问" class="headerlink" title="反问"></a>反问</h3><ul>
+<li><p>对新员工的培养</p>
+</li>
+<li><p>部门的架构</p>
+</li>
+<li><p>一些基础的比如五险一金什么时候交，试用期薪资打不打折啊，面试结果什么时候知道</p>
+</li>
+</ul>
+<h3 id="hr"><a href="#hr" class="headerlink" title="hr"></a>hr</h3><p>hr的第一次沟通很重要，就是第一印象一定要留好。我们每天打电话沟通的那些人，看简历觉得还行才会有电话沟通的机会，但有的人电话接通就是我们问一句他说一句，<strong>挤牙膏</strong>一样，不问就不说了，而且每句话都很短也<strong>不会展开讲讲</strong>，这样就一下子觉得这个人不行。</p>
+<h3 id="offer"><a href="#offer" class="headerlink" title="offer"></a>offer</h3><p>你要说都没有的话会想你不行，你说有的话会觉得你不一定来发给你浪费我们的时间。</p>
+<p>可以说投递了很多公司，最近刚参加几家公司的面试，还没有出结果，但是我很喜欢xxx（你面的公司），讲一下你了解到的主要业务方向和工作内容，很符合自己的职业规划，吹一波彩虹屁。</p>
 ]]></content>
       <categories>
         <category>面试</category>
