@@ -17154,6 +17154,30 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
+
+
+<p>🆕 Java对象的组成部分</p>
+<details>
+<summary>展开查看</summary>
+
+<p>对象都由对象头、对象的实例数据区和对齐填充字节这三部分组成。</p>
+<p>对象头</p>
+<ul>
+<li>Mark Word：记录对象和锁的有关信息，通常是32bit大小</li>
+<li>指向类的指针：指向类的数据，也就是指向方法区中的位置，通常是32bit大小</li>
+<li>数组长度：只有数组对象才有，在32位或者64位JVM中，长度都是32bit。</li>
+</ul>
+<p>实例数据区</p>
+<ul>
+<li>实例对象的一些字段属性内容。</li>
+</ul>
+<p>对齐填充字节</p>
+<ul>
+<li>JVM要求Java对象所占的内存大小应该是8bit的倍数，所以这部分主要就是将对象大小补充为8bit的倍数，没有别的功能。</li>
+</ul>
+</details>
+<br>
+
 <h2 id="并发编程篇"><a href="#并发编程篇" class="headerlink" title="并发编程篇"></a>并发编程篇</h2><h3 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h3><p>乐观锁的实现方式</p>
 <details>
 <summary>展开查看</summary>
