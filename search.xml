@@ -17154,7 +17154,22 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
+<p>🆕Checked Exception 和 Unchecked Exception 有什么区别</p>
+<details>
+<summary>展开查看</summary>
 
+
+<ul>
+<li><p>Checked Exception：受检异常，如果没被catch或throws处理，就无法通过编译</p>
+</li>
+<li><p>Unchecked Exception：不受检异常，不处理也可以编译通过。</p>
+<ul>
+<li>ArrayIndexOutOfBoundsException（数组越界错误）</li>
+</ul>
+</li>
+</ul>
+</details>
+<br>
 
 <p>🆕 Java对象的组成部分</p>
 <details>
@@ -17962,6 +17977,18 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <summary>展开查看</summary>
 
 <p>Spring事务的实现基于AOP技术，通过在方法调用前后插入事务管理的逻辑来实现事务的管理。当在方法上标记了@Transactional注解时，Spring会使用AOP技术生成一个代理对象，这个代理对象负责管理事务的开启、提交、回滚等操作。具体来说，Spring将@Transactional注解标记的方法封装成一个事务切面，并在方法执行前后分别执行事务的开启和提交&#x2F;回滚等逻辑。</p>
+</details>
+<br>
+
+<p>🆕AutoWired和Resource注入的区别</p>
+<details>
+<summary>展开查看</summary>
+
+<ul>
+<li>AutoWired是Spring提供的注解，Resource是Java EE提供的注解，都用于自动装配Bean。</li>
+<li>AutoWired按照类型进行自动装配，当有多个类型匹配的bean时，就按照名称进行匹配</li>
+<li>Resource按照名称自动状态，也支持按类型装配。</li>
+</ul>
 </details>
 <br>
 
