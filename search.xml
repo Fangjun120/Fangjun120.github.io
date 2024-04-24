@@ -17193,6 +17193,27 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
+
+
+<p>🆕ArrayList在多线程环境下会出现什么问题？</p>
+<details>
+<summary>展开查看</summary>
+
+<p>ArrayList非线程安全，在多线程环境下可能会出现数据不一致，数组越界的问题。</p>
+<p>先要知道add方法的源码：</p>
+<p><img src="/pic/arraylist%E4%B8%ADadd%E6%96%B9%E6%B3%95.png"></p>
+<p><strong>数组越界</strong>：假设有两个线程t1和t2同时添加元素，这时arraylist容量为10，其中已经有9个元素。t1和t2同时进入add方法，判断是否需要扩容，均为不需要。t1：<code>elementData[size++]=e1</code>，此时size变成10；t2：<code>elementData[size++]=e2</code>，数组越界。</p>
+<p><strong>空指针：</strong>假设有两个线程t1和t2同时添加元素，这时arraylist容量为10，其中已经有5个元素。t1：<code>elementData[size++]=e1</code>，在执行<code>size++</code>之前，t2：<code>elementData[size++]=e2</code>。此时t2线程把t1线程添加的值覆盖了，然后再经过两次<code>size++</code>，第6个元素是t2添加的值，第7个元素为<code>null</code>，<code>size=8</code></p>
+<p><strong>并发修改异常：</strong>：这个异常和<code>modCount</code>变量有关，<code>modCount</code>在<code>Iterator</code>中使用，代表集合被修改的次数，add和remove方法都会让这个变量+1。</p>
+<p><strong>解决方法：</strong></p>
+<ul>
+<li>用Vector替换ArrayList</li>
+<li>用<code>Collections.synchronizedList()</code></li>
+<li>用<code>CopyOnWriteArrayList</code>，性能比上面两个好，读操作不加锁，写操作才加锁。list中的数组拷贝一份副本，写操作完成后（阻塞其他的写操作，但不阻塞读操作，读到的是没修改的数组），将list中数组的地址引用指向修改后的新数组地址</li>
+</ul>
+</details>
+<br>
+
 <h2 id="并发编程篇"><a href="#并发编程篇" class="headerlink" title="并发编程篇"></a>并发编程篇</h2><h3 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h3><p>乐观锁的实现方式</p>
 <details>
 <summary>展开查看</summary>
@@ -19095,7 +19116,7 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <p>IO 多路复用主要是来解决什么问题的呢</p>
 <p>说一下mvcc</p>
 <p>比方说有两个线程操作同一条记录，一个进行 update 操作，一个进行 select 操作，都是where，都是根据主键，这两个线程能同时执行吗？</p>
-<h2 id="菜鸟"><a href="#菜鸟" class="headerlink" title="菜鸟"></a>菜鸟</h2><p>聊一下无人车项目</p>
+<h2 id="菜鸟-一面"><a href="#菜鸟-一面" class="headerlink" title="菜鸟-一面"></a>菜鸟-一面</h2><p>聊一下无人车项目</p>
 <p>为什么他要先推到一个共享内层</p>
 <p>有考虑过别的方法吗(Kafka消息队列)</p>
 <p>消费失败了怎么办</p>
@@ -19104,6 +19125,33 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <p>ros底层是怎么存消息的，用了什么实体</p>
 <p>这个项目比较复杂的地方在哪里</p>
 <p>开源代码看过哪些</p>
+<p>反问</p>
+<h2 id="菜鸟-二面"><a href="#菜鸟-二面" class="headerlink" title="菜鸟-二面"></a>菜鸟-二面</h2><p>主控模块大概实现了什么功能？</p>
+<p>为什么一定要存在一个主控模块呢？就为什么不能直接跟子模块直接通信？</p>
+<p>那这个主控模块就是它是没有具体的一些业务逻辑的，是吧？</p>
+<p>为什么要选 u d p 呢</p>
+<p>你们这个传输这个指令有哪些类呢？就是它有没有分比较关键和和关键性，一般和关键性比较重要的这个指令。</p>
+<p>指令下发了，丢了怎么办呢</p>
+<p>你这个是一个实验性质，还是一个实际用的一个东西啊？</p>
+<p>拥塞控制</p>
+<p>为什么会发生拥塞？</p>
+<p>滑动窗口协议是做什么用的</p>
+<p> h t t p 的这个协议，它属处于这个网络的哪一层</p>
+<p>数字链路层是做什么用的呢？为什么要提出这一层？怎么保障连通性？</p>
+<p>数据传输的时候有涉及到数据压缩吗</p>
+<p>这个项目用那个开发语言是什么语言呢</p>
+<p>Redis 支持哪些数据结构</p>
+<p>不同的数据结构分别应用在什么样的场景</p>
+<p>有没有一些具体的应用场景</p>
+<p>起步依赖是用来做什么的</p>
+<p>你用过哪些starter</p>
+<p>parent pom是做什么用的</p>
+<p>我在子模块里面重新声明了这个jar包的依赖，会优先加载哪个</p>
+<p>看业务代码，讲流程。</p>
+<p>Java 里头这个序列化是做什么用</p>
+<p>Java 它自带的序列化是怎么做？</p>
+<p>Arraylist是线程安全的吗，拿到多线程环境下去用会出什么问题啊？</p>
+<p>synchronize 关键词如果加在一个那个 static 方法上面，这个能有什么效果啊？</p>
 <p>反问</p>
 ]]></content>
       <categories>
@@ -19157,6 +19205,12 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <h3 id="hr"><a href="#hr" class="headerlink" title="hr"></a>hr</h3><p>hr的第一次沟通很重要，就是第一印象一定要留好。我们每天打电话沟通的那些人，看简历觉得还行才会有电话沟通的机会，但有的人电话接通就是我们问一句他说一句，<strong>挤牙膏</strong>一样，不问就不说了，而且每句话都很短也<strong>不会展开讲讲</strong>，这样就一下子觉得这个人不行。</p>
 <h3 id="offer"><a href="#offer" class="headerlink" title="offer"></a>offer</h3><p>你要说都没有的话会想你不行，你说有的话会觉得你不一定来发给你浪费我们的时间。</p>
 <p>可以说投递了很多公司，最近刚参加几家公司的面试，还没有出结果，但是我很喜欢xxx（你面的公司），讲一下你了解到的主要业务方向和工作内容，很符合自己的职业规划，吹一波彩虹屁。</p>
+<h3 id="场景题"><a href="#场景题" class="headerlink" title="场景题"></a>场景题</h3><ul>
+<li><p>要有逻辑，不要想到哪说哪，有层次感</p>
+</li>
+<li><p>要敢说，不要觉得不对就不说了，让面试官看到思考过程和联想过程</p>
+</li>
+</ul>
 ]]></content>
       <categories>
         <category>面试</category>
