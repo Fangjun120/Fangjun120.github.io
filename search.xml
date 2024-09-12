@@ -16828,6 +16828,45 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <p>因为是个练手项目，所以对比大众点评不是十分完整，主要有登录注册、店铺查询、秒杀优惠、UV统计等功能。</p>
 <p>主要技术栈有springboot、mybatis-plus、redis、mysql、redission</p>
 <p><a href="https://boardmix.cn/app/editor/0Q6gMeM-aALgUkuroNKKvg">https://boardmix.cn/app/editor/0Q6gMeM-aALgUkuroNKKvg</a></p>
+<h2 id="美团"><a href="#美团" class="headerlink" title="美团"></a>美团</h2><p>在两个月的实习过程中，我完成了新人的学习任务，熟悉团队开发业务并逐步参与到日常需求。期间遇到了一些问题，也产生了一些思考与感悟，收获良多。</p>
+<p>位置  米格  商品中心  kano  报价</p>
+<h3 id="执行流"><a href="#执行流" class="headerlink" title="执行流"></a>执行流</h3><h4 id="旧执行流"><a href="#旧执行流" class="headerlink" title="旧执行流"></a>旧执行流</h4><p>以层为单位，上层依赖下层，复杂后依赖关系不明显，且会有冗余执行</p>
+<h4 id="新执行流"><a href="#新执行流" class="headerlink" title="新执行流"></a>新执行流</h4><p>图</p>
+<p>dataIniter，enableprocess，process，postprocess</p>
+<h3 id="新人学习，打好基本功"><a href="#新人学习，打好基本功" class="headerlink" title="新人学习，打好基本功"></a>新人学习，打好基本功</h3><ul>
+<li>工作：通过互联网+大学中的必修课了解公司的文化制度，学习了信息安全知识；结合新人sop和组内总结的wiki了解常用的基础组件，了解流量交易的业务需求，通用技术栈，学习action执行框架。</li>
+<li>结果与收获：整理总结了相关中间件和平台的认识，通过参与名酒馆需求评审了解链路。</li>
+</ul>
+<h3 id="排查cbase空指针异常"><a href="#排查cbase空指针异常" class="headerlink" title="排查cbase空指针异常"></a>排查cbase空指针异常</h3><ul>
+<li>工作：com.sankuai.meituan.waimai.sc.framework.executor.impl.QueuedGraphExecutor.buildContext(QueuedGraphExecutor.java:96) 抛出空指针异常，具体语句是graphConfig.getActionConfigMap(), 经排查发现是graphConfig为空导致的，这个对象是由GraphManager 类监听ContextRefreshedEvent 事件后触发构造的。即在调用执行流时，底层的初始化还没好。api的节点部署完成后过一段时间才会被发现，执行流已经加载好了；而cbase节点一部署完成就会被发现，执行流的相关参数还没构造好，调用时对象为空。</li>
+<li>结果与收获：通过MTthrift自定义状态尝试解决，在服务端启动时设置其运行状态为未启动状态，服务预热后将状态设置为正常，此时开始接收流量，从而达到延迟接收流量的效果。通过本次错误排查，了解了服务底层初始化的过程，加深了对ContextRefreshedEvent事件及其在应用启动过程中的作用的理解。</li>
+</ul>
+<h3 id="促销标签优化-接入推荐理由"><a href="#促销标签优化-接入推荐理由" class="headerlink" title="促销标签优化+接入推荐理由"></a>促销标签优化+接入推荐理由</h3><ul>
+<li>目标：解决部分商家中出现的补贴力度小的活动占据有效曝光位的问题；附近商家模块没有优惠券导致的吸引力弱，需要接入推荐理由做兜底。</li>
+<li>工作：新增实验，在实验把控下向下游服务传递新的visitModule字段；整理商家状态信息，根据ui稿返回新的商家状态样式；附近商家模块新增推荐理由字段，在动态标签没有数据时返回推荐理由。</li>
+<li>问题：<ul>
+<li>沟通不明确，改动点出错。前期需求评审时对部分改动的范围没有明确，由于本次需求主要涉及到两个模块，包括附近商家和商品双排，prd中商家状态的样式只有ui稿，没有文字说明，在开发时就把两个模块的样式统一做了修改，但实际上只需要修改附近商家部分。这导致开发时出现了无用功。</li>
+<li>商家状态包括营业状态，限单状态等，原代码将这些状态统一在一个函数中进行处理。但对于附近商家模块，“快递发货”这个状态比较特殊，它不属于动态标签，是在别的地方处理赋值的。这一点在首次开发时没注意到。</li>
+</ul>
+</li>
+<li>结果与收获<ul>
+<li>本次需求的整体流程比较完整，从前期的需求评审、技术评审到投入开发、自测联调，再到后期交付QA和上线，全程参与下让我体会到了完整规范的服务端开发流程，对我这样的新人而言，规范的流程是不可或缺的。通过一个完整的开发流程，从实践上串联起之前学习的中间件和平台。</li>
+<li>另外，由于组内在强调单测，让我也重视起了单测。之前在学校的项目里很少写单测，但其实单测是验证代码逻辑正确的第一道关卡，写单测的过程有利于更早暴露代码中的一些问题。最终本需求的单测覆盖率为94%。</li>
+<li>其次是对待需求的态度，我在着手技术方案时发现方案中包括了需求的背景、目的等要素，觉得这些东西prd里有就可以，技术方案着眼于技术相关即可。后面mt给我解释，虽然需求设计是产品的工作，但开发人员也不是一味的按照prd做改动，对于需求的内容和改动要有自己的理解，觉得不合理的地方要及时提出商讨。</li>
+</ul>
+</li>
+</ul>
+<h3 id="升级st环境下module构建使用的Maven版本"><a href="#升级st环境下module构建使用的Maven版本" class="headerlink" title="升级st环境下module构建使用的Maven版本"></a>升级st环境下module构建使用的Maven版本</h3><ul>
+<li>工作：构建module项目使用的maven工具版本为3.3.3，构建报告建议升级Maven版本以加快构建速度，已在mudule中新增升级Maven后的模板以供使用。</li>
+<li>结果与收获：将Maven版本升级为3.9.5后，平均构建时间减少了30%，背后的原因是Maven3.9.5之后的版本在Maven依赖分析上把原本的深度优先改成了广度优先。</li>
+</ul>
+<h3 id="工作收获"><a href="#工作收获" class="headerlink" title="工作收获"></a>工作收获</h3><ul>
+<li>了解常用的中间件和开发测试过程中要使用的平台，学习action执行框架，了解业务范围和链路</li>
+<li>通过深度参与一个业务需求的完整流程，包括需求评审、技术评审、排期、开发、自测、联调、CR、交付、上线，过程中明确了每个阶段的任务，从前期梳理到后期上线时遇到的问题、操作流程等进行总结记录。</li>
+<li>学习排查线上异常的方法，通过日志定位异常，分析产生的原因，同时了解了服务底层初始化的过程。</li>
+<li>反思开发过程中出现的改动错误等问题，让我明白了多业务方合作下有效沟通的重要性，对于不清楚不明白的点一定要先明确下来，同时在交流之前明确沟通的目的，以提高沟通效率，规范了我的开发和测试流程。</li>
+<li>目前接触的业务较少，自身对于优秀的设计理念和设计模式方面的积累薄弱。在周会中了解到目前有服务拆分的需求，了解了DDD架构的设计理念，也是业务能力的一种积累。</li>
+</ul>
 <h2 id="横项"><a href="#横项" class="headerlink" title="横项"></a>横项</h2><h3 id="技术选型"><a href="#技术选型" class="headerlink" title="技术选型"></a>技术选型</h3><p>图像帧如何传输，一开始考虑ros，延时问题</p>
 <h3 id="难点"><a href="#难点" class="headerlink" title="难点"></a>难点</h3><p><strong>交叉编译</strong></p>
 <p>当时我们视频编码用的编码库是和瑞星微芯片配套的，但是那个库在开发板上本地编译一直不成功，在github库上也咨询了作者，他也没有什么好的方案。</p>
@@ -17207,8 +17246,8 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 <p><strong>并发修改异常：</strong>：这个异常和<code>modCount</code>变量有关，<code>modCount</code>在<code>Iterator</code>中使用，代表集合被修改的次数，add和remove方法都会让这个变量+1。</p>
 <p><strong>解决方法：</strong></p>
 <ul>
-<li>用Vector替换ArrayList</li>
-<li>用<code>Collections.synchronizedList()</code></li>
+<li>用Vector替换ArrayList (Stack是基于Vector实现)</li>
+<li>用<code>Collections.synchronizedList()</code>，加了synchronized的集合，传递一个集合对象，维护变量记录对象地址，直接操作对象数值。</li>
 <li>用<code>CopyOnWriteArrayList</code>，性能比上面两个好，读操作不加锁，写操作才加锁。list中的数组拷贝一份副本，写操作完成后（阻塞其他的写操作，但不阻塞读操作，读到的是没修改的数组），将list中数组的地址引用指向修改后的新数组地址</li>
 </ul>
 </details>
