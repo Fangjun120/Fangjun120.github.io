@@ -15441,6 +15441,20 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
+<p>ArrayList 和 LinkedList 的区别</p>
+<details>
+<summary>展开查看</summary>
+
+<ul>
+<li>底层数据结构。动态数组 VS 双向链表</li>
+<li>效率。ArrayList查询效率高；ArrayList尾部插入删除是O(1)，其他部分需要挪动数组，是O(n)；LinkedList头尾节点增删是O(1)，其他部分需要遍历链表，是O(n)。</li>
+<li>空间。就单元素而言，LinkedList由于有头尾指针，比ArrayList费空间；但是ArrayList有冗余的数组位置。</li>
+<li>线程是否安全。都不是。方法内使用；或者使用<code>Collections.synchronizedList(new xxxList&lt;&gt;())</code></li>
+</ul>
+<p>因此，LinkedList适合频繁在头尾增删数据，偶尔随机访问的场景。</p>
+</details>
+<br>
+
 <h2 id="并发编程篇"><a href="#并发编程篇" class="headerlink" title="并发编程篇"></a>并发编程篇</h2><h3 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h3><p>乐观锁的实现方式</p>
 <details>
 <summary>展开查看</summary>
