@@ -14626,6 +14626,53 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 
 <span id="more"></span>
 
+<p>String#intern 方法有什么作用?</p>
+<details>
+<summary>展开查看</summary>
+
+<p>其作用是将指定的字符串对象的引用保存在字符串常量池中，可以简单分为两种情况：</p>
+<ul>
+<li>如果字符串常量池中保存了对应的字符串对象的引用，就直接返回该引用。</li>
+<li>如果字符串常量池中没有保存了对应的字符串对象的引用，那就在常量池中创建一个指向该字符串对象的引用并返回。</li>
+</ul>
+</details>
+<br>
+
+<p>代码题</p>
+<details>
+<summary>展开查看</summary>
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Main</span> &#123;</span><br><span class="line">    <span class="comment">// java 只有值传递，对于基本类型是属性值，对于引用类型是地址值</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">changeA</span><span class="params">(<span class="type">int</span>[] arrays)</span>&#123;</span><br><span class="line">        arrays[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">change</span><span class="params">(String str)</span> &#123;</span><br><span class="line">        <span class="comment">// String是不可变变量，这里只是把str的地址换了</span></span><br><span class="line">        str = <span class="string">&quot;a&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">str</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(<span class="string">&quot;as&quot;</span>);</span><br><span class="line">        <span class="comment">// 局部变量的值不会影响外界</span></span><br><span class="line">        change(str);</span><br><span class="line">        System.out.println(str); <span class="comment">// as</span></span><br><span class="line">        </span><br><span class="line">        <span class="type">int</span>[] arr = <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;<span class="number">0</span>,<span class="number">2</span>,<span class="number">3</span>&#125;;</span><br><span class="line">        <span class="comment">// 数组是可变的，这里是外部arr和内部arrays指向了同一个数组</span></span><br><span class="line">        changeA(arr);</span><br><span class="line">        System.out.println(arr[<span class="number">0</span>]); <span class="comment">// 1</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</details>
+<br>
+
+
+
+<p>常用API</p>
+<details>
+<summary>展开查看</summary>
+
+<p>数组排序</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Arrays.sort(arr);</span><br><span class="line">Arrays.sort(arr, (a, b)-&gt;a-b);</span><br></pre></td></tr></table></figure>
+
+<p>比较两个数组</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Arrays.equals(arr1, arr2);</span><br></pre></td></tr></table></figure>
+
+<p>数组转list</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">List&lt;<span class="type">int</span>[]&gt; res = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"><span class="type">int</span>[][] a = res.toArray(<span class="keyword">new</span> <span class="title class_">int</span>[res.size()][]); <span class="comment">// int[] 是对象</span></span><br><span class="line"></span><br><span class="line">List&lt;String&gt; res = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">String[] a = res.toArray(<span class="keyword">new</span> <span class="title class_">String</span>[res.size()]); <span class="comment">// String是对象</span></span><br><span class="line"></span><br><span class="line">List&lt;Integer&gt; res = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line"><span class="type">int</span>[] a = res.toArray(<span class="keyword">new</span> <span class="title class_">int</span>[res.size()]); <span class="comment">// 错误，不能是基本数据类型，必须是对象</span></span><br><span class="line"></span><br><span class="line">List&lt;Integer&gt; res = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;&gt;();</span><br><span class="line">Integer[] a = res.toArray(<span class="keyword">new</span> <span class="title class_">Integer</span>[res.size()]); <span class="comment">// Integer是对象</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span>[] a = list.stream().mapToInt(Integer::intValue).toArray();</span><br></pre></td></tr></table></figure>
+
+
+
+<p>list转数组</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="type">List</span> <span class="variable">list</span> <span class="operator">=</span> Arrays.asList(<span class="keyword">new</span> <span class="title class_">int</span>[]&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;);</span><br><span class="line"><span class="type">List</span> <span class="variable">list</span> <span class="operator">=</span> Arrays.asList(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>);</span><br></pre></td></tr></table></figure>
+
+<p>arraylist构造函数</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;List&lt;String&gt;&gt;(map.values()); <span class="comment">// 必须是集合</span></span><br></pre></td></tr></table></figure>
+
+</details>
+<br>
+
 <p>transient关键字的作用</p>
 <details>
 <summary>展开查看</summary>
@@ -15415,6 +15462,9 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </ul>
 </li>
 <li><p>集群模式</p>
+<ul>
+<li>Redis 集群是一种分布式系统，用于在多个 Redis 节点之间分片存储数据，并通过内置的客户端分片机制将数据均匀地分布在不同的节点上。Redis 集群可以自动发现新的节点并进行数据重分配，从而实现故障转移和负载均衡，提高系统的可用性和扩展性。</li>
+</ul>
 </li>
 <li><p>持久化备份</p>
 </li>
@@ -15540,6 +15590,69 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 <ul>
 <li>先查旧表，再查新表。这样可以避免遗漏数据</li>
 </ul>
+</details>
+<br>
+
+<p>redis中大key和热key问题</p>
+<details>
+<summary>展开查看</summary>
+
+<h4 id="big-key"><a href="#big-key" class="headerlink" title="big key"></a><strong>big key</strong></h4><p>如果一个 key 对应的 <strong>value 所占用的内存比较大</strong>，那这个 key 就可以看作是 bigkey</p>
+<h5 id="产生原因"><a href="#产生原因" class="headerlink" title="产生原因"></a>产生原因</h5><ul>
+<li>程序设计不当，比如直接使用 String 类型存储较大的文件对应的二进制数据。</li>
+<li>对于业务的数据规模考虑不周到，比如使用集合类型的时候没有考虑到数据量的快速增长。</li>
+<li>未及时清理垃圾数据，比如哈希中冗余了大量的无用键值对。</li>
+</ul>
+<h5 id="危害"><a href="#危害" class="headerlink" title="危害"></a>危害</h5><ul>
+<li>客户端超时阻塞：由于 Redis 执行命令是单线程处理，然后在操作大 key 时会比较耗时，那么就会阻塞 Redis，从客户端这一视角看，就是很久很久都没有响应。</li>
+<li>网络阻塞：每次获取大 key 产生的网络流量较大，如果一个 key 的大小是 1 MB，每秒访问量为 1000，那么每秒会产生 1000MB 的流量，这对于普通千兆网卡的服务器来说是灾难性的。</li>
+<li>工作线程阻塞：如果使用 del 删除大 key 时，会阻塞工作线程，这样就没办法处理后续的命令</li>
+</ul>
+<h5 id="发现bigkey"><a href="#发现bigkey" class="headerlink" title="发现bigkey"></a>发现bigkey</h5><ul>
+<li>使用 Redis 自带的 <code>--bigkeys</code> 参数来查找。</li>
+<li>使用 Redis 自带的 SCAN 命令</li>
+<li>借助公有云的 Redis 分析服务</li>
+</ul>
+<h5 id="处理"><a href="#处理" class="headerlink" title="处理"></a>处理</h5><ul>
+<li><strong>分割 bigkey</strong>：将一个 bigkey 分割为多个小 key。例如，将一个含有上万字段数量的 Hash 按照一定策略（比如二次哈希）拆分为多个 Hash。</li>
+<li><strong>手动清理</strong>：Redis 4.0+ 可以使用 <code>UNLINK</code> 命令来异步删除一个或多个指定的 key。Redis 4.0 以下可以考虑使用 <code>SCAN</code> 命令结合 <code>DEL</code> 命令来分批次删除。</li>
+<li><strong>采用合适的数据结构</strong>：例如，文件二进制数据不使用 String 保存、使用 HyperLogLog 统计页面 UV、Bitmap 保存状态信息（0&#x2F;1）。</li>
+<li><strong>开启 lazy-free（惰性删除&#x2F;延迟释放）</strong>：lazy-free 特性是 Redis 4.0 开始引入的，指的是让 Redis 采用异步方式延迟释放 key 使用的内存，将该操作交给单独的子线程处理，避免阻塞主线程。</li>
+</ul>
+<h4 id="hot-key"><a href="#hot-key" class="headerlink" title="hot key"></a>hot key</h4><p>hotkey 出现的原因主要是某个热点数据访问量暴增，如重大的热搜事件、参与秒杀的商品。</p>
+<h5 id="危害-1"><a href="#危害-1" class="headerlink" title="危害"></a>危害</h5><p>处理 hotkey 会占用大量的 CPU 和带宽，可能会影响 Redis 实例对其他请求的正常处理。会引发缓存击穿问题。</p>
+<h5 id="发现"><a href="#发现" class="headerlink" title="发现"></a>发现</h5><ul>
+<li>使用 Redis 自带的 <code>--hotkeys</code> 参数来查找。</li>
+<li>使用<code>MONITOR</code> 命令<ul>
+<li>实时查看redis所有操作，对性能影响很大，禁止长时间开启。</li>
+</ul>
+</li>
+<li>根据业务情况提前预估。</li>
+</ul>
+<h5 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h5><ul>
+<li>读写分离<ul>
+<li>主节点处理写请求，从节点处理读请求</li>
+</ul>
+</li>
+<li>使用redis cluster<ul>
+<li>将热点数据分散存储在多个redis节点上</li>
+</ul>
+</li>
+<li>多级缓存<ul>
+<li>hotkey 采用二级缓存的方式进行处理，将 hotkey 存放一份到 JVM 本地内存中</li>
+</ul>
+</li>
+</ul>
+</details>
+<br>
+
+<p>setnx 原理</p>
+<details>
+<summary>展开查看</summary>
+
+<p><code>SETNX</code> 是 Redis 提供的原子性命令，用于实现分布式锁。它可以通过设置一个键来表示锁，当这个键不存在时，才会成功设置，从而保证互斥。</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">SET lock_key lock_value NX EX 10</span><br><span class="line">DEL lock_key</span><br></pre></td></tr></table></figure>
+
 </details>
 <br>
 
@@ -15723,7 +15836,18 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </details>
 <br>
 
-<h2 id="框架篇"><a href="#框架篇" class="headerlink" title="框架篇"></a>框架篇</h2><p>🌟spring如何解决循环依赖 (循环引用) 问题</p>
+<h2 id="框架篇"><a href="#框架篇" class="headerlink" title="框架篇"></a>框架篇</h2><p>Springboot两大特性，起步依赖原理？</p>
+<details>
+<summary>展开查看</summary>
+
+<ul>
+<li>自动装配 和 起步依赖</li>
+<li>起步依赖的原理是Maven的依赖传递</li>
+</ul>
+</details>
+<br>
+
+<p>🌟spring如何解决循环依赖 (循环引用) 问题</p>
 <details>
 <summary>展开查看</summary>
 
