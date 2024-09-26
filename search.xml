@@ -15063,6 +15063,17 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
+<p>synchroized加在代码块和方法上区别，分别会阻塞什么形式的请求</p>
+<details>
+<summary>展开查看</summary>
+synchronized 在普通方法上为对象锁，即不同对象调用时不会阻塞，相同对象调用时会阻塞。
+
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Task</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">funA</span><span class="params">()</span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 三个线程分别是同的对象调用funA -- 不会阻塞</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;<span class="number">3</span>;i++)&#123;</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; <span class="keyword">new</span> <span class="title class_">Task</span>().funA()).start();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 三个线程同的对象调用funA -- 同步阻塞</span></span><br><span class="line">        <span class="type">Task</span> <span class="variable">task</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Task</span>();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;<span class="number">3</span>;i++)&#123;</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; task.funA()).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>synchronized 在代码块上可以分为类锁和对象锁，类锁无论是都相同对象调用都为同步阻塞。</p>
+</details>
+<br>
+
 <h3 id="JMM"><a href="#JMM" class="headerlink" title="JMM"></a>JMM</h3><p>介绍一下内存模型？</p>
 <details>
 <summary>展开查看</summary>
@@ -15266,7 +15277,20 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
+<p>不同隔离级别下，加锁的时机有什么不同？</p>
+<details>
+<summary>展开查看</summary>
 
+<p>RU：无锁</p>
+<p>RC：读时加共享锁，读完释放；更新&#x2F;删除在事务开始时加排他锁，结束释放。</p>
+<p>RR：读时事务开始时加共享锁，结束时释放；更新&#x2F;删除在事务开始时加排他锁，结束释放。</p>
+<p>串行化：在RR基础上，在执行范围查询时，加范围锁，直到事务结束时释放</p>
+<ul>
+<li>隔离级别越高，锁持有的时间越长，确保数据一致性和隔离性，但会降低并发性。</li>
+<li>隔离级别越低，锁的持有时间短，允许更多并发访问，但可能导致脏读和不可重复读。</li>
+</ul>
+</details>
+<br>
 
 <h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p>查询语句执行过程</p>
 <details>
@@ -15613,7 +15637,7 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </ul>
 <p>发现bigkey</p>
 <ul>
-<li>使用 Redis 自带的 <code>--bigkeys</code> 参数来查找。</li>
+<li>使用 Redis 自带的 <code>--bigkeys</code> 参数来查找。 <code>redis-cli --bigkeys</code></li>
 <li>使用 Redis 自带的 SCAN 命令</li>
 <li>借助公有云的 Redis 分析服务</li>
 </ul>
@@ -15630,7 +15654,7 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 <p>处理 hotkey 会占用大量的 CPU 和带宽，可能会影响 Redis 实例对其他请求的正常处理。会引发缓存击穿问题。</p>
 <p>发现</p>
 <ul>
-<li>使用 Redis 自带的 <code>--hotkeys</code> 参数来查找。</li>
+<li>使用 Redis 自带的 <code>--hotkeys</code> 参数来查找。<code>redis-cli --hotkeys</code></li>
 <li>使用<code>MONITOR</code> 命令<ul>
 <li>实时查看redis所有操作，对性能影响很大，禁止长时间开启。</li>
 </ul>
@@ -15725,14 +15749,22 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 <p>🆕Minor GC、Major GC、Full GC的区别</p>
 <details>
 <summary>展开查看</summary>
-- 部分收集：不是完整收集整个 Java 堆的垃圾收集。其中又分为： 
-  - 新生代收集（Minor GC/Young GC）：只是新生代的垃圾收集
-  - 老年代收集（Major GC/Old GC）：只是老年代的垃圾收集 
-    - 目前，只有 CMS GC 会有单独收集老年代的行为
-  - 混合收集（Mixed GC）：收集整个新生代以及部分老年代的垃圾收集 
-    - 目前只有 G1 GC 会有这种行为
-- 整堆收集（Full GC）：收集整个 Java 堆和方法区的垃圾
 
+<ul>
+<li>部分收集：不是完整收集整个 Java 堆的垃圾收集。其中又分为： <ul>
+<li>新生代收集（Minor GC&#x2F;Young GC）：只是新生代的垃圾收集</li>
+<li>老年代收集（Major GC&#x2F;Old GC）：只是老年代的垃圾收集 <ul>
+<li>目前，只有 CMS GC 会有单独收集老年代的行为</li>
+</ul>
+</li>
+<li>混合收集（Mixed GC）：收集整个新生代以及部分老年代的垃圾收集 <ul>
+<li>目前只有 G1 GC 会有这种行为</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>整堆收集（Full GC）：收集整个 Java 堆和方法区的垃圾</li>
+</ul>
 </details>
 <br>
 
