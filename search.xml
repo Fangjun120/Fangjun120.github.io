@@ -14676,8 +14676,11 @@ gulp.task(&#39;default&#39;, [&#39;htmlmin&#39;, &#39;cssmin&#39;, &#39;jsmin&#3
 <p>transient关键字的作用</p>
 <details>
 <summary>展开查看</summary>
-- 被修饰的对象不参与序列化
-- 在ArrayList源码中有，元素存放在elementData变量，这个变量被transient修饰，elementData是一个缓存数组，它通常会预留一些容量，等容量不足时再扩充容量，那么有些空间可能就没有实际存储元素，采用上诉的方式来实现序列化时，就可以保证只序列化实际存储的那些元素，而不是整个数组，从而节省空间和时间。
+
+<ul>
+<li>被修饰的对象不参与序列化</li>
+<li>在ArrayList源码中有，元素存放在elementData变量，这个变量被transient修饰，elementData是一个缓存数组，它通常会预留一些容量，等容量不足时再扩充容量，那么有些空间可能就没有实际存储元素，采用上诉的方式来实现序列化时，就可以保证只序列化实际存储的那些元素，而不是整个数组，从而节省空间和时间。</li>
+</ul>
 </details>
 <br>
 
@@ -14833,7 +14836,7 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
-<p>🆕Checked Exception 和 Unchecked Exception 有什么区别</p>
+<p>Checked Exception 和 Unchecked Exception 有什么区别</p>
 <details>
 <summary>展开查看</summary>
 
@@ -14893,7 +14896,7 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
-<p>ArrayList 和 LinkedList 的区别</p>
+<p>🆕ArrayList 和 LinkedList 的区别</p>
 <details>
 <summary>展开查看</summary>
 
@@ -14907,7 +14910,7 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
-<p>Java的基本类型和包装类型</p>
+<p>🆕Java的基本类型和包装类型</p>
 <details>
 <summary>展开查看</summary>
 
@@ -14940,7 +14943,7 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
-<p>AOT 对比 JIT</p>
+<p>🆕AOT 对比 JIT</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15004,12 +15007,20 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
-<p>volatile 关键字解决了什么问题，它的实现原理是什么？</p>
+<p>🆕volatile 关键字解决了什么问题，它的<strong>实现原理</strong>是什么？</p>
 <details>
 <summary>展开查看</summary>
 
 <ul>
-<li>保证了变量的可见性，每次使用volatile修饰的变量都需要进入主存中读取；可以防止JVM指令重排序（通过内存屏障实现）。</li>
+<li><p>保证了变量的可见性，每次使用volatile修饰的变量都需要进入主存中读取；可以防止JVM指令重排序（通过内存屏障实现）。</p>
+</li>
+<li><p><code>volatile</code> 关键字的实现原理主要涉及两个方面：</p>
+<ul>
+<li><strong>禁止指令重排序</strong>：在变量被声明为 <code>volatile</code> 后，编译器和处理器会禁止对该变量进行指令重排序优化。这样可以确保 volatile 变量的写操作先于后续的读操作，从而保证了可见性。</li>
+<li><strong>内存屏障（Memory Barrier）</strong>：在写操作和读操作的前后会插入内存屏障，确保写操作的结果对后续的读操作可见。内存屏障会阻止处理器重排序指令，保证了指令执行的顺序。</li>
+</ul>
+<p>具体来说，对于写操作，<code>volatile</code> 关键字会在写操作之后插入写屏障（Store Barrier），确保写操作先于后续的其他指令执行。对于读操作，<code>volatile</code> 关键字会在读操作之前插入读屏障（Load Barrier），确保读操作在其他指令执行之前获取最新的值。</p>
+</li>
 </ul>
 </details>
 <br>
@@ -15063,11 +15074,11 @@ IO模型如下，两个进程想跨网络通信，先把数据从用户空间拷
 </details>
 <br>
 
-<p>synchroized加在代码块和方法上区别，分别会阻塞什么形式的请求</p>
+<p>🆕synchroized加在代码块和方法上区别，分别会阻塞什么形式的请求</p>
 <details>
 <summary>展开查看</summary>
-synchronized 在普通方法上为对象锁，即不同对象调用时不会阻塞，相同对象调用时会阻塞。
 
+<p>synchronized 在普通方法上为对象锁，即不同对象调用时不会阻塞，相同对象调用时会阻塞。</p>
 <figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Task</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title function_">funA</span><span class="params">()</span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="comment">// 三个线程分别是同的对象调用funA -- 不会阻塞</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;<span class="number">3</span>;i++)&#123;</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; <span class="keyword">new</span> <span class="title class_">Task</span>().funA()).start();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 三个线程同的对象调用funA -- 同步阻塞</span></span><br><span class="line">        <span class="type">Task</span> <span class="variable">task</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Task</span>();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;<span class="number">3</span>;i++)&#123;</span><br><span class="line">            <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; task.funA()).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>synchronized 在代码块上可以分为类锁和对象锁，类锁无论是都相同对象调用都为同步阻塞。</p>
@@ -15117,7 +15128,7 @@ synchronized 在普通方法上为对象锁，即不同对象调用时不会阻�
 </details>
 <br>
 
-<p>🆕如果在ThreadLocal中存信息，经过一次垃圾回收以后，信息就获取不到了吗</p>
+<p>如果在ThreadLocal中存信息，经过一次垃圾回收以后，信息就获取不到了吗</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15214,7 +15225,6 @@ synchronized 在普通方法上为对象锁，即不同对象调用时不会阻�
 <details>
 <summary>展开查看</summary>
 
-
 <ul>
 <li>锁，如排他锁，一个事务获取到数据行的排他锁，其他事务就不能获取该行的锁</li>
 <li>MVCC(<strong>多版本</strong>并发控制可以看作是乐观控制的模式)</li>
@@ -15277,7 +15287,7 @@ synchronized 在普通方法上为对象锁，即不同对象调用时不会阻�
 </details>
 <br>
 
-<p>不同隔离级别下，加锁的时机有什么不同？</p>
+<p>🆕不同隔离级别下，加锁的时机有什么不同？</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15304,7 +15314,7 @@ synchronized 在普通方法上为对象锁，即不同对象调用时不会阻�
 </details>
 <br>
 
-<p>如何排查死锁</p>
+<p>🆕如何排查死锁</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15383,7 +15393,7 @@ synchronized 在普通方法上为对象锁，即不同对象调用时不会阻�
 </details>
 <br>
 
-<p>联合索引的索引树结构</p>
+<p>🆕联合索引的索引树结构</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15403,7 +15413,7 @@ synchronized 在普通方法上为对象锁，即不同对象调用时不会阻�
 </details>
 <br>
 
-<p>什么是索引下推</p>
+<p>🆕什么是索引下推</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15421,10 +15431,9 @@ synchronized 在普通方法上为对象锁，即不同对象调用时不会阻�
 </details>
 <br>
 
-<p>🆕mysql批量操作时，如果发生了错误，如何快速定位是哪条数据的错误？</p>
+<p>mysql批量操作时，如果发生了错误，如何快速定位是哪条数据的错误？</p>
 <details>
 <summary>展开查看</summary>
-
 
 <ul>
 <li>数据库错误日志</li>
@@ -15559,7 +15568,7 @@ synchronized 在普通方法上为对象锁，即不同对象调用时不会阻�
 </details>
 <br>
 
-<p>🌟RDB和AOF的使用场景，如何切换</p>
+<p>RDB和AOF的使用场景，如何切换</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15616,7 +15625,7 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<p>Redis 扩容机制</p>
+<p>🆕Redis 扩容机制</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15634,7 +15643,7 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<p>redis中大key和热key问题</p>
+<p>🆕redis中大key和热key问题</p>
 <details>
 <summary>展开查看</summary>
 **big key**
@@ -15696,7 +15705,7 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<p>setnx 原理</p>
+<p>🆕setnx 原理</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15751,7 +15760,7 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<p>🆕老年代如果满了怎么办？</p>
+<p>老年代如果满了怎么办？</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15763,7 +15772,7 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<p>🆕Minor GC、Major GC、Full GC的区别</p>
+<p>Minor GC、Major GC、Full GC的区别</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15785,7 +15794,7 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<p>OOM 有几种常见类型和解决方法</p>
+<p>🆕OOM 有几种常见类型和解决方法</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15797,7 +15806,7 @@ redis读写使用单线程，基于reactor开发了事件处理模型，结合IO
 </details>
 <br>
 
-<p>永久代一般都存放哪些东西？</p>
+<p>🆕永久代一般都存放哪些东西？</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15880,7 +15889,7 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </details>
 <br>
 
-<p>垃圾回收分代算法</p>
+<p>🆕垃圾回收分代算法</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15896,7 +15905,7 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </details>
 <br>
 
-<h2 id="框架篇"><a href="#框架篇" class="headerlink" title="框架篇"></a>框架篇</h2><p>Springboot两大特性，起步依赖原理？</p>
+<h2 id="框架篇"><a href="#框架篇" class="headerlink" title="框架篇"></a>框架篇</h2><p>🆕Springboot两大特性，起步依赖原理？</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15907,7 +15916,7 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 </details>
 <br>
 
-<p>自动装配原理？</p>
+<p>🆕自动装配原理？</p>
 <details>
 <summary>展开查看</summary>
 Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解，其中`@EnableAutoConfiguration` 的作用是启动Springboot的自动配置。
@@ -15964,7 +15973,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>🆕AOP使用的设计模式，AOP的应用场景</p>
+<p>AOP使用的设计模式，AOP的应用场景</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15985,7 +15994,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>🆕AutoWired和Resource注入的区别</p>
+<p>AutoWired和Resource注入的区别</p>
 <details>
 <summary>展开查看</summary>
 
@@ -15997,7 +16006,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>🆕spring事务内部多个sql用的是同一个连接吗，不同事务呢，怎么实现的</p>
+<p>spring事务内部多个sql用的是同一个连接吗，不同事务呢，怎么实现的</p>
 <details>
 <summary>展开查看</summary>
 
@@ -16007,7 +16016,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>🌟事务失效的场景</p>
+<p>事务失效的场景</p>
 <details>
 <summary>展开查看</summary>
 
@@ -16041,7 +16050,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>🆕动态代理的两种实现方式</p>
+<p>动态代理的两种实现方式</p>
 <details>
 <summary>展开查看</summary>
 **基于接口实现(jdk)**
@@ -16078,7 +16087,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>🌟spring mvc的执行流程</p>
+<p>spring mvc的执行流程</p>
 <details>
 <summary>展开查看</summary>
 
@@ -16115,7 +16124,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>🆕Spring中的bean是<strong>线程安全</strong>的吗？</p>
+<p>Spring中的bean是<strong>线程安全</strong>的吗？</p>
 <details>
 <summary>展开查看</summary>
 
@@ -16149,7 +16158,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>Spring生命周期</p>
+<p>🆕Spring生命周期</p>
 <details>
 <summary>展开查看</summary>
 
@@ -16311,7 +16320,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>Kafka重复消费问题</p>
+<p>🆕Kafka重复消费问题</p>
 <details>
 <summary>展开查看</summary>
 
@@ -16324,7 +16333,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>消费失败怎么办</p>
+<p>🆕消费失败怎么办</p>
 <details>
 <summary>展开查看</summary>
 
@@ -16446,7 +16455,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>🆕进程间的通信方式</p>
+<p>进程间的通信方式</p>
 <details>
 <summary>展开查看</summary>
 
@@ -16463,7 +16472,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>🆕进程调度算法</p>
+<p>进程调度算法</p>
 <details>
 <summary>展开查看</summary>
 
@@ -16512,7 +16521,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 <br>
 
 
-<p>🆕HTTP1.0、1.1、2.0、3.0版本差别</p>
+<p>HTTP1.0、1.1、2.0、3.0版本差别</p>
 <details>
 <summary>展开查看</summary>
 - 根据域名查找ip。**DNS**协议
@@ -16525,7 +16534,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>🆕HTTPS 和 HTTP对比</p>
+<p>HTTPS 和 HTTP对比</p>
 <details>
 <summary>展开查看</summary>
 - 根据域名查找ip。**DNS**协议
@@ -16539,7 +16548,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>🌟从输入URL到页面展示发生了什么？</p>
+<p>从输入URL到页面展示发生了什么？</p>
 <details>
 <summary>展开查看</summary>
 - 根据域名查找ip。**DNS**协议
@@ -16553,7 +16562,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>🆕TCP和UDP的区别</p>
+<p>TCP和UDP的区别</p>
 <details>
 <summary>展开查看</summary>
 
@@ -16569,7 +16578,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>🆕TCP和UDP的使用场景</p>
+<p>TCP和UDP的使用场景</p>
 <details>
 <summary>展开查看</summary>
 - 根据域名查找ip。**DNS**协议
@@ -16643,7 +16652,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 </details>
 <br>
 
-<p>🌟TCP拥塞控制了解吗</p>
+<p>TCP拥塞控制了解吗</p>
 <details>
 <summary>展开查看</summary>
 
@@ -16714,7 +16723,7 @@ Springboot的核心注解是`@SpringBootApplication`，这是一个复合注解�
 <ul>
 <li><code>netstat -p</code></li>
 </ul>
-<p>CPU飙高系统反应慢怎么排查？</p>
+<p>🆕CPU飙高系统反应慢怎么排查？</p>
 <details>
 <summary>展开查看</summary>
 
