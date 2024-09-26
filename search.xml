@@ -19533,6 +19533,46 @@ CMS使用标记--清除算法，CMS设计的目的是减少垃圾回收的停顿
 <li>反思开发过程中出现的改动错误等问题，让我明白了多业务方合作下有效沟通的重要性，对于不清楚不明白的点一定要先明确下来，同时在交流之前明确沟通的目的，以提高沟通效率，规范了我的开发和测试流程。</li>
 <li>目前接触的业务较少，自身对于优秀的设计理念和设计模式方面的积累薄弱。在周会中了解到目前有服务拆分的需求，了解了DDD架构的设计理念，也是业务能力的一种积累。</li>
 </ul>
+<h4 id="空指针异常"><a href="#空指针异常" class="headerlink" title="空指针异常"></a>空指针异常</h4><p>原因：下游服务部署完成后偶发空指针异常错误，报错的地方来自底层执行框架的GraphManager类 ，执行框架监听了contextRefreshedEvent事件，会去读取执行流描述文件，将其加载到一个变量中去。后面从这个变量中获取到执行流的执行链路。空指针异常就发生变量为空，原因是服务接受流量的时机过早，底层执行框架还没加载完成。</p>
+<p>解决：使用MTthrift提供的自定义状态，在一开始把服务设置成关闭状态，使用ApplicationReadyEvent事件把服务设置成激活状态，该事件的发生在contextRefreshedEvent之后（Spring中事件的触发默认是在主线程按顺序执行的）。</p>
+<p>可以把事件提前吗？执行流初始化事件放到容器准备好之前，容器准备好之前服务不会启动，可以使用ApplicationStartingEvent。</p>
+<h4 id="执行流升级"><a href="#执行流升级" class="headerlink" title="执行流升级"></a>执行流升级</h4><p>美团内部执行流经过一次升级，之前是分层结构，上层依赖下层，这存在一些问题：</p>
+<ul>
+<li>依赖关系不直观，导致一系列问题，检查难</li>
+<li>不方便复用</li>
+</ul>
+<p>新执行流改为图。业务中还有一小部分业务用的是旧执行流，改为新执行流。</p>
+<h2 id="事件介绍"><a href="#事件介绍" class="headerlink" title="事件介绍"></a>事件介绍</h2><p>SpringApplicationEvent</p>
+<ul>
+<li>ApplicationStartingEvent：在environment准备之前，非常早期的事件，此时Spring还没有开始读取任何配置以及初始化日志</li>
+<li>ApplicationEnvironmentPreparedEvent：environment已经准备好，在context创建前</li>
+<li>ApplicationPreparedEvent：bean definition 已经加载，但是没有refresh</li>
+<li>ApplicationStartedEvent：context已经被refresh，但application和command-line的runner还没被调用</li>
+<li>ApplicationReadyEvent：application和command-line的runner都被调用后触发</li>
+<li>ApplicationFailedEvent：启动失败触发</li>
+</ul>
+<p>ApplicationContextEvent</p>
+<ul>
+<li>ContextRefreshedEvent：当spring容器context刷新时触发</li>
+<li>ContextStartedEvent：当spring容器context启动后触发</li>
+<li>ContextStoppedEvent：当spring容器context停止时触发</li>
+<li>ContextClosedEvent：当spring容器context关闭时触发，容器被关闭时，其管理的所有单例Bean都被销毁。</li>
+</ul>
+<p>ApplicationStartingEvent、ApplicationEnvironmentPreparedEvent、ApplicationPreparedEvent三个事件开始较早，不能通过component注解扫描的形式去捕获，可以在spring.factories 文件中注册监听器</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">org.springframework.context.ApplicationListener=\</span><br><span class="line">org.event.TestApplicationStartingEvent,\</span><br><span class="line">org.event.TestApplicationEnvironmentPreparedEvent,\</span><br><span class="line">org.event.TestApplicationPreparedEvent,\</span><br></pre></td></tr></table></figure>
+
+<h4 id="执行顺序"><a href="#执行顺序" class="headerlink" title="执行顺序"></a>执行顺序</h4><ul>
+<li><code>ApplicationStartingEvent</code> - 应用启动，最早的事件。</li>
+<li><code>ApplicationEnvironmentPreparedEvent</code> - 环境准备好，<code>ApplicationContext</code> 尚未创建。</li>
+<li><code>ApplicationPreparedEvent</code> - <code>ApplicationContext</code> 创建完成，但未完全初始化。</li>
+<li><code>ContextRefreshedEvent</code> - <code>ApplicationContext</code> 完全刷新，所有 Bean 初始化完成。</li>
+<li><code>ApplicationStartedEvent</code> - 应用已启动，<code>ApplicationRunner</code> 和 <code>CommandLineRunner</code> 还未运行。</li>
+<li><code>ApplicationReadyEvent</code> - 应用完全准备好，<code>ApplicationRunner</code> 和 <code>CommandLineRunner</code> 运行完毕。</li>
+<li><code>ContextStartedEvent</code> - <code>ApplicationContext</code> 手动启动时触发（可选）。</li>
+<li><code>ContextStoppedEvent</code> - <code>ApplicationContext</code> 手动停止时触发（可选）。</li>
+<li><code>ContextClosedEvent</code> - <code>ApplicationContext</code> 关闭时触发，应用关闭。</li>
+<li><code>ApplicationFailedEvent</code> - 应用启动失败时触发。</li>
+</ul>
 <h2 id="横项"><a href="#横项" class="headerlink" title="横项"></a>横项</h2><h3 id="技术选型"><a href="#技术选型" class="headerlink" title="技术选型"></a>技术选型</h3><p>图像帧如何传输，一开始考虑ros，延时问题</p>
 <h3 id="难点"><a href="#难点" class="headerlink" title="难点"></a>难点</h3><p><strong>交叉编译</strong></p>
 <p>当时我们视频编码用的编码库是和瑞星微芯片配套的，但是那个库在开发板上本地编译一直不成功，在github库上也咨询了作者，他也没有什么好的方案。</p>
